@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
+import { AnimatedRoutes } from "@/lib/motion";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -69,6 +70,70 @@ const AppInit = () => {
   return null;
 };
 
+// Rutas envueltas en AnimatedRoutes para aplicar transiciones de página
+// globales (landing/portal/admin) sin alterar ningún path ni element.
+const AppRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatedRoutes>
+      <Routes location={location}>
+        {/* Public landing */}
+        <Route path="/" element={<Index />} />
+
+        {/* Legal pages */}
+        <Route path="/legal/privacidad" element={<Privacidad />} />
+        <Route path="/legal/terminos" element={<Terminos />} />
+        <Route path="/legal/cancelacion" element={<Cancelacion />} />
+
+        {/* Auth */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        {/* Legacy /auth → new login */}
+        <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
+
+        {/* Client portal */}
+        <Route path="/app" element={<Dashboard />} />
+        <Route path="/app/classes" element={<BookClasses />} />
+        <Route path="/app/classes/:classId" element={<BookClassConfirm />} />
+        <Route path="/app/bookings" element={<MyBookings />} />
+        <Route path="/app/checkout" element={<Checkout />} />
+        <Route path="/app/profile" element={<Profile />} />
+        <Route path="/app/profile/edit" element={<ProfileEdit />} />
+        <Route path="/app/profile/preferences" element={<ProfilePreferences />} />
+        <Route path="/app/orders" element={<MyOrders />} />
+        <Route path="/app/referrals" element={<Referrals />} />
+        <Route path="/app/notifications" element={<Notifications />} />
+
+        {/* Admin panel */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/plans" element={<PlansList />} />
+        <Route path="/admin/memberships" element={<MembershipsList />} />
+        <Route path="/admin/clients" element={<ClientsList />} />
+        <Route path="/admin/clients/:id" element={<ClientDetail />} />
+        <Route path="/admin/classes" element={<ClassesCalendar />} />
+        <Route path="/admin/classes/types" element={<ClassTypesList />} />
+        <Route path="/admin/classes/generate" element={<GenerateClasses />} />
+        <Route path="/admin/bookings" element={<BookingsList />} />
+        <Route path="/admin/bookings/waitlist" element={<Waitlist />} />
+        <Route path="/admin/staff" element={<Navigate to="/admin/classes" replace />} />
+        <Route path="/admin/payments" element={<PaymentsPage />} />
+        <Route path="/admin/orders" element={<Navigate to="/admin/payments" replace />} />
+        <Route path="/admin/reports" element={<ReportsPage />} />
+        <Route path="/admin/referrals" element={<ReferralsList />} />
+        <Route path="/admin/settings" element={<SettingsPage />} />
+        <Route path="/admin/audit" element={<AuditLogPage />} />
+        <Route path="/admin/discount-codes" element={<DiscountCodesPage />} />
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatedRoutes>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -76,60 +141,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AppInit />
-        <Routes>
-          {/* Public landing */}
-          <Route path="/" element={<Index />} />
-
-          {/* Legal pages */}
-          <Route path="/legal/privacidad" element={<Privacidad />} />
-          <Route path="/legal/terminos" element={<Terminos />} />
-          <Route path="/legal/cancelacion" element={<Cancelacion />} />
-
-          {/* Auth */}
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
-          {/* Legacy /auth → new login */}
-          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
-
-          {/* Client portal */}
-          <Route path="/app" element={<Dashboard />} />
-          <Route path="/app/classes" element={<BookClasses />} />
-          <Route path="/app/classes/:classId" element={<BookClassConfirm />} />
-          <Route path="/app/bookings" element={<MyBookings />} />
-          <Route path="/app/checkout" element={<Checkout />} />
-          <Route path="/app/profile" element={<Profile />} />
-          <Route path="/app/profile/edit" element={<ProfileEdit />} />
-          <Route path="/app/profile/preferences" element={<ProfilePreferences />} />
-          <Route path="/app/orders" element={<MyOrders />} />
-          <Route path="/app/referrals" element={<Referrals />} />
-          <Route path="/app/notifications" element={<Notifications />} />
-
-          {/* Admin panel */}
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/plans" element={<PlansList />} />
-          <Route path="/admin/memberships" element={<MembershipsList />} />
-          <Route path="/admin/clients" element={<ClientsList />} />
-          <Route path="/admin/clients/:id" element={<ClientDetail />} />
-          <Route path="/admin/classes" element={<ClassesCalendar />} />
-          <Route path="/admin/classes/types" element={<ClassTypesList />} />
-          <Route path="/admin/classes/generate" element={<GenerateClasses />} />
-          <Route path="/admin/bookings" element={<BookingsList />} />
-          <Route path="/admin/bookings/waitlist" element={<Waitlist />} />
-          <Route path="/admin/staff" element={<Navigate to="/admin/classes" replace />} />
-          <Route path="/admin/payments" element={<PaymentsPage />} />
-          <Route path="/admin/orders" element={<Navigate to="/admin/payments" replace />} />
-          <Route path="/admin/reports" element={<ReportsPage />} />
-          <Route path="/admin/referrals" element={<ReferralsList />} />
-          <Route path="/admin/settings" element={<SettingsPage />} />
-          <Route path="/admin/audit" element={<AuditLogPage />} />
-          <Route path="/admin/discount-codes" element={<DiscountCodesPage />} />
-
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
