@@ -22,6 +22,7 @@ export function ContactFooter() {
               src={`https://www.google.com/maps?q=${STUDIO.mapsQuery}&output=embed`}
               className="h-64 w-full md:h-full"
               loading="lazy"
+              sandbox="allow-scripts allow-same-origin allow-popups"
             />
           </div>
         </div>

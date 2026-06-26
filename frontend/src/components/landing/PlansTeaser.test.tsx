@@ -8,5 +8,8 @@ describe("PlansTeaser", () => {
     expect(screen.getByText("$120")).toBeInTheDocument();
     expect(screen.getByText("$16,000")).toBeInTheDocument();
     expect(screen.getByText(/Membresía mensual/)).toBeInTheDocument();
+    expect(screen.getByText("$270")).toBeInTheDocument();
+    expect(screen.getByText("$500")).toBeInTheDocument();
+    expect(screen.getByText("$990")).toBeInTheDocument();
   });
 });

@@ -6,5 +6,6 @@ describe("FounderSpread", () => {
     render(<FounderSpread />);
     expect(screen.getByText("Alexandra Murillo")).toBeInTheDocument();
     expect(screen.getByText("Fundadora")).toBeInTheDocument();
+    expect(screen.getByText(/El movimiento se vive con intención/)).toBeInTheDocument();
   });
 });
