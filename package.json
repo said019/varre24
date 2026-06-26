@@ -1,0 +1,26 @@
+{
+  "name": "varre24",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "VARRE24 — sistema de reservas para studio boutique de Barre y Pilates (CDMX). Monorepo frontend + backend.",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n frontend,backend -c magenta,green \"npm:dev:frontend\" \"npm:dev:backend\"",
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:backend": "npm run dev -w backend",
+    "build": "npm run build -w frontend",
+    "start": "node backend/server/index.js",
+    "lint": "npm run lint -w frontend",
+    "test": "npm run test -w frontend"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

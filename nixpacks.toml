@@ -1,0 +1,16 @@
+# nixpacks.toml — build de Railway para el monorepo VARRE24
+# Un solo servicio: instala todo el workspace, compila el frontend y el
+# backend Express sirve el build (frontend/dist) + la API.
+
+[phases.setup]
+# openssl es necesario para firmar los pases de Apple Wallet (si se activan).
+nixPkgs = ["nodejs_20", "openssl"]
+
+[phases.install]
+cmds = ["npm install --include=dev"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node backend/server/index.js"

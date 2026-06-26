@@ -1,0 +1,757 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import api from "@/lib/api";
+import { AuthGuard } from "@/components/admin/AuthGuard";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { DatePicker } from "@/components/ui/date-picker";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, Search, User, Package, CheckCircle2, CreditCard, Banknote, ArrowRight, ChevronLeft, History, Sparkles, Clock, XCircle, Eye, ImageIcon } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
+import { cn } from "@/lib/utils";
+
+// ── Helpers ──────────────────────────────────────────────
+// Métodos disponibles para el admin al registrar una venta manual.
+// Nota: el enum payment_method de la DB es ('cash','transfer','card','online').
+// Se reusan los códigos existentes:
+//   cash      → Efectivo (físico, recibido en el estudio)
+//   transfer  → Transferencia bancaria SPEI
+//   card      → Tarjeta (terminal en el estudio o pago online ya hecho via MP)
+
+function hoursLeft(o: any): number {
+  if (!o?.auto_approval_expires_at) return 0;
+  return Math.max(0, Math.ceil((new Date(o.auto_approval_expires_at).getTime() - Date.now()) / 3_600_000));
+}
+
+const PAYMENT_METHODS = [
+  { value: "cash",     label: "Efectivo",      icon: Banknote },
+  { value: "card",     label: "Tarjeta",       icon: CreditCard },
+  { value: "transfer", label: "Transferencia", icon: ArrowRight },
+];
+
+const STEP_META = [
+  { label: "Buscar cliente", icon: User },
+  { label: "Elegir plan", icon: Package },
+  { label: "Confirmar", icon: CheckCircle2 },
+];
+
+// ── Category groups for plan display ──────────────────────
+function groupPlans(plans: any[]) {
+  const groups: Record<string, any[]> = { pilates: [], bienestar: [], otro: [] };
+  for (const p of plans) {
+    const cat = p.classCategory ?? p.class_category ?? "";
+    if (cat === "pilates") groups.pilates.push(p);
+    else if (cat === "bienestar") groups.bienestar.push(p);
+    else if (cat === "all") groups.otro.push(p);
+    else if (p.name?.toLowerCase().includes("pilates") || p.name?.toLowerCase().includes("mat") || p.name?.toLowerCase().includes("flow")) groups.pilates.push(p);
+    else if (p.name?.toLowerCase().includes("body") || p.name?.toLowerCase().includes("strong") || p.name?.toLowerCase().includes("flex")) groups.bienestar.push(p);
+    else groups.otro.push(p);
+  }
+  return groups;
+}
+
+// ── Step indicator ────────────────────────────────────────
+const StepBar = ({ step }: { step: number }) => (
+  <div className="flex items-center gap-0 mb-8">
+    {STEP_META.map((s, i) => {
+      const done = step > i + 1;
+      const active = step === i + 1;
+      return (
+        <div key={i} className="flex items-center gap-0">
+          <div className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
+            done && "bg-[#836A5D]/20 text-[#836A5D] border border-[#836A5D]/30",
+            active && "bg-gradient-to-r from-[#836A5D] to-[#C8B79E] text-white shadow-[0_0_16px_rgba(131,106,93,0.4)]",
+            !done && !active && "bg-[#836A5D]/[0.06] text-[#2d2d2d]/25 border border-[#836A5D]/15"
+          )}>
+            <span className={cn(
+              "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
+              done && "bg-[#836A5D] text-white",
+              active && "bg-[#836A5D]/15 text-[#2d2d2d]",
+              !done && !active && "bg-[#836A5D]/10 text-[#2d2d2d]/30"
+            )}>
+              {done ? "✓" : i + 1}
+            </span>
+            {s.label}
+          </div>
+          {i < 2 && (
+            <div className={cn(
+              "w-8 h-px mx-1 transition-all",
+              done ? "bg-[#836A5D]/50" : "bg-[#836A5D]/10"
+            )} />
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
+
+// ── Cash Assignment Wizard ──────────────────────────────
+const CashAssignment = () => {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+  const [step, setStep] = useState(1);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const [selectedUser, setSelectedUser] = useState<{ id: string; displayName: string; email?: string; phone?: string | null } | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<{ id: string; name: string; price: number } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+
+  const { data: usersData, isLoading: usersLoading } = useQuery<{ data: { id: string; displayName: string; email: string; phone?: string | null }[] }>({
+    queryKey: ["users-search", debouncedSearch],
+    queryFn: async () => (
+      await api.get(`/users?role=client${debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""}`)
+    ).data,
+  });
+
+  const allUsers = Array.isArray(usersData?.data) ? usersData.data : [];
+  const filteredUsers = allUsers;
+
+  const { data: plansData } = useQuery<{ data: { id: string; name: string; price: number; classLimit?: number | null; durationDays?: number; classCategory?: string }[] }>({
+    queryKey: ["plans"],
+    queryFn: async () => (await api.get("/plans")).data,
+  });
+
+  const assignMutation = useMutation({
+    mutationFn: () => api.post("/memberships", {
+      userId: selectedUser?.id,
+      planId: selectedPlan?.id,
+      paymentMethod,
+      startDate: new Date().toISOString().split("T")[0],
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["memberships"] });
+      toast({ title: "✅ Membresía activada correctamente" });
+      setStep(1); setSelectedUser(null); setSelectedPlan(null); setSearch("");
+    },
+    onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al asignar", variant: "destructive" }),
+  });
+
+  const plans = (Array.isArray(plansData?.data) ? plansData.data : []).filter((p) => (p as any).isActive !== false && (p as any).is_active !== false);
+  const planGroups = groupPlans(plans);
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <StepBar step={step} />
+
+      {/* ── Step 1: Buscar cliente ─────────────────────────── */}
+      {step === 1 && (
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-[#836A5D]/15 bg-[#836A5D]/[0.04] p-5">
+            <h3 className="text-sm font-semibold text-[#2d2d2d]/60 uppercase tracking-wider mb-4">Buscar cliente</h3>
+            <div className="relative">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#C8B79E]/60" />
+              <Input
+                className="pl-9 bg-[#836A5D]/[0.06] border-[#836A5D]/15 focus:border-[#836A5D]/50 focus:ring-[#836A5D]/20 text-[#2d2d2d] placeholder:text-[#836A5D]/40 rounded-xl"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Nombre, email o teléfono…"
+                autoFocus
+              />
+            </div>
+          </div>
+
+          {usersLoading && (
+            <div className="flex items-center justify-center py-8 text-[#C8B79E]/60">
+              <Loader2 className="animate-spin mr-2" size={16} /> Buscando…
+            </div>
+          )}
+
+          <div className="space-y-2">
+            {filteredUsers.map((u) => (
+              <button
+                key={u.id}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border border-[#836A5D]/15 bg-[#836A5D]/[0.04] hover:bg-[#836A5D]/5 hover:border-[#836A5D]/25 transition-all group text-left"
+                onClick={() => { setSelectedUser(u); setStep(2); }}
+              >
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#836A5D]/30 to-[#C8B79E]/20 border border-[#836A5D]/30 flex items-center justify-center text-sm font-bold text-[#836A5D] shrink-0">
+                  {u.displayName?.[0]?.toUpperCase() ?? "?"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-[#2d2d2d]/90 truncate">{u.displayName}</p>
+                  <p className="text-xs text-[#2d2d2d]/35 truncate">
+                    {u.email}
+                    {u.phone ? ` · ${u.phone}` : ""}
+                  </p>
+                </div>
+                <ArrowRight size={14} className="text-[#2d2d2d]/20 group-hover:text-[#836A5D]/60 transition-colors shrink-0" />
+              </button>
+            ))}
+            {filteredUsers.length === 0 && !usersLoading && (
+              <p className="text-center py-6 text-[#2d2d2d]/30 text-sm">No se encontraron clientes</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Step 2: Elegir plan ────────────────────────────── */}
+      {step === 2 && (
+        <div className="space-y-5">
+          {/* Cliente seleccionado */}
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-[#836A5D]/8 border border-[#836A5D]/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#836A5D] to-[#C8B79E] flex items-center justify-center text-xs font-bold text-white">
+              {selectedUser?.displayName?.[0]?.toUpperCase()}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#2d2d2d]/90">{selectedUser?.displayName}</p>
+              <p className="text-xs text-[#2d2d2d]/40">{selectedUser?.email}</p>
+            </div>
+            <Button variant="ghost" size="sm" className="ml-auto text-[#2d2d2d]/30 hover:text-[#2d2d2d]/60 text-xs" onClick={() => setStep(1)}>
+              <ChevronLeft size={12} className="mr-1" /> Cambiar
+            </Button>
+          </div>
+
+          {/* Plan groups */}
+          {Object.entries(planGroups).map(([group, items]) => {
+            if (!items.length) return null;
+            const groupColors: Record<string, string> = {
+              pilates: "text-[#C8B79E]",
+              bienestar: "text-[#836A5D]",
+              otro: "text-[#2d2d2d]/50",
+            };
+            const groupLabels: Record<string, string> = {
+              pilates: "Paquetes Pilates",
+              bienestar: "Paquetes Bienestar",
+              otro: "Otros paquetes",
+            };
+            return (
+              <div key={group}>
+                <p className={cn("text-[11px] font-semibold uppercase tracking-widest mb-2 px-1", groupColors[group])}>
+                  {groupLabels[group] ?? group}
+                </p>
+                <div className="grid grid-cols-1 gap-2">
+                  {items.map((p) => (
+                    <button
+                      key={p.id}
+                      className={cn(
+                        "w-full flex items-center justify-between p-3.5 rounded-xl border transition-all text-left group",
+                        selectedPlan?.id === p.id
+                          ? "border-[#836A5D]/50 bg-gradient-to-r from-[#836A5D]/10 to-[#C8B79E]/5 shadow-[0_0_16px_rgba(131,106,93,0.12)]"
+                          : "border-[#836A5D]/15 bg-[#836A5D]/[0.04] hover:border-[#836A5D]/25 hover:bg-[#836A5D]/5"
+                      )}
+                      onClick={() => setSelectedPlan(p)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "w-2 h-2 rounded-full shrink-0 transition-all",
+                          selectedPlan?.id === p.id
+                            ? "bg-[#836A5D] shadow-[0_0_8px_#836A5D]"
+                            : "bg-[#836A5D]/12 group-hover:bg-[#836A5D]/50"
+                        )} />
+                        <div>
+                          <p className="text-sm font-semibold text-[#2d2d2d]/85">{p.name}</p>
+                          <p className="text-xs text-[#2d2d2d]/30">
+                            {p.classLimit === null ? "Ilimitado" : `${p.classLimit} clases`}
+                            {p.durationDays ? ` · ${p.durationDays} días` : ""}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={cn(
+                        "text-sm font-bold transition-colors",
+                        selectedPlan?.id === p.id ? "text-[#836A5D]" : "text-[#2d2d2d]/60 group-hover:text-[#2d2d2d]/90"
+                      )}>
+                        ${Number(p.price).toLocaleString()} MXN
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          <div className="flex gap-3 pt-2">
+            <Button variant="outline" className="border-[#836A5D]/15 text-[#2d2d2d]/50 hover:text-[#2d2d2d] hover:border-[#836A5D]/25" onClick={() => setStep(1)}>
+              <ChevronLeft size={14} className="mr-1" /> Volver
+            </Button>
+            <Button
+              className="flex-1 bg-gradient-to-r from-[#836A5D] to-[#C8B79E] hover:opacity-90 text-white font-semibold shadow-[0_0_20px_rgba(131,106,93,0.3)]"
+              disabled={!selectedPlan}
+              onClick={() => setStep(3)}
+            >
+              Continuar <ArrowRight size={14} className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Step 3: Confirmar ─────────────────────────────── */}
+      {step === 3 && (
+        <div className="space-y-5">
+          {/* Resumen */}
+          <div className="rounded-2xl border border-[#836A5D]/15 bg-[#836A5D]/[0.04] overflow-hidden">
+            <div className="px-5 py-3 border-b border-[#836A5D]/15 flex items-center gap-2">
+              <Sparkles size={14} className="text-[#F5ECDB]" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#2d2d2d]/50">Resumen de la membresía</span>
+            </div>
+            <div className="p-5 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#2d2d2d]/50">Cliente</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#836A5D] to-[#C8B79E] flex items-center justify-center text-[9px] font-bold text-white">
+                    {selectedUser?.displayName?.[0]?.toUpperCase()}
+                  </div>
+                  <span className="text-sm font-semibold text-[#2d2d2d]/90">{selectedUser?.displayName}</span>
+                </div>
+              </div>
+              <div className="h-px bg-[#836A5D]/[0.06]" />
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#2d2d2d]/50">Plan</span>
+                <span className="text-sm font-semibold text-[#2d2d2d]/90">{selectedPlan?.name}</span>
+              </div>
+              <div className="h-px bg-[#836A5D]/[0.06]" />
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#2d2d2d]/50">Total</span>
+                <span className="text-lg font-bold text-[#836A5D]">${Number(selectedPlan?.price).toLocaleString()} MXN</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Método de pago */}
+          <div className="rounded-2xl border border-[#836A5D]/15 bg-[#836A5D]/[0.04] p-5">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-[#2d2d2d]/40 mb-3 block">Método de pago</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {PAYMENT_METHODS.map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-3 rounded-xl border transition-all",
+                    paymentMethod === value
+                      ? "border-[#836A5D]/50 bg-[#836A5D]/10 text-[#836A5D]"
+                      : "border-[#836A5D]/15 bg-[#836A5D]/[0.04] text-[#2d2d2d]/40 hover:border-[#836A5D]/20 hover:text-[#2d2d2d]/70"
+                  )}
+                  onClick={() => setPaymentMethod(value)}
+                >
+                  <Icon size={16} />
+                  <span className="text-xs font-medium">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="outline" className="border-[#836A5D]/15 text-[#2d2d2d]/50 hover:text-[#2d2d2d] hover:border-[#836A5D]/25" onClick={() => setStep(2)}>
+              <ChevronLeft size={14} className="mr-1" /> Volver
+            </Button>
+            <Button
+              className="flex-1 bg-gradient-to-r from-[#836A5D] to-[#C8B79E] hover:opacity-90 text-white font-bold shadow-[0_0_24px_rgba(131,106,93,0.35)] h-11"
+              onClick={() => assignMutation.mutate()}
+              disabled={assignMutation.isPending}
+            >
+              {assignMutation.isPending
+                ? <><Loader2 className="animate-spin mr-2" size={14} /> Activando…</>
+                : <><CheckCircle2 size={15} className="mr-2" /> Confirmar y activar membresía</>
+              }
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Pending Orders (verify / reject) ─────────────────────
+const PendingOrders = () => {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const { data: dataVerify, isLoading: loadingVerify } = useQuery<{ data: any[] }>({
+    queryKey: ["admin-orders-pending-verification"],
+    queryFn: async () => (await api.get("/admin/orders?status=pending_verification")).data,
+  });
+  const { data: dataPending, isLoading: loadingPending } = useQuery<{ data: any[] }>({
+    queryKey: ["admin-orders-pending-payment"],
+    queryFn: async () => (await api.get("/admin/orders?status=pending_payment")).data,
+  });
+  const isLoading = loadingVerify || loadingPending;
+
+  const { data: provisionalsData } = useQuery({
+    queryKey: ["admin-orders-provisional"],
+    queryFn: async () => (await api.get("/admin/orders?status=approved")).data,
+    refetchInterval: 60_000,
+  });
+  const provisionals: any[] = (provisionalsData?.data ?? []).filter(
+    (o: any) => o.auto_approval_expires_at && new Date(o.auto_approval_expires_at) > new Date()
+  );
+
+  const provisionalsSorted = [...provisionals].sort(
+    (a, b) => new Date(a.auto_approval_expires_at).getTime() - new Date(b.auto_approval_expires_at).getTime()
+  );
+  const orders = [
+    ...provisionalsSorted,
+    ...(Array.isArray(dataVerify?.data) ? dataVerify.data : []),
+    ...(Array.isArray(dataPending?.data) ? dataPending.data.filter((o: any) => o.payment_method === "cash") : []),
+  ].sort((a: any, b: any) => {
+    // Provisionals first (they have auto_approval_expires_at), then by createdAt desc
+    const aIsProvisional = !!a.auto_approval_expires_at;
+    const bIsProvisional = !!b.auto_approval_expires_at;
+    if (aIsProvisional && !bIsProvisional) return -1;
+    if (!aIsProvisional && bIsProvisional) return 1;
+    if (aIsProvisional && bIsProvisional) {
+      return new Date(a.auto_approval_expires_at).getTime() - new Date(b.auto_approval_expires_at).getTime();
+    }
+    return new Date(b.createdAt ?? b.created_at).getTime() - new Date(a.createdAt ?? a.created_at).getTime();
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: (id: string) => api.put(`/admin/orders/${id}/verify`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-orders-pending-verification"] });
+      qc.invalidateQueries({ queryKey: ["admin-orders-pending-payment"] });
+      qc.invalidateQueries({ queryKey: ["orders-pending"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
+      qc.invalidateQueries({ queryKey: ["payments"] });
+      toast({ title: "✅ Orden verificada y membresía activada" });
+    },
+    onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al verificar", variant: "destructive" }),
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => api.put(`/admin/orders/${id}/reject`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-orders-pending-verification"] });
+      qc.invalidateQueries({ queryKey: ["admin-orders-pending-payment"] });
+      qc.invalidateQueries({ queryKey: ["orders-pending"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
+      toast({ title: "Orden rechazada" });
+    },
+    onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al rechazar", variant: "destructive" }),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-[#836A5D]/60">
+        <Loader2 className="animate-spin mr-2" size={16} /> Cargando…
+      </div>
+    );
+  }
+
+  if (!orders.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <CheckCircle2 size={32} className="text-[#C8B79E]/40 mb-3" />
+        <p className="text-[#2d2d2d]/40 text-sm font-medium">No hay órdenes pendientes</p>
+        <p className="text-[#2d2d2d]/25 text-xs mt-1">Todas las órdenes han sido procesadas</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="space-y-3">
+        {orders.map((o: any) => {
+          const isCash = o.payment_method === "cash";
+          const isTransfer = o.payment_method === "transfer";
+          return (
+          <div
+            key={o.id}
+            className={cn(
+              "rounded-xl border p-4 space-y-3",
+              isCash
+                ? "border-blue-500/25 bg-blue-50/40"
+                : "border-amber-600/20 bg-amber-50/50"
+            )}
+          >
+            {/* Payment method banner */}
+            <div className={cn(
+              "flex items-center gap-2.5 rounded-lg px-3 py-2.5 -mx-0.5",
+              isCash
+                ? "bg-blue-100/70 border border-blue-200/50"
+                : "bg-amber-100/70 border border-amber-200/50"
+            )}>
+              <div className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                isCash ? "bg-blue-500 text-white" : "bg-amber-500 text-white"
+              )}>
+                {isCash ? <Banknote size={15} /> : <CreditCard size={15} />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={cn("text-xs font-bold", isCash ? "text-blue-800" : "text-amber-800")}>
+                  {isCash ? "PAGO EN EFECTIVO — EN ESTUDIO" : isTransfer ? "TRANSFERENCIA / SPEI" : "TARJETA"}
+                </p>
+                <p className={cn("text-[10px]", isCash ? "text-blue-600/70" : "text-amber-600/70")}>
+                  {isCash ? "La clienta pagará directamente en recepción" : "Comprobante enviado, verificar pago"}
+                </p>
+              </div>
+              <Badge variant="outline" className={cn(
+                "text-[10px] shrink-0",
+                isCash ? "text-blue-700 border-blue-400/40 bg-blue-50" : "text-amber-700 border-amber-400/40 bg-amber-50"
+              )}>
+                <Clock size={9} className="mr-1" />
+                {isCash ? "Por cobrar" : "Por verificar"}
+              </Badge>
+              {o.auto_approval_expires_at && (
+                <Badge variant={hoursLeft(o) < 4 ? "destructive" : "secondary"} className="ml-1 text-[10px] shrink-0">
+                  🕒 {hoursLeft(o)}h para revisar
+                </Badge>
+              )}
+            </div>
+
+            {/* Client info + amount */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#836A5D]/30 to-[#C8B79E]/20 border border-[#836A5D]/30 flex items-center justify-center text-sm font-bold text-[#836A5D] shrink-0">
+                  {(o.userName ?? "?")[0]?.toUpperCase()}
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-[#2d2d2d]/90">{o.userName ?? "—"}</p>
+                  <p className="text-xs text-[#2d2d2d]/40">{o.planName ?? "Plan"}</p>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="font-bold text-sm text-[#2d2d2d]/90">
+                  ${Number(o.totalAmount ?? o.total_amount ?? 0).toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                </p>
+                <p className="text-[10px] text-[#2d2d2d]/35">
+                  {o.createdAt ? new Date(o.createdAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                </p>
+              </div>
+            </div>
+
+            {/* Proof gallery (only for transfers) */}
+            {(o.proofs && o.proofs.length > 0) ? (
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {o.proofs.map((p: any) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setPreviewUrl(p.file_url)}
+                    className="block aspect-square rounded-xl overflow-hidden border border-[#836A5D]/15 hover:border-[#836A5D]/40"
+                  >
+                    <img src={p.file_url} alt={p.file_name || "Comprobante"} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            ) : o.proofUrl ? (
+              <button
+                type="button"
+                onClick={() => setPreviewUrl(o.proofUrl)}
+                className="mt-2 text-xs text-[#836A5D] underline"
+              >
+                Ver comprobante
+              </button>
+            ) : null}
+
+            {/* Actions */}
+            <div className="flex gap-2 pt-1">
+              <Button
+                size="sm"
+                className={cn(
+                  "flex-1 font-semibold text-xs h-9 text-white hover:opacity-90",
+                  isCash
+                    ? "bg-gradient-to-r from-blue-600 to-blue-500 shadow-blue-500/20 shadow-sm"
+                    : "bg-gradient-to-r from-[#4a7a38] to-[#6b9a52]"
+                )}
+                onClick={() => verifyMutation.mutate(o.id)}
+                disabled={verifyMutation.isPending}
+              >
+                {verifyMutation.isPending
+                  ? <Loader2 className="animate-spin" size={13} />
+                  : <><CheckCircle2 size={13} className="mr-1" /> {isCash ? "Confirmar pago y activar" : "Verificar y activar"}</>
+                }
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-red-400/30 text-red-600 hover:bg-red-50 hover:border-red-400/50 font-semibold text-xs h-9"
+                onClick={() => rejectMutation.mutate(o.id)}
+                disabled={rejectMutation.isPending}
+              >
+                {rejectMutation.isPending ? <Loader2 className="animate-spin" size={13} /> : <><XCircle size={13} className="mr-1" /> Rechazar</>}
+              </Button>
+            </div>
+          </div>
+          );
+        })}
+      </div>
+
+      {/* Proof preview modal */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setPreviewUrl(null)}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-auto p-2" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-3 pb-2">
+              <p className="text-sm font-semibold text-[#2d2d2d]/80">Comprobante de pago</p>
+              <button onClick={() => setPreviewUrl(null)} className="text-[#2d2d2d]/40 hover:text-[#2d2d2d] text-lg">✕</button>
+            </div>
+            {previewUrl.includes("application/pdf") || previewUrl.endsWith(".pdf") ? (
+              <iframe src={previewUrl} className="w-full h-[60vh] rounded-lg border-0" title="Comprobante PDF" />
+            ) : (
+              <img src={previewUrl} alt="Comprobante" className="w-full rounded-lg" />
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+// ── Payments History ──────────────────────────────────────
+const PAGE_SIZE = 50;
+
+const PaymentsHistory = () => {
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [visible, setVisible] = useState(PAGE_SIZE);
+
+  const qs = new URLSearchParams();
+  if (start) qs.set("startDate", start);
+  if (end) qs.set("endDate", end);
+  qs.set("limit", "1000"); // traemos hasta 1000 y paginamos en cliente
+
+  const { data, isFetching } = useQuery<{ data: any[]; total?: number }>({
+    queryKey: ["payments", start, end],
+    queryFn: async () => (await api.get(`/payments?${qs.toString()}`)).data,
+  });
+  const allPayments = Array.isArray(data?.data) ? data.data : [];
+  const payments = allPayments.slice(0, visible);
+  const periodTotal = allPayments.reduce(
+    (s, p: any) => s + Number(p.total_amount ?? p.amount ?? 0), 0
+  );
+
+  const methodStyles: Record<string, string> = {
+    cash: "text-[#5a4f46] border-[#836A5D]/30 bg-[#836A5D]/10",
+    card: "text-[#4a5638] border-[#C8B79E]/30 bg-[#C8B79E]/10",
+    transfer: "text-[#5a4f46] border-[#836A5D]/30 bg-[#836A5D]/10",
+  };
+  const methodLabels: Record<string, string> = { cash: "Efectivo", card: "Tarjeta", transfer: "Transferencia", online: "En línea" };
+  // Origen del pago: 'order' = portal del cliente, 'membership'/'walkin' = registrado por admin
+  const originLabel = (src: string) =>
+    src === "order" ? "Portal del cliente" : src === "walkin" ? "Mostrador (sin cuenta)" : "Registrado por admin";
+  const originStyle = (src: string) =>
+    src === "order"
+      ? "text-emerald-700 border-emerald-200 bg-emerald-50"
+      : "text-[#6C5147] border-[#836A5D]/25 bg-[#836A5D]/[0.08]";
+  const fmtOpDate = (raw: any) => {
+    if (!raw) return "—";
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime())
+      ? "—"
+      : d.toLocaleString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  };
+
+  const clearFilters = () => { setStart(""); setEnd(""); setVisible(PAGE_SIZE); };
+
+  return (
+    <div className="space-y-4">
+      {/* Filtros */}
+      <div className="flex flex-wrap items-end gap-3 p-4 rounded-xl border border-[#836A5D]/15 bg-[#836A5D]/[0.03]">
+        <div className="space-y-1">
+          <Label className="text-[11px] text-[#6C5147]/70">Desde</Label>
+          <DatePicker value={start} onChange={(v) => { setStart(v); setVisible(PAGE_SIZE); }} />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[11px] text-[#6C5147]/70">Hasta</Label>
+          <DatePicker value={end} onChange={(v) => { setEnd(v); setVisible(PAGE_SIZE); }} min={start || undefined} />
+        </div>
+        {(start || end) && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-[#6C5147]">
+            Limpiar
+          </Button>
+        )}
+        <div className="ml-auto text-right">
+          <div className="text-[10px] tracking-[0.16em] uppercase font-semibold text-[#6C5147]/60">
+            Total {start || end ? "del período" : "mostrado"}
+          </div>
+          <div className="text-lg font-bold text-[#2d2d2d] tabular-nums">
+            {isFetching ? <Loader2 size={16} className="animate-spin inline" /> : `$${periodTotal.toLocaleString("es-MX")} MXN`}
+          </div>
+          <div className="text-[11px] text-[#6C5147]/60">{allPayments.length} pago{allPayments.length === 1 ? "" : "s"}</div>
+        </div>
+      </div>
+
+      {isFetching && !allPayments.length ? (
+        <div className="flex justify-center py-16"><Loader2 size={22} className="animate-spin text-[#836A5D]/50" /></div>
+      ) : !allPayments.length ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <History size={32} className="text-[#2d2d2d]/10 mb-3" />
+          <p className="text-[#2d2d2d]/30 text-sm">
+            {start || end ? "Sin pagos en este período" : "Sin pagos registrados aún"}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-2">
+            {payments.map((p: any) => (
+              <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-[#836A5D]/15 bg-[#836A5D]/[0.04] hover:bg-[#836A5D]/[0.06] transition-colors">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#836A5D]/20 to-[#C8B79E]/10 border border-[#836A5D]/20 flex items-center justify-center shrink-0">
+                  <CreditCard size={13} className="text-[#836A5D]/70" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#2d2d2d]/85 truncate">{p.userName ?? p.userId ?? "—"}</p>
+                  <p className="text-xs text-[#2d2d2d]/40">{p.planName ?? "—"}</p>
+                  <p className="text-[11px] text-[#2d2d2d]/30">Operación: {fmtOpDate(p.created_at ?? p.createdAt)}</p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap justify-end">
+                  <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full border", originStyle(p.source))}>
+                    {originLabel(p.source)}
+                  </span>
+                  <span className={cn("text-[11px] font-semibold px-2.5 py-1 rounded-full border", methodStyles[p.method] ?? "text-[#2d2d2d]/40 border-[#836A5D]/15 bg-[#836A5D]/[0.06]")}>
+                    {methodLabels[p.method] ?? p.method ?? "—"}
+                  </span>
+                  <span className="text-sm font-bold text-[#2d2d2d]/90">${Number(p.total_amount ?? p.amount ?? 0).toLocaleString()} MXN</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {visible < allPayments.length && (
+            <div className="flex justify-center pt-2">
+              <Button variant="outline" size="sm" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
+                Cargar más ({allPayments.length - visible} restantes)
+              </Button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// ── Main Payments Page ────────────────────────────────────
+const PaymentsPage = () => {
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") === "pending" ? "pending" : "cash";
+  const [activeTab, setActiveTab] = useState<"cash" | "pending" | "history">(initialTab);
+
+  return (
+    <AuthGuard>
+      <AdminLayout>
+        <div className="admin-page max-w-3xl">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-[#2d2d2d] mb-1">Pagos</h1>
+            <p className="text-sm text-[#2d2d2d]/35">Asigna paquetes cobrados en estudio, verifica pagos pendientes y consulta el historial</p>
+          </div>
+
+          {/* Tab switcher */}
+          <div className="flex gap-1 p-1 rounded-xl bg-[#836A5D]/[0.06] border border-[#836A5D]/15 w-fit mb-8">
+            {([["cash", "Asignación manual"], ["pending", "Pendientes"], ["history", "Historial"]] as const).map(([val, label]) => (
+              <button
+                key={val}
+                onClick={() => setActiveTab(val)}
+                className={cn(
+                  "px-5 py-2 rounded-lg text-sm font-semibold transition-all",
+                  activeTab === val
+                    ? "bg-gradient-to-r from-[#836A5D] to-[#C8B79E] text-white shadow-[0_0_14px_rgba(131,106,93,0.3)]"
+                    : "text-[#2d2d2d]/40 hover:text-[#2d2d2d]/70"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === "cash" && <CashAssignment />}
+          {activeTab === "pending" && <PendingOrders />}
+          {activeTab === "history" && <PaymentsHistory />}
+        </div>
+      </AdminLayout>
+    </AuthGuard>
+  );
+};
+
+export default PaymentsPage;

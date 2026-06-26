@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VARRE24 — Brand Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* ── Cremas / neutros cálidos ── */
+    --cream-50:#FFFDF8;
+    --cream-100:#FAF3EA;   /* fondo base */
+    --cream-200:#F5ECDB;   /* superficie 2 */
+    --sand-300:#EADBC7;    /* bordes */
+    --taupe-400:#C9B7A4;   /* muted / deshabilitado */
+    --muted-ink:#8A6F5E;   /* texto secundario */
+    /* ── Marca ── */
+    --pink-200:#F4D1CF;    /* rosa suave */
+    --clay-500:#D8714E;    /* coral / acento secundario */
+    --terracotta-600:#BC4500; /* primario (CTA) */
+    --terracotta-700:#9A3800; /* primario hover */
+    --cacao-800:#752223;   /* marca profunda / títulos */
+    --ink-900:#2E1A14;     /* texto principal */
+
+    --radius:14px;
+    --shadow-soft:0 1px 2px rgba(46,26,20,.04), 0 8px 24px rgba(117,34,35,.06);
+    --shadow-card:0 2px 4px rgba(46,26,20,.05), 0 18px 40px rgba(117,34,35,.10);
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;
+    --sans:"Inter Tight", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--cream-100); color:var(--ink-900);
+    font-family:var(--sans); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:64px 28px 96px}
+  h1,h2,h3{font-family:var(--serif); font-weight:400; letter-spacing:-.01em; margin:0}
+  .eyebrow{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted-ink); font-weight:600}
+  section{margin-top:64px}
+  .rule{height:1px; background:var(--sand-300); border:0; margin:0}
+
+  /* Cover */
+  .cover{
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(244,209,207,.55) 0%, rgba(250,243,234,0) 55%),
+      linear-gradient(180deg, var(--cream-50), var(--cream-200));
+    border:1px solid var(--sand-300); border-radius:24px;
+    padding:64px 56px; box-shadow:var(--shadow-soft);
+  }
+  .wordmark{font-family:var(--serif); font-weight:300; font-size:clamp(56px,11vw,128px); line-height:.92; letter-spacing:-.02em; color:var(--ink-900)}
+  .wordmark b{font-weight:600; color:var(--terracotta-600)}
+  .cover .tag{font-family:var(--serif); font-style:italic; font-size:clamp(20px,3vw,30px); color:var(--cacao-800); margin-top:18px}
+  .cover .sub{margin-top:22px; max-width:46ch; color:var(--muted-ink)}
+
+  /* Palette */
+  .swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-top:24px}
+  .sw{border-radius:var(--radius); overflow:hidden; border:1px solid var(--sand-300); background:var(--cream-50); box-shadow:var(--shadow-soft)}
+  .sw .chip{height:96px}
+  .sw .meta{padding:10px 12px; font-size:12px}
+  .sw .name{font-weight:600}
+  .sw .hex{color:var(--muted-ink); font-variant-numeric:tabular-nums; text-transform:uppercase}
+  .sw .tok{color:var(--muted-ink); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px}
+
+  /* Type */
+  .type-row{display:grid; grid-template-columns:1fr; gap:28px; margin-top:24px}
+  .spec .label{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-ink)}
+  .spec .serif-xl{font-family:var(--serif); font-weight:300; font-size:clamp(40px,7vw,72px); line-height:1; letter-spacing:-.02em; margin-top:6px}
+  .spec .serif-i{font-family:var(--serif); font-style:italic; font-weight:400}
+  .scale > div{font-family:var(--serif); font-weight:400; line-height:1.1; border-top:1px solid var(--sand-300); padding:14px 0}
+  .scale small{font-family:var(--sans); color:var(--muted-ink); font-size:12px; display:inline-block; width:120px; vertical-align:middle}
+  .body-sample{max-width:62ch; margin-top:10px}
+  .body-sample .k{font-weight:600}
+
+  /* Components */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .panel{background:var(--cream-50); border:1px solid var(--sand-300); border-radius:18px; padding:24px; box-shadow:var(--shadow-soft)}
+  .panel h3{font-size:20px; color:var(--cacao-800)}
+  .btns{display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; align-items:center}
+  .btn{font-family:var(--sans); font-weight:600; font-size:14px; border-radius:999px; padding:12px 22px; border:1px solid transparent; cursor:pointer}
+  .btn-primary{background:var(--terracotta-600); color:var(--cream-50)}
+  .btn-primary:hover{background:var(--terracotta-700)}
+  .btn-secondary{background:var(--pink-200); color:var(--cacao-800)}
+  .btn-ghost{background:transparent; color:var(--terracotta-600); border-color:var(--terracotta-600)}
+  .chiprow{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+  .chip-tag{font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px; background:var(--cream-200); color:var(--cacao-800); border:1px solid var(--sand-300)}
+  .chip-tag.barre{background:#F7E2D8; color:var(--clay-500); border-color:#E9C9B9}
+  .chip-tag.pilates{background:#F3E7DA; color:#8A5A33; border-color:#E6D2BD}
+  .chip-tag.especial{background:var(--pink-200); color:var(--cacao-800); border-color:#EBBDBA}
+
+  /* Class card */
+  .class-card{border:1px solid var(--sand-300); border-radius:16px; padding:18px; background:linear-gradient(180deg,var(--cream-50),var(--cream-100))}
+  .class-card .time{font-family:var(--serif); font-size:30px; color:var(--ink-900)}
+  .class-card .name{font-weight:600; margin-top:2px}
+  .class-card .meta{color:var(--muted-ink); font-size:13px; margin-top:2px}
+  .class-card .foot{display:flex; justify-content:space-between; align-items:center; margin-top:16px}
+  .spots{font-size:12px; color:var(--muted-ink)}
+  .dotrow{display:flex; gap:5px; margin-top:6px}
+  .dot{width:14px;height:14px;border-radius:50%; background:var(--terracotta-600)}
+  .dot.off{background:var(--sand-300)}
+
+  /* Membership card */
+  .mcard{
+    border-radius:20px; padding:24px; color:var(--cream-50);
+    background:radial-gradient(120% 120% at 100% 0%, var(--clay-500) 0%, var(--terracotta-700) 45%, var(--cacao-800) 100%);
+    box-shadow:var(--shadow-card); min-height:190px; display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .mcard .top{display:flex; justify-content:space-between; align-items:flex-start}
+  .mcard .brand{font-family:var(--serif); font-size:22px; letter-spacing:.02em}
+  .mcard .plan{opacity:.85; font-size:13px}
+  .mcard .big{font-family:var(--serif); font-size:40px; line-height:1}
+  .mcard .stamps{display:flex; gap:6px; margin-top:8px}
+  .mcard .st{width:16px;height:16px;border-radius:50%; background:rgba(255,253,248,.35)}
+  .mcard .st.on{background:var(--cream-50)}
+
+  .meta-foot{margin-top:64px; color:var(--muted-ink); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">VARRE24 · Brand Board · Studio Boutique Barre &amp; Pilates · CDMX</div>
+
+  <!-- 1. Cover / wordmark -->
+  <section class="cover" style="margin-top:18px">
+    <div class="wordmark">VARRE<b>24</b></div>
+    <div class="tag">Movimiento, fuerza y bienestar.</div>
+    <p class="sub">Una experiencia boutique diseñada para conectar contigo. Elegante, cálida y cercana — con un toque de lujo sutil.</p>
+  </section>
+
+  <!-- 2. Palette -->
+  <section>
+    <div class="eyebrow">01 — Paleta</div>
+    <h2 style="font-size:30px;margin-top:8px">Cálida: terracota, coral y crema</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#FAF3EA"></div><div class="meta"><div class="name">Crema base</div><div class="hex">#FAF3EA</div><div class="tok">--cream-100</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F5ECDB"></div><div class="meta"><div class="name">Superficie</div><div class="hex">#F5ECDB</div><div class="tok">--cream-200</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F4D1CF"></div><div class="meta"><div class="name">Rosa suave</div><div class="hex">#F4D1CF</div><div class="tok">--pink-200</div></div></div>
+      <div class="sw"><div class="chip" style="background:#D8714E"></div><div class="meta"><div class="name">Coral / clay</div><div class="hex">#D8714E</div><div class="tok">--clay-500</div></div></div>
+      <div class="sw"><div class="chip" style="background:#BC4500"></div><div class="meta"><div class="name">Terracota (primario)</div><div class="hex">#BC4500</div><div class="tok">--terracotta-600</div></div></div>
+      <div class="sw"><div class="chip" style="background:#752223"></div><div class="meta"><div class="name">Cacao / marca</div><div class="hex">#752223</div><div class="tok">--cacao-800</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2E1A14"></div><div class="meta"><div class="name">Tinta (texto)</div><div class="hex">#2E1A14</div><div class="tok">--ink-900</div></div></div>
+      <div class="sw"><div class="chip" style="background:#C9B7A4"></div><div class="meta"><div class="name">Taupe (muted)</div><div class="hex">#C9B7A4</div><div class="tok">--taupe-400</div></div></div>
+    </div>
+  </section>
+
+  <!-- 3. Typography -->
+  <section>
+    <div class="eyebrow">02 — Tipografía</div>
+    <div class="type-row">
+      <div class="spec">
+        <div class="label">Títulos · Fraunces (serif editorial)</div>
+        <div class="serif-xl">Aa <span class="serif-i">Barre &amp; Pilates</span></div>
+        <div class="scale">
+          <div style="font-size:44px">Reserva tu clase <small>Display / H1</small></div>
+          <div style="font-size:30px">Membresías y precios <small>H2</small></div>
+          <div style="font-size:22px">Tu próxima sesión <small>H3</small></div>
+        </div>
+      </div>
+      <div class="spec">
+        <div class="label">Cuerpo / UI · Inter Tight (grotesca)</div>
+        <p class="body-sample"><span class="k">VARRE24</span> combina entrenamiento, bienestar y experiencia en un entorno íntimo y cuidadosamente diseñado. Cupo reducido (7 personas) para garantizar calidad y atención personalizada. ABCDEFG abcdefg 0123456789 — $120 · $270 · $500 · $990.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Components -->
+  <section>
+    <div class="eyebrow">03 — Componentes</div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Botones</h3>
+        <div class="btns">
+          <button class="btn btn-primary">Reservar</button>
+          <button class="btn btn-secondary">Ver horario</button>
+          <button class="btn btn-ghost">Comprar membresía</button>
+        </div>
+        <h3 style="margin-top:24px">Etiquetas de clase</h3>
+        <div class="chiprow">
+          <span class="chip-tag pilates">PILATES MAT</span>
+          <span class="chip-tag barre">BARRE</span>
+          <span class="chip-tag especial">EXPERIENCE</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Tarjeta de clase</h3>
+        <div class="class-card">
+          <div class="time">7:00<span style="font-size:15px"> am</span></div>
+          <div class="name">Barre</div>
+          <div class="meta">60 min · Coach VARRE24 · Nápoles</div>
+          <div class="foot">
+            <div>
+              <div class="spots">5 de 7 lugares</div>
+              <div class="dotrow"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot off"></span><span class="dot off"></span></div>
+            </div>
+            <button class="btn btn-primary">Reservar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Tarjeta de membresía (wallet in-app)</h3>
+        <div class="mcard">
+          <div class="top">
+            <div class="brand">VARRE<b>24</b></div>
+            <div class="plan">Membresía mensual</div>
+          </div>
+          <div>
+            <div class="big">8 <span style="font-size:15px;opacity:.85">clases restantes</span></div>
+            <div class="stamps">
+              <span class="st on"></span><span class="st on"></span><span class="st on"></span><span class="st on"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span><span class="st"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Barra de navegación</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--sand-300);border-radius:14px;padding:14px 18px;background:var(--cream-50)">
+          <span style="font-family:var(--serif);font-size:20px">VARRE<b style="color:var(--terracotta-600)">24</b></span>
+          <span style="display:flex;gap:18px;font-size:14px;color:var(--muted-ink)">Inicio · Horario · Membresías · Contacto</span>
+          <button class="btn btn-primary" style="padding:9px 16px">Entrar</button>
+        </div>
+        <h3 style="margin-top:24px">Estados</h3>
+        <div class="chiprow">
+          <span class="chip-tag" style="background:#E7F0E2;color:#3F6B3A;border-color:#CFE2C6">Confirmada</span>
+          <span class="chip-tag" style="background:var(--pink-200);color:var(--cacao-800);border-color:#EBBDBA">Lista de espera</span>
+          <span class="chip-tag" style="background:#F6E0D8;color:var(--terracotta-700);border-color:#EAC6B8">Penalización $70</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" style="margin-top:64px" />
+  <div class="meta-foot">
+    <span>VARRE24 · Arizona 14, Piso 3, Col. Nápoles, Benito Juárez, CDMX</span>
+    <span>Tipografías: Fraunces (títulos) · Inter Tight (cuerpo)</span>
+  </div>
+
+</div>
+</body>
+</html>

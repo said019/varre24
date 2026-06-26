@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/icon-192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#725D51" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pilates Room" />
+  <link rel="apple-touch-startup-image" href="/icon-512.png" />
+  <title>Pilates Room</title>
+  <meta name="description" content="Pilates Room — Estudio de pilates dentro de Centro Oils&Love. Un espacio femenino, cálido y cercano." />
+  <meta name="author" content="Pilates Room" />
+
+  <meta property="og:title" content="Pilates Room" />
+  <meta property="og:description" content="Estudio de pilates dentro de Centro Oils&Love. Un espacio femenino, cálido y cercano." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/pilates-room-logo.png" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+
+</html>

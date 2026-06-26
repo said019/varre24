@@ -1,0 +1,52 @@
+{
+  "name": "Pilates Room",
+  "short_name": "Pilates Room",
+  "description": "Pilates Reformer en grupos de seis · Centro Oils&Love · Guadalajara",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5ECDB",
+  "theme_color": "#725D51",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reservar clase",
+      "short_name": "Reservar",
+      "url": "/app/book"
+    },
+    {
+      "name": "Mis reservas",
+      "short_name": "Reservas",
+      "url": "/app/bookings"
+    }
+  ]
+}
