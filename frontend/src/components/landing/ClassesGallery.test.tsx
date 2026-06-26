@@ -8,5 +8,6 @@ describe("ClassesGallery", () => {
       expect(screen.getByText(n)).toBeInTheDocument()
     );
     expect(screen.getAllByText(/60 min/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/cupo 7/).length).toBeGreaterThan(0);
   });
 });

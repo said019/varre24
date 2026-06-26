@@ -42,6 +42,6 @@ export const PLANS = [
 ];
 
 export function waLink(clase: string): string {
-  const text = `Hola 🤍%0AMe gustaría reservar una clase de ${clase}%0A%0A¿Me pueden compartir paquetes y horarios disponibles?%0AGracias ✨`;
-  return `https://wa.me/${STUDIO.whatsapp}?text=${text}`;
+  const text = `Hola 🤍\nMe gustaría reservar una clase de ${clase}\n\n¿Me pueden compartir paquetes y horarios disponibles?\nGracias ✨`;
+  return `https://wa.me/${STUDIO.whatsapp}?text=${encodeURIComponent(text)}`;
 }
