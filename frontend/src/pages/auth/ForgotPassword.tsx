@@ -4,13 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "react-router-dom";
 import api from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle } from "lucide-react";
-import pilatesRoomLogo from "@/assets/pilates-room-logo.png";
-import authPhoto from "@/assets/pilates-room-images/auth-team.webp";
+import { Loader2, ArrowRight, CheckCircle, ArrowLeft } from "lucide-react";
+import { AuthLayout } from "@/components/auth/AuthLayout";
 
 const schema = z.object({ email: z.string().email("Email inválido") });
 type FormValues = { email: string };
@@ -36,81 +32,101 @@ const ForgotPassword = () => {
     }
   };
 
+  const heading = (
+    <>
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#7C0116] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[1px] bg-[#7C0116] inline-block" />
+        Recuperación
+      </p>
+      <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">
+        Recuperar <span className="italic font-light">contraseña</span>
+      </h1>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-background flex">
-
-      {/* ── LEFT PANEL — foto ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2B0911]">
-        <img
-          src={authPhoto}
-          alt="Equipo de instructoras de VARRE24"
-          className="absolute inset-x-0 top-0 w-full object-contain object-top"
-          style={{ height: 'auto', aspectRatio: '1600/1067' }}
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.55)_0%,rgba(74,51,41,0.20)_30%,rgba(74,51,41,0.85)_72%,rgba(74,51,41,0.97)_100%)]" />
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#E7C9CF_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
-        <div className="relative z-10 flex flex-col justify-between p-12 w-full">
-          <Link to="/" className="block">
-            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
-          </Link>
-          <div>
-            <div className="inline-flex items-center gap-2 border border-white/40 px-4 py-[7px] rounded-full text-xs tracking-[0.18em] uppercase text-white/90 mb-6">
-              <span className="w-[6px] h-[6px] rounded-full bg-white animate-pulse" />
-              Barre &amp; Pilates · CDMX
-            </div>
-            <h2 className="font-bebas text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] text-white tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
-              VUELVE A
-              <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
-                tu práctica.
-              </span>
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL — form ── */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-sm space-y-6">
-        {/* Logo */}
-        <div className="flex justify-center mb-2">
-          <Link to="/">
-            <img src={pilatesRoomLogo} alt="VARRE24" className="h-16 w-auto" />
+    <AuthLayout
+      heading={heading}
+      brandTagline="VUELVE A"
+      brandItalic="tu práctica."
+      brandBlurb="Te enviaremos un enlace seguro para que vuelvas a entrar y retomes tu movimiento."
+      brandStats={[]}
+    >
+      {sent ? (
+        <div className="rounded-2xl border border-[#F3CCD4] bg-[#FFF7F8] p-7 text-center">
+          <CheckCircle className="mx-auto text-[#7C0116]" size={44} />
+          <h2 className="font-bebas text-[1.85rem] leading-none text-foreground tracking-tight mt-4">
+            Revisa tu
+            <span className="font-editorial italic font-light text-[#7C0116] normal-case text-[1.3rem] ml-1.5">
+              email.
+            </span>
+          </h2>
+          <p className="text-sm text-muted-foreground mt-3 leading-relaxed font-alilato">
+            Si el email está registrado recibirás un enlace para restablecer tu contraseña.
+          </p>
+          <Link
+            to="/auth/login"
+            className="press mt-6 inline-flex items-center justify-center gap-2 text-sm font-semibold tracking-[0.12em] uppercase text-[#7C0116] hover:text-[#7C0116]/80 transition-colors no-underline"
+          >
+            <ArrowLeft size={15} />
+            Volver al inicio
           </Link>
         </div>
-        {sent ? (
-          <div className="text-center space-y-3">
-            <CheckCircle className="mx-auto text-green-500" size={48} />
-            <h2 className="text-xl font-bold">Revisa tu email</h2>
-            <p className="text-sm text-muted-foreground">
-              Si el email está registrado recibirás un enlace para restablecer tu contraseña.
-            </p>
-            <Link to="/auth/login" className="text-primary hover:underline text-sm">Volver al inicio</Link>
-          </div>
-        ) : (
-          <>
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Recuperar contraseña</h1>
-              <p className="text-sm text-muted-foreground mt-1">Te enviaremos un enlace por email</p>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground -mt-4 mb-7 leading-relaxed font-alilato">
+            Te enviaremos un enlace por email para restablecer tu acceso.
+          </p>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Email</label>
+              <input
+                type="email"
+                autoComplete="email"
+                placeholder="tu@email.com"
+                {...register("email")}
+                className="font-alilato bg-[#FFF7F8] border border-[#F3CCD4] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#7C0116] transition-all"
+              />
+              {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1">
-                <Label>Email</Label>
-                <Input type="email" placeholder="tu@email.com" {...register("email")} />
-                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
-                Enviar enlace
-              </Button>
-            </form>
-            <p className="text-center text-sm">
-              <Link to="/auth/login" className="text-primary hover:underline">Volver al inicio</Link>
-            </p>
-          </>
-        )}
-      </div>
-      </div>
-    </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="press mt-1 bg-[#7C0116] text-[#FFF1F3] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+            >
+              {loading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <>
+                  Enviar enlace
+                  <ArrowRight size={15} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-[1px] bg-border" />
+            <span className="text-xs text-muted-foreground font-alilato">¿Ya la recordaste?</span>
+            <div className="flex-1 h-[1px] bg-border" />
+          </div>
+
+          <Link
+            to="/auth/login"
+            className="press flex items-center justify-center gap-2 w-full py-4 rounded-full border border-[#F3CCD4] text-[#7C0116] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#7C0116] hover:bg-[#FFF7F8] transition-all no-underline"
+          >
+            <ArrowLeft size={15} />
+            Volver al inicio
+          </Link>
+
+          <p className="text-center text-xs text-muted-foreground/50 mt-6 font-alilato">
+            © {new Date().getFullYear()} VARRE24 · Nápoles, CDMX
+          </p>
+        </>
+      )}
+    </AuthLayout>
   );
 };
 
