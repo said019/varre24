@@ -1,4 +1,4 @@
-const CACHE_NAME = "pilates-room-v2";
+const CACHE_NAME = "varre24-v1";
 const PRECACHE_URLS = ["/", "/icon-192.png", "/icon-512.png", "/pilates-room-logo.png"];
 
 self.addEventListener("install", (event) => {

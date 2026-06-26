@@ -1,5 +1,5 @@
 -- ============================================================
--- PILATES ROOM @ Centro Oils&Love — SEED OFICIAL
+-- VARRE24 @ Nápoles, CDMX — SEED OFICIAL
 -- Fecha: 2026-04-26
 -- Source of truth: brief del cliente + material gráfico oficial.
 -- ============================================================
@@ -19,8 +19,8 @@ DELETE FROM plans;
 -- 2. SYSTEM SETTINGS
 -- ============================================================
 UPDATE system_settings SET value = '{
-  "name": "Pilates Room",
-  "address": "Centro Oils&Love, Jardines del Country, Guadalajara, Jalisco",
+  "name": "VARRE24",
+  "address": "Arizona 14, Piso 3, Col. Nápoles, Benito Juárez, CDMX",
   "phone": "",
   "email": "",
   "social_media": {}
@@ -105,9 +105,9 @@ VALUES
 INSERT INTO users (id, email, phone, display_name, role, is_active)
 VALUES (
   'c3000001-0001-4000-8000-000000000001',
-  'admin@pilatesroom.com',
+  'admin@varre24.com',
   '0000000000',
-  'Administradora Pilates Room',
+  'Administradora VARRE24',
   'admin',
   true
 ) ON CONFLICT (email) DO NOTHING;
@@ -115,9 +115,9 @@ VALUES (
 INSERT INTO users (id, email, phone, display_name, role, is_active)
 VALUES (
   'c3000001-0001-4000-8000-000000000002',
-  'instructora@pilatesroom.com',
+  'instructora@varre24.com',
   '0000000001',
-  'Instructora Pilates Room',
+  'Instructora VARRE24',
   'instructor',
   true
 ) ON CONFLICT (email) DO NOTHING;
@@ -126,7 +126,7 @@ INSERT INTO instructors (id, user_id, display_name, bio, specialties, is_active)
 VALUES (
   'd4000001-0001-4000-8000-000000000001',
   'c3000001-0001-4000-8000-000000000002',
-  'Instructora Pilates Room',
+  'Instructora VARRE24',
   'Instructora certificada en Pilates Reformer.',
   '["Pilates Reformer"]'::jsonb,
   true

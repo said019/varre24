@@ -55,13 +55,13 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={`rounded-2xl border border-[#836A5D]/15 bg-white/50 p-5 space-y-3 ${className}`}
+      className={`rounded-2xl border border-[#7C0116]/15 bg-white/50 p-5 space-y-3 ${className}`}
     >
       <div className="flex items-center gap-2">
-        <KeyRound size={16} className="text-[#836A5D]" />
-        <h2 className="text-base font-bold text-[#2d2d2d]">Cambiar contraseña</h2>
+        <KeyRound size={16} className="text-[#7C0116]" />
+        <h2 className="text-base font-bold text-[#2B0911]">Cambiar contraseña</h2>
       </div>
-      <p className="text-xs text-[#715B50]">
+      <p className="text-xs text-[#5C0110]">
         Para tu seguridad necesitas escribir tu contraseña actual antes de definir una nueva.
       </p>
 
@@ -78,7 +78,7 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
           <button
             type="button"
             onClick={() => setShow1((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#836A5D]/50 hover:text-[#836A5D]"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#7C0116]/50 hover:text-[#7C0116]"
             tabIndex={-1}
           >
             {show1 ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -99,7 +99,7 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
           <button
             type="button"
             onClick={() => setShow2((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#836A5D]/50 hover:text-[#836A5D]"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#7C0116]/50 hover:text-[#7C0116]"
             tabIndex={-1}
           >
             {show2 ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -129,7 +129,7 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
       <Button
         type="submit"
         disabled={!allOK || mutation.isPending}
-        className="w-full bg-[#836A5D] hover:bg-[#6C5147] text-white disabled:opacity-50"
+        className="w-full bg-[#7C0116] hover:bg-[#670626] text-white disabled:opacity-50"
       >
         {mutation.isPending && <Loader2 size={14} className="mr-2 animate-spin" />}
         {mutation.isPending ? "Actualizando…" : "Actualizar contraseña"}
@@ -140,7 +140,7 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
 
 function RequirementItem({ ok, label }: { ok: boolean; label: string }) {
   return (
-    <li className={`flex items-center gap-1.5 ${ok ? "text-emerald-700" : "text-[#836A5D]/55"}`}>
+    <li className={`flex items-center gap-1.5 ${ok ? "text-emerald-700" : "text-[#7C0116]/55"}`}>
       <CheckCircle2 size={11} className={ok ? "opacity-100" : "opacity-30"} />
       {label}
     </li>

@@ -41,7 +41,7 @@ const TEMPLATES: Template[] = [
   {
     id: "weekly",
     label: "Recordatorio semanal",
-    subject: "Tu semana en Pilates Room",
+    subject: "Tu semana en VARRE24",
     headline: "Hola, {name}",
     body: "Te recordamos abrir tu app y reservar las clases de la semana antes de que se llenen.\n\nNuestros horarios son:\n• Lun a Vie: 7:30, 8:30, 17:00, 18:00 y 19:30\n• Sábados: 8:00 y 9:15\n• Domingos: 9:00 y 10:00\n\nNos vemos en el estudio.",
     ctaUrl: "https://pilatesroom.com.mx/app/classes",
@@ -71,12 +71,12 @@ const TEMPLATES: Template[] = [
   {
     id: "welcome",
     label: "Bienvenida (nueva persona)",
-    subject: "Te damos la bienvenida a Pilates Room",
+    subject: "Te damos la bienvenida a VARRE24",
     headline: "Te damos la bienvenida, {name}",
     body: "Qué gusto tenerte aquí. Estamos felices de acompañarte en este camino — esto es para ti.\n\nPara que aproveches al máximo:\n• Llega 10 min antes a tu primera clase\n• Usa ropa cómoda y calcetas antideslizantes\n• Trae botella de agua\n\nNos vemos pronto en el estudio.",
     ctaUrl: "https://pilatesroom.com.mx/app/classes",
     ctaText: "Reservar mi primera clase",
-    whatsapp: "Hola {name} 🌿 Te damos la bienvenida a Pilates Room. Reserva tu primera clase desde la app: https://pilatesroom.com.mx/app/classes",
+    whatsapp: "Hola {name} 🌿 Te damos la bienvenida a VARRE24. Reserva tu primera clase desde la app: https://pilatesroom.com.mx/app/classes",
   },
   {
     id: "renewal",
@@ -175,7 +175,7 @@ export function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenC
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Enviar comunicado</DialogTitle>
-          <DialogDescription>Envía un email o WhatsApp a tus clientas. Usa <code className="text-[#725D51]">{"{name}"}</code> para personalizar con el nombre.</DialogDescription>
+          <DialogDescription>Envía un email o WhatsApp a tus clientas. Usa <code className="text-[#7C0116]">{"{name}"}</code> para personalizar con el nombre.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -269,7 +269,7 @@ export function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenC
           <Button
             onClick={handleSend}
             disabled={isPending || audienceCount === 0 || (tab === "email" ? !subject || !body : !waMessage.trim())}
-            className="bg-[#725D51] hover:bg-[#665346] text-[#F5ECDB]"
+            className="bg-[#7C0116] hover:bg-[#5C0110] text-[#FFE4E8]"
           >
             {isPending ? <Loader2 className="animate-spin mr-1.5" size={14} /> : <Send size={14} className="mr-1.5" />}
             {confirmStep ? `Confirmar y enviar a ${audienceCount}` : "Enviar"}

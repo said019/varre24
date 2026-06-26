@@ -74,7 +74,7 @@ export function AdminPendingBell() {
 
         if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
           try {
-            const n = new Notification("Pilates Room — orden por verificar", {
+            const n = new Notification("VARRE24 — orden por verificar", {
               body: description,
               tag: `pending-${o.id}`,
               icon: "/icon-192.png",
@@ -108,15 +108,15 @@ export function AdminPendingBell() {
       className={cn(
         "relative inline-flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
         count > 0
-          ? "border-[#836A5D]/30 bg-[#836A5D]/8 text-[#836A5D] hover:bg-[#836A5D]/14"
-          : "border-[#836A5D]/12 bg-white/45 text-[#836A5D]/55 hover:bg-white/70",
+          ? "border-[#7C0116]/30 bg-[#7C0116]/8 text-[#7C0116] hover:bg-[#7C0116]/14"
+          : "border-[#7C0116]/12 bg-white/45 text-[#7C0116]/55 hover:bg-white/70",
       )}
     >
       <Bell size={16} strokeWidth={2.1} className={count > 0 ? "animate-[wiggle_2.4s_ease-in-out_infinite]" : undefined} />
       {count > 0 && (
         <span
           aria-hidden="true"
-          className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#b3261e] text-white text-[10px] font-bold leading-none tabular-nums inline-flex items-center justify-center shadow-sm ring-2 ring-[#fbf7ef]"
+          className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#b3261e] text-white text-[10px] font-bold leading-none tabular-nums inline-flex items-center justify-center shadow-sm ring-2 ring-[#FFF7F8]"
         >
           {count > 99 ? "99+" : count}
         </span>

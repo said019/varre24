@@ -19,7 +19,7 @@ type FormValues = { email: string; password: string };
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#836A5D] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5 tabular">
+      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#7C0116] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5 tabular">
         {n}
       </span>
       <span className="flex-1">{children}</span>
@@ -82,42 +82,42 @@ const Login = () => {
     <div className="min-h-screen bg-background flex">
 
       {/* ── LEFT PANEL — foto del estudio ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#4A3329]">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2B0911]">
         <img
           src={authPhotoPanel}
-          alt="Equipo de instructoras de Pilates Room"
+          alt="Equipo de instructoras de VARRE24"
           className="absolute inset-0 h-full w-full object-cover object-[50%_42%]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.38)_0%,rgba(74,51,41,0.16)_32%,rgba(74,51,41,0.72)_74%,rgba(74,51,41,0.94)_100%)]" />
 
         {/* glow ambiental */}
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#C8B79E_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#E7C9CF_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
 
         {/* content sobre la foto */}
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           {/* logo */}
           <Link to="/" className="block">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
           </Link>
 
           {/* quote */}
           <div>
             <div className="inline-flex items-center gap-2 border border-white/40 px-4 py-[7px] rounded-full text-xs tracking-[0.12em] uppercase text-white/90 mb-6">
               <span className="w-[6px] h-[6px] rounded-full bg-white animate-pulse" />
-              Jardines del Country · Guadalajara
+              Nápoles · Benito Juárez, CDMX
             </div>
             <h2 className="font-bebas text-[clamp(3rem,5vw,5.5rem)] leading-[0.92] text-white mb-5 tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               MOVIMIENTO
-              <span className="block font-editorial italic font-light text-[#E8D9C5] normal-case">
+              <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
                 con propósito.
               </span>
             </h2>
             <p className="text-white/85 text-[0.92rem] leading-[1.7] max-w-[360px] font-alilato">
-              Un espacio donde otros roles se quedan afuera. Pilates Reformer en grupos de siete, con un cierre de relajación que cuida tu regreso al día.
+              Un espacio donde otros roles se quedan afuera. Barre &amp; Pilates Mat en grupos de 7, con un cierre de relajación que cuida tu regreso al día.
             </p>
             {/* stats */}
             <div className="flex gap-8 mt-9 tabular">
-              {[["07", "Por clase"], ["50", "Min · sesión"], ["29", "Clases / semana"]].map(([n, l]) => (
+              {[["07", "Por clase"], ["60", "Min · sesión"], ["29", "Clases / semana"]].map(([n, l]) => (
                 <div key={l}>
                   <div className="font-bebas text-[1.85rem] leading-none text-white tracking-wide">{n}</div>
                   <div className="text-[0.7rem] text-white/70 uppercase tracking-[0.18em] leading-tight mt-1">{l}</div>
@@ -138,8 +138,8 @@ const Login = () => {
 
           {/* Mobile logo — prominent for PWA home screen identity */}
           <Link to="/" className="lg:hidden flex flex-col items-center mb-10">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-20 w-auto drop-shadow-sm" />
-            <span className="text-[10px] tracking-[0.22em] uppercase text-muted-foreground mt-2">Pilates Reformer · GDL</span>
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-sm" />
+            <span className="text-[10px] tracking-[0.22em] uppercase text-muted-foreground mt-2">Barre &amp; Pilates · CDMX</span>
           </Link>
 
           {/* heading */}
@@ -258,23 +258,23 @@ const Login = () => {
           </div>
 
           <p className="text-center text-xs text-muted-foreground/50 mt-6">
-            © {new Date().getFullYear()} Pilates Room · Jardines del Country, GDL
+            © {new Date().getFullYear()} VARRE24 · Nápoles, CDMX
           </p>
 
           {/* PWA Install Card — siempre visible salvo si la app ya corre standalone */}
           {!isStandalone && (
-            <div className="mt-7 rounded-2xl border border-[#836A5D]/25 bg-mesh-warm ring-spotlight p-5">
+            <div className="mt-7 rounded-2xl border border-[#7C0116]/25 bg-mesh-warm ring-spotlight p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-white shadow-soft p-1.5 flex items-center justify-center shrink-0">
                   <img src={pilatesRoomLogo} alt="" className="w-full h-full object-contain" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[0.66rem] tracking-[0.22em] uppercase text-[#836A5D] font-semibold mb-1">
+                  <p className="text-[0.66rem] tracking-[0.22em] uppercase text-[#7C0116] font-semibold mb-1">
                     Acceso rápido
                   </p>
-                  <h3 className="font-bebas text-[1.35rem] leading-none text-[#4A3329] tracking-tight">
-                    Instala Pilates Room
-                    <span className="font-editorial italic font-light text-[0.85rem] text-[#836A5D] normal-case ml-1.5 tracking-normal">
+                  <h3 className="font-bebas text-[1.35rem] leading-none text-[#2B0911] tracking-tight">
+                    Instala VARRE24
+                    <span className="font-editorial italic font-light text-[0.85rem] text-[#7C0116] normal-case ml-1.5 tracking-normal">
                       en tu teléfono.
                     </span>
                   </h3>
@@ -282,7 +282,7 @@ const Login = () => {
               </div>
 
               {/* Tabs iOS / Android */}
-              <div className="inline-flex p-0.5 bg-white/60 rounded-full border border-[#836A5D]/15 mb-4">
+              <div className="inline-flex p-0.5 bg-white/60 rounded-full border border-[#7C0116]/15 mb-4">
                 {(["android", "ios"] as const).map((p) => (
                   <button
                     key={p}
@@ -290,8 +290,8 @@ const Login = () => {
                     onClick={() => setInstallPlatform(p)}
                     className={`press px-4 py-1.5 rounded-full text-[0.7rem] tracking-[0.14em] uppercase font-semibold transition-colors ${
                       installPlatform === p
-                        ? "bg-[#836A5D] text-white shadow-soft"
-                        : "text-[#715B50] hover:text-[#4A3329]"
+                        ? "bg-[#7C0116] text-white shadow-soft"
+                        : "text-[#5C0110] hover:text-[#2B0911]"
                     }`}
                   >
                     <Smartphone size={11} className="inline -mt-0.5 mr-1.5" />
@@ -301,20 +301,20 @@ const Login = () => {
               </div>
 
               {/* Pasos */}
-              <ol className="space-y-2.5 text-[0.82rem] text-[#4A3329]/85 leading-[1.55] font-alilato">
+              <ol className="space-y-2.5 text-[0.82rem] text-[#2B0911]/85 leading-[1.55] font-alilato">
                 {installPlatform === "ios" ? (
                   <>
                     <Step n={1}>
                       Abre el sitio en <span className="font-semibold">Safari</span> y toca el botón
-                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#836A5D]/20 text-[#007AFF]">
+                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#7C0116]/20 text-[#007AFF]">
                         <Share size={11} />
-                        <span className="text-[0.7rem] font-medium text-[#4A3329]">Compartir</span>
+                        <span className="text-[0.7rem] font-medium text-[#2B0911]">Compartir</span>
                       </span>
                     </Step>
                     <Step n={2}>
                       Desliza y elige
-                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#836A5D]/20 text-[0.74rem] font-medium">
-                        <Plus size={11} className="text-[#836A5D]" /> Agregar a pantalla de inicio
+                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#7C0116]/20 text-[0.74rem] font-medium">
+                        <Plus size={11} className="text-[#7C0116]" /> Agregar a pantalla de inicio
                       </span>
                     </Step>
                     <Step n={3}>
@@ -325,27 +325,27 @@ const Login = () => {
                   <>
                     <Step n={1}>
                       Abre el sitio en <span className="font-semibold">Chrome</span> y toca el menú
-                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#836A5D]/20">
-                        <MoreVertical size={11} className="text-[#836A5D]" />
+                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#7C0116]/20">
+                        <MoreVertical size={11} className="text-[#7C0116]" />
                         <span className="text-[0.7rem] font-medium">Más</span>
                       </span>
                       arriba a la derecha
                     </Step>
                     <Step n={2}>
                       Toca
-                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#836A5D]/20 text-[0.74rem] font-medium">
+                      <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-white border border-[#7C0116]/20 text-[0.74rem] font-medium">
                         Instalar app
                       </span>
                       o <span className="font-semibold">Agregar a pantalla de inicio</span>
                     </Step>
                     <Step n={3}>
-                      Confirma. Pilates Room queda como acceso directo, con el logo como icono.
+                      Confirma. VARRE24 queda como acceso directo, con el logo como icono.
                     </Step>
                   </>
                 )}
               </ol>
 
-              <p className="mt-4 pt-3 border-t border-[#836A5D]/15 text-[0.7rem] text-[#715B50] leading-[1.5] font-alilato">
+              <p className="mt-4 pt-3 border-t border-[#7C0116]/15 text-[0.7rem] text-[#5C0110] leading-[1.5] font-alilato">
                 Una vez instalada, abre la app desde tu pantalla de inicio para entrar más rápido y recibir notificaciones de tus clases.
               </p>
             </div>

@@ -288,18 +288,18 @@ export default function AuditLogPage() {
           {/* Header */}
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
-              <h1 className="text-2xl font-bold text-[#2d2d2d] flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-[#2B0911] flex items-center gap-2">
                 <History size={22} /> Auditoría
               </h1>
-              <p className="text-sm text-[#715B50]">Quién hizo qué movimiento en el sistema.</p>
+              <p className="text-sm text-[#5C0110]">Quién hizo qué movimiento en el sistema.</p>
             </div>
-            <div className="text-xs text-[#836A5D]/60">
+            <div className="text-xs text-[#7C0116]/60">
               {entries.length} {entries.length === 1 ? "entrada" : "entradas"} · se refresca cada 30 s
             </div>
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#836A5D]/15 bg-white/50 p-3">
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#7C0116]/15 bg-white/50 p-3">
             <Select value={range} onValueChange={setRange}>
               <SelectTrigger className="w-[160px] text-sm"><SelectValue placeholder="Rango" /></SelectTrigger>
               <SelectContent>
@@ -334,7 +334,7 @@ export default function AuditLogPage() {
             </Select>
 
             <div className="relative flex-1 min-w-[180px]">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#836A5D]/50" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7C0116]/50" />
               <Input
                 placeholder="Buscar por path, recurso, email..."
                 value={q}
@@ -361,7 +361,7 @@ export default function AuditLogPage() {
               {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-20 w-full rounded-xl" />)}
             </div>
           ) : entries.length === 0 ? (
-            <div className="text-center py-16 text-[#836A5D]/60 text-sm">
+            <div className="text-center py-16 text-[#7C0116]/60 text-sm">
               <History size={32} className="mx-auto mb-2 opacity-40" />
               No hay actividad para los filtros seleccionados.
             </div>
@@ -374,16 +374,16 @@ export default function AuditLogPage() {
                     key={e.id}
                     type="button"
                     onClick={() => setDetail(e)}
-                    className="block w-full text-left rounded-xl border border-[#836A5D]/15 bg-white/60 hover:bg-white p-4 transition-colors"
+                    className="block w-full text-left rounded-xl border border-[#7C0116]/15 bg-white/60 hover:bg-white p-4 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3 flex-wrap">
-                      <div className="flex items-center gap-2 text-[11px] text-[#836A5D]/70">
+                      <div className="flex items-center gap-2 text-[11px] text-[#7C0116]/70">
                         <span className="font-mono">{format(new Date(e.created_at), "d MMM HH:mm", { locale: es })}</span>
                         <span>·</span>
                         <User size={11} />
-                        <span className="font-medium text-[#2d2d2d]">{e.actor_email || "Sistema"}</span>
+                        <span className="font-medium text-[#2B0911]">{e.actor_email || "Sistema"}</span>
                         {e.actor_role && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#836A5D]/10 text-[#836A5D] uppercase">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#7C0116]/10 text-[#7C0116] uppercase">
                             {e.actor_role}
                           </span>
                         )}
@@ -398,15 +398,15 @@ export default function AuditLogPage() {
                       const human = humanizeAction(e.method, e.path, e.payload);
                       return (
                         <>
-                          <p className="mt-1.5 text-sm font-medium text-[#2d2d2d]/85 truncate">{human.title}</p>
+                          <p className="mt-1.5 text-sm font-medium text-[#2B0911]/85 truncate">{human.title}</p>
                           {human.detail && (
-                            <p className="text-xs text-[#715B50] mt-0.5 truncate">{human.detail}</p>
+                            <p className="text-xs text-[#5C0110] mt-0.5 truncate">{human.detail}</p>
                           )}
                         </>
                       );
                     })()}
                     {link && (
-                      <span className="inline-flex items-center gap-1 mt-2 text-[11px] text-[#836A5D] font-medium">
+                      <span className="inline-flex items-center gap-1 mt-2 text-[11px] text-[#7C0116] font-medium">
                         <ExternalLink size={11} /> {link.label}
                       </span>
                     )}
@@ -429,50 +429,50 @@ export default function AuditLogPage() {
                 {(() => {
                   const human = humanizeAction(detail.method, detail.path, detail.payload);
                   return (
-                    <div className="rounded-xl border border-[#C8B79E]/30 bg-[#C8B79E]/10 p-3">
-                      <p className="text-[15px] font-medium text-[#544331]">{human.title}</p>
-                      {human.detail && <p className="text-xs text-[#715B50] mt-0.5">{human.detail}</p>}
+                    <div className="rounded-xl border border-[#E7C9CF]/30 bg-[#E7C9CF]/10 p-3">
+                      <p className="text-[15px] font-medium text-[#670626]">{human.title}</p>
+                      {human.detail && <p className="text-xs text-[#5C0110] mt-0.5">{human.detail}</p>}
                     </div>
                   );
                 })()}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-[11px] text-[#836A5D]/70">Quién</p>
-                    <p>{detail.actor_email || "Sistema"} <span className="text-[10px] text-[#836A5D]">({detail.actor_role || "—"})</span></p>
+                    <p className="text-[11px] text-[#7C0116]/70">Quién</p>
+                    <p>{detail.actor_email || "Sistema"} <span className="text-[10px] text-[#7C0116]">({detail.actor_role || "—"})</span></p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#836A5D]/70">Cuándo</p>
+                    <p className="text-[11px] text-[#7C0116]/70">Cuándo</p>
                     <p>{format(new Date(detail.created_at), "d MMM yyyy · HH:mm:ss", { locale: es })}</p>
-                    <p className="text-[11px] text-[#836A5D]/60">{formatDistanceToNow(new Date(detail.created_at), { addSuffix: true, locale: es })}</p>
+                    <p className="text-[11px] text-[#7C0116]/60">{formatDistanceToNow(new Date(detail.created_at), { addSuffix: true, locale: es })}</p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#836A5D]/70">Resultado</p>
+                    <p className="text-[11px] text-[#7C0116]/70">Resultado</p>
                     <p><Badge variant="outline" className={statusBadgeClass(detail.status_code)}>{statusLabel(detail.status_code)}</Badge></p>
                   </div>
                   {detail.ip && (
                     <div>
-                      <p className="text-[11px] text-[#836A5D]/70">IP</p>
+                      <p className="text-[11px] text-[#7C0116]/70">IP</p>
                       <p className="font-mono text-xs">{detail.ip}</p>
                     </div>
                   )}
                 </div>
                 {/* Detalles técnicos colapsables */}
-                <details className="rounded-lg border border-[#836A5D]/15 bg-white/40 p-2">
-                  <summary className="cursor-pointer text-[11px] text-[#836A5D]/70 uppercase tracking-wide select-none">Detalles técnicos</summary>
+                <details className="rounded-lg border border-[#7C0116]/15 bg-white/40 p-2">
+                  <summary className="cursor-pointer text-[11px] text-[#7C0116]/70 uppercase tracking-wide select-none">Detalles técnicos</summary>
                   <div className="mt-2 space-y-1.5 text-xs">
-                    <p><span className="text-[#836A5D]/70">Método y ruta:</span> <span className="font-mono">{detail.method} {detail.path}</span></p>
-                    <p className="break-all"><span className="text-[#836A5D]/70">URL completa:</span> <span className="font-mono">{detail.path_full || detail.path}</span></p>
-                    <p><span className="text-[#836A5D]/70">Código HTTP:</span> <span className="font-mono">{detail.status_code}</span></p>
+                    <p><span className="text-[#7C0116]/70">Método y ruta:</span> <span className="font-mono">{detail.method} {detail.path}</span></p>
+                    <p className="break-all"><span className="text-[#7C0116]/70">URL completa:</span> <span className="font-mono">{detail.path_full || detail.path}</span></p>
+                    <p><span className="text-[#7C0116]/70">Código HTTP:</span> <span className="font-mono">{detail.status_code}</span></p>
                   </div>
                 </details>
                 <div>
-                  <p className="text-[11px] text-[#836A5D]/70 mb-1">Payload</p>
-                  <pre className="bg-[#836A5D]/[0.04] border border-[#836A5D]/15 rounded-lg p-3 text-[11px] overflow-auto max-h-[300px]">
+                  <p className="text-[11px] text-[#7C0116]/70 mb-1">Payload</p>
+                  <pre className="bg-[#7C0116]/[0.04] border border-[#7C0116]/15 rounded-lg p-3 text-[11px] overflow-auto max-h-[300px]">
                     {JSON.stringify(detail.payload || {}, null, 2)}
                   </pre>
                 </div>
                 {resourceLink(detail) && (
-                  <Button asChild size="sm" className="bg-[#836A5D] hover:bg-[#6C5147] text-white">
+                  <Button asChild size="sm" className="bg-[#7C0116] hover:bg-[#670626] text-white">
                     <Link to={resourceLink(detail)!.to}>{resourceLink(detail)!.label} →</Link>
                   </Button>
                 )}

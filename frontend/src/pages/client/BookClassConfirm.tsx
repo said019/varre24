@@ -144,13 +144,13 @@ const BookClassConfirm = () => {
                 {loadingMembership ? (
                   <Skeleton className="h-16 w-full rounded-xl" />
                 ) : (
-                <div className="rounded-xl border border-[#836A5D]/20 bg-[#836A5D]/[0.04] p-3 space-y-3">
+                <div className="rounded-xl border border-[#7C0116]/20 bg-[#7C0116]/[0.04] p-3 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#2d2d2d] flex items-center gap-1.5">
-                        <UserPlus size={14} className="text-[#836A5D]" /> Llevar invitada
+                      <p className="text-sm font-semibold text-[#2B0911] flex items-center gap-1.5">
+                        <UserPlus size={14} className="text-[#7C0116]" /> Llevar invitada
                       </p>
-                      <p className="text-[11px] text-[#715B50] leading-snug mt-0.5">
+                      <p className="text-[11px] text-[#5C0110] leading-snug mt-0.5">
                         {isTrial
                           ? "La clase de prueba no permite llevar invitada."
                           : "Se cobrarán 2 créditos (uno tuyo, uno de la invitada) y se ocupan 2 lugares."}

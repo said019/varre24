@@ -88,7 +88,7 @@ const MyOrders = () => {
       <ClientLayout>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-[#2d2d2d]">Mis órdenes</h1>
+            <h1 className="text-xl font-bold text-[#2B0911]">Mis órdenes</h1>
             <Button asChild size="sm" variant="outline">
               <Link to="/app/checkout"><ShoppingBag size={14} className="mr-2" />Nueva orden</Link>
             </Button>
@@ -119,8 +119,8 @@ const MyOrders = () => {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 space-y-3">
-              <ShoppingBag size={40} className="mx-auto text-[#836A5D]/30" />
-              <p className="text-sm text-[#715B50]">No tienes órdenes aún</p>
+              <ShoppingBag size={40} className="mx-auto text-[#7C0116]/30" />
+              <p className="text-sm text-[#5C0110]">No tienes órdenes aún</p>
               <Button asChild size="sm">
                 <Link to="/app/checkout">Adquirir membresía</Link>
               </Button>
@@ -134,17 +134,17 @@ const MyOrders = () => {
                 return (
                   <div
                     key={o.id}
-                    className="rounded-xl border border-[#e8e9e3] bg-white p-4 hover:shadow-sm transition-shadow"
+                    className="rounded-xl border border-[#FFE4E8] bg-white p-4 hover:shadow-sm transition-shadow"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0">
-                        <p className="font-semibold text-sm text-[#2d2d2d]">{o.plan_name}</p>
-                        <p className="text-xs text-[#715B50]">
+                        <p className="font-semibold text-sm text-[#2B0911]">{o.plan_name}</p>
+                        <p className="text-xs text-[#5C0110]">
                           ${Number(o.total_amount).toLocaleString("es-MX")} MXN
                           {" · "}
                           {paymentMethodLabel(o.payment_method)}
                         </p>
-                        <p className="text-[11px] text-[#836A5D]">
+                        <p className="text-[11px] text-[#7C0116]">
                           {o.order_number && <span className="font-mono">{o.order_number} · </span>}
                           {o.created_at && format(new Date(o.created_at), "d MMM yyyy · HH:mm", { locale: es })}
                         </p>

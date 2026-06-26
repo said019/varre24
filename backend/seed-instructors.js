@@ -34,11 +34,11 @@ const BIO = "Instructora certificada en Pilates Reformer.";
 const SPECIALTIES = JSON.stringify(["Pilates Reformer"]);
 
 const INSTRUCTORS = [
-  { n: 1, name: "Instructora 1", email: "instructora1@pilatesroom.com", phone: "0000000001", coach: "01", photo: "/instructors/instructora-1.jpg", focus: [50, 28], existingInstructorId: EXISTING_ISABEL_INSTRUCTOR_ID },
-  { n: 2, name: "Instructora 2", email: "instructora2@pilatesroom.com", phone: "0000000002", coach: "02", photo: "/instructors/instructora-2.jpg", focus: [50, 40] },
-  { n: 3, name: "Instructora 3", email: "instructora3@pilatesroom.com", phone: "0000000003", coach: "03", photo: "/instructors/instructora-3.jpg", focus: [55, 32] },
-  { n: 4, name: "Instructora 4", email: "instructora4@pilatesroom.com", phone: "0000000004", coach: "04", photo: "/instructors/instructora-4.jpg", focus: [48, 34] },
-  { n: 5, name: "Instructora 5", email: "instructora5@pilatesroom.com", phone: "0000000005", coach: "05", photo: "/instructors/instructora-5.jpg", focus: [42, 28] },
+  { n: 1, name: "Instructora 1", email: "instructora1@varre24.com", phone: "0000000001", coach: "01", photo: "/instructors/instructora-1.jpg", focus: [50, 28], existingInstructorId: EXISTING_ISABEL_INSTRUCTOR_ID },
+  { n: 2, name: "Instructora 2", email: "instructora2@varre24.com", phone: "0000000002", coach: "02", photo: "/instructors/instructora-2.jpg", focus: [50, 40] },
+  { n: 3, name: "Instructora 3", email: "instructora3@varre24.com", phone: "0000000003", coach: "03", photo: "/instructors/instructora-3.jpg", focus: [55, 32] },
+  { n: 4, name: "Instructora 4", email: "instructora4@varre24.com", phone: "0000000004", coach: "04", photo: "/instructors/instructora-4.jpg", focus: [48, 34] },
+  { n: 5, name: "Instructora 5", email: "instructora5@varre24.com", phone: "0000000005", coach: "05", photo: "/instructors/instructora-5.jpg", focus: [42, 28] },
 ];
 
 async function getCols(client, table) {

@@ -1,6 +1,6 @@
 /**
  * MembershipCard – Tarjeta visual de membresía
- * Paleta oficial Pilates Room · Fuentes Gulfs + Alilato
+ * Paleta oficial VARRE24 · Fuentes Gulfs + Alilato
  */
 
 import { useMemo } from "react";
@@ -24,14 +24,14 @@ function detectCategory(planName: string): PlanCategory {
 }
 
 // ─────────────────────────────────────────────
-// Paleta Pilates Room
+// Paleta VARRE24
 // ─────────────────────────────────────────────
 const PALETTE = {
   pilates: {
-    gradient:     "linear-gradient(145deg, #f2f4ec 0%, #e8ecdd 55%, #f2f4ec 100%)",
+    gradient:     "linear-gradient(145deg, #FFF1F3 0%, #FFE4E8 55%, #FFF1F3 100%)",
     noise:        "rgba(181,191,156,0.06)",
-    glow1:        "#C8B79E",
-    glow2:        "#836A5D",
+    glow1:        "#E7C9CF",
+    glow2:        "#7C0116",
     accent:       "#6b7a52",
     accentLight:  "#4a5638",
     badge:        "rgba(181,191,156,0.25)",
@@ -43,48 +43,48 @@ const PALETTE = {
     stampBorder:  "rgba(107,122,82,0.35)",
     iconHighlight:"#6b7a52",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#C8B79E",
+    progressFrom: "#E7C9CF",
     progressTo:   "#6b7a52",
     divider:      "rgba(181,191,156,0.25)",
   },
   bienestar: {
-    gradient:     "linear-gradient(145deg, #f0ece8 0%, #e8e2dc 55%, #f0ece8 100%)",
+    gradient:     "linear-gradient(145deg, #FFE4E8 0%, #FFE4E8 55%, #FFE4E8 100%)",
     noise:        "rgba(131,106,93,0.06)",
-    glow1:        "#836A5D",
-    glow2:        "#C8B79E",
-    accent:       "#7a6d62",
-    accentLight:  "#5a4f46",
+    glow1:        "#7C0116",
+    glow2:        "#E7C9CF",
+    accent:       "#9B5A66",
+    accentLight:  "#670626",
     badge:        "rgba(131,106,93,0.25)",
-    badgeText:    "#5a4f46",
+    badgeText:    "#670626",
     badgeBorder:  "rgba(122,109,98,0.35)",
     label:        "Bienestar",
     border:       "rgba(131,106,93,0.40)",
     stampBg:      "rgba(131,106,93,0.15)",
     stampBorder:  "rgba(122,109,98,0.35)",
-    iconHighlight:"#7a6d62",
+    iconHighlight:"#9B5A66",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#836A5D",
-    progressTo:   "#7a6d62",
+    progressFrom: "#7C0116",
+    progressTo:   "#9B5A66",
     divider:      "rgba(131,106,93,0.20)",
   },
   other: {
-    gradient:     "linear-gradient(145deg, #f0ece8 0%, #eae7e2 55%, #f0ece8 100%)",
+    gradient:     "linear-gradient(145deg, #FFE4E8 0%, #FFE4E8 55%, #FFE4E8 100%)",
     noise:        "rgba(131,106,93,0.04)",
-    glow1:        "#836A5D",
-    glow2:        "#C8B79E",
-    accent:       "#7a6d62",
-    accentLight:  "#5a4f46",
+    glow1:        "#7C0116",
+    glow2:        "#E7C9CF",
+    accent:       "#9B5A66",
+    accentLight:  "#670626",
     badge:        "rgba(131,106,93,0.20)",
-    badgeText:    "#5a4f46",
+    badgeText:    "#670626",
     badgeBorder:  "rgba(131,106,93,0.35)",
     label:        "Membresía",
     border:       "rgba(131,106,93,0.35)",
     stampBg:      "rgba(131,106,93,0.12)",
     stampBorder:  "rgba(131,106,93,0.30)",
-    iconHighlight:"#7a6d62",
+    iconHighlight:"#9B5A66",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#836A5D",
-    progressTo:   "#C8B79E",
+    progressFrom: "#7C0116",
+    progressTo:   "#E7C9CF",
     divider:      "rgba(131,106,93,0.18)",
   },
 } satisfies Record<PlanCategory, {
@@ -274,7 +274,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
             </span>
 
             <h3
-              className="font-gulfs text-2xl leading-tight text-[#2d2d2d]"
+              className="font-gulfs text-2xl leading-tight text-[#2B0911]"
               style={{ textShadow: `0 0 24px ${pal.accent}55` }}
             >
               {planName}
@@ -297,7 +297,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
               >
                 {classesRemaining}
               </span>
-              <span className="font-alilato text-[9px] uppercase tracking-widest text-[#2d2d2d]/40 mt-0.5 leading-tight text-center">
+              <span className="font-alilato text-[9px] uppercase tracking-widest text-[#2B0911]/40 mt-0.5 leading-tight text-center">
                 de {classLimit}<br />clases
               </span>
             </div>
@@ -342,7 +342,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
                     }}
                   />
                 </div>
-                <p className="font-alilato text-[10px] text-[#2d2d2d]/30">
+                <p className="font-alilato text-[10px] text-[#2B0911]/30">
                   {used} de {classLimit} clases usadas
                 </p>
               </div>
@@ -355,8 +355,8 @@ export function MembershipCard({ membership }: MembershipCardProps) {
           >
             <InfinityIcon size={20} style={{ color: pal.accent }} />
             <div>
-              <p className="font-gulfs text-base text-[#2d2d2d]">Clases ilimitadas</p>
-              <p className="font-alilato text-[11px] text-[#2d2d2d]/40">Sin límite de sesiones</p>
+              <p className="font-gulfs text-base text-[#2B0911]">Clases ilimitadas</p>
+              <p className="font-alilato text-[11px] text-[#2B0911]/40">Sin límite de sesiones</p>
             </div>
           </div>
         ) : null}
@@ -367,9 +367,9 @@ export function MembershipCard({ membership }: MembershipCardProps) {
             <div className="h-px w-full" style={{ background: pal.divider }} />
             <div className="flex items-center gap-2">
               <CalendarDays size={12} style={{ color: pal.accent, opacity: 0.8 }} />
-              <span className="font-alilato text-[11px] text-[#2d2d2d]/40">
+              <span className="font-alilato text-[11px] text-[#2B0911]/40">
                 Vence el{" "}
-                <span className="text-[#2d2d2d]/65 font-medium">
+                <span className="text-[#2B0911]/65 font-medium">
                   {format(safeParse(endDate), "d 'de' MMMM yyyy", { locale: es })}
                 </span>
                 {daysRemaining !== null && (

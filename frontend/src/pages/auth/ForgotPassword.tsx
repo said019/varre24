@@ -40,27 +40,27 @@ const ForgotPassword = () => {
     <div className="min-h-screen bg-background flex">
 
       {/* ── LEFT PANEL — foto ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#4A3329]">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2B0911]">
         <img
           src={authPhoto}
-          alt="Equipo de instructoras de Pilates Room"
+          alt="Equipo de instructoras de VARRE24"
           className="absolute inset-x-0 top-0 w-full object-contain object-top"
           style={{ height: 'auto', aspectRatio: '1600/1067' }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.55)_0%,rgba(74,51,41,0.20)_30%,rgba(74,51,41,0.85)_72%,rgba(74,51,41,0.97)_100%)]" />
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#C8B79E_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#E7C9CF_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <Link to="/" className="block">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
           </Link>
           <div>
             <div className="inline-flex items-center gap-2 border border-white/40 px-4 py-[7px] rounded-full text-xs tracking-[0.18em] uppercase text-white/90 mb-6">
               <span className="w-[6px] h-[6px] rounded-full bg-white animate-pulse" />
-              Pilates Reformer · GDL
+              Barre &amp; Pilates · CDMX
             </div>
             <h2 className="font-bebas text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] text-white tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               VUELVE A
-              <span className="block font-editorial italic font-light text-[#E8D9C5] normal-case">
+              <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
                 tu práctica.
               </span>
             </h2>
@@ -74,7 +74,7 @@ const ForgotPassword = () => {
         {/* Logo */}
         <div className="flex justify-center mb-2">
           <Link to="/">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-16 w-auto" />
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-16 w-auto" />
           </Link>
         </div>
         {sent ? (

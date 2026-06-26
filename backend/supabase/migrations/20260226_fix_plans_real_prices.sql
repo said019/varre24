@@ -1,5 +1,5 @@
 -- ─── Fix planes: reemplazar con precios y estructura reales ──────────────────
--- Basado en los precios oficiales de Pilates Room
+-- Basado en los precios oficiales de VARRE24
 -- Categorías: Pilates + planes sueltos (inscripción, sesión individual, extra)
 
 -- 1. Eliminar todos los planes existentes (cascada solo si no tienen membresías activas)

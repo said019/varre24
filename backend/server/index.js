@@ -45,21 +45,21 @@ const MP_PUBLIC_KEY = process.env.MP_PUBLIC_KEY || "";
 const MP_BACKEND_URL = String(process.env.BACKEND_URL || process.env.PUBLIC_BACKEND_URL || APP_PUBLIC_URL).replace(/\/+$/, "");
 const MP_FRONTEND_URL = String(process.env.FRONTEND_URL || APP_PUBLIC_URL).replace(/\/+$/, "");
 const MP_CURRENCY = (process.env.MP_CURRENCY || "MXN").toUpperCase();
-const MP_STATEMENT_DESCRIPTOR = (process.env.MP_STATEMENT_DESCRIPTOR || "PILATES ROOM").slice(0, 22);
+const MP_STATEMENT_DESCRIPTOR = (process.env.MP_STATEMENT_DESCRIPTOR || "VARRE24").slice(0, 22);
 const MP_MAX_INSTALLMENTS = Math.max(1, parseInt(process.env.MP_MAX_INSTALLMENTS || "12", 10) || 12);
-// Política Pilates Room: sin comisión por pago con tarjeta. El estudio absorbe
+// Política VARRE24: sin comisión por pago con tarjeta. El estudio absorbe
 // la comisión de MercadoPago para que el cliente vea el mismo precio sin importar
 // el método de pago. Esto está forzado a 0 sin importar la env var.
 const CARD_FEE_PCT = 0;
 const isMercadoPagoEnabled = () => Boolean(MP_ACCESS_TOKEN);
 
 // ─── Evolution API (WhatsApp) config ────────────────────────────────────────
-// Pilates Room — usa variables de entorno propias, sin defaults heredados de
+// VARRE24 — usa variables de entorno propias, sin defaults heredados de
 // otros proyectos. Si EVOLUTION_API_URL/KEY no están definidas, los endpoints
 // de WhatsApp responderán con un error claro pidiendo configurar la instancia.
 const EVOLUTION_API_URL = String(process.env.EVOLUTION_API_URL || "").replace(/\/+$/, "");
 const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY || "";
-const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE_NAME || "pilates-room";
+const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE_NAME || "varre24";
 const EVOLUTION_CONFIGURED = Boolean(EVOLUTION_API_URL && EVOLUTION_API_KEY);
 if (!EVOLUTION_CONFIGURED) {
   console.warn("[EVOLUTION] No configurado: define EVOLUTION_API_URL y EVOLUTION_API_KEY para habilitar WhatsApp.");
@@ -669,7 +669,7 @@ async function ensureSchema() {
           ('16 Clases',     '16', 1100, 'pilates', 30, true, 4)
         ON CONFLICT DO NOTHING;
       `);
-      console.log("✅ Seeded Pilates Room packages");
+      console.log("✅ Seeded VARRE24 packages");
     }
     // ── Limpiar tipos heredados y dejar solo Pilates Reformer ────────────
     await pool.query(`DELETE FROM class_types WHERE name IN ('Pilates Reformer','Barre Studio','Yoga Sculpt','Pilates Matt Clásico','Pilates Terapéutico','Flex & Flow','Body Strong')`).catch(() => { });
@@ -761,7 +761,7 @@ async function ensureSchema() {
           ('Body Strong',          'Dinámica y retadora',   'Una clase de intensidad moderada, dinámica y retadora, que busca lograr un funcionamiento integral y funcional del cuerpo sin dejar ejecución y cuidado de los movimientos. ¡Conoce y desafía tus propios límites!',                              'pilates',   'pesada',  'intermediate', 50, 10, '#8B6B5E', '🔥', 4, true)
         ON CONFLICT DO NOTHING;
       `);
-      console.log("✅ Seeded 4 Pilates Room class types");
+      console.log("✅ Seeded 4 VARRE24 class types");
     }
     // ── Seed schedule_slots – horario base VARRE24 ────────────────────────
     await pool.query(`DELETE FROM schedule_slots WHERE class_type_name IN ('Pilates Reformer','Barre Studio','Yoga Sculpt','Body Strong','Pilates Matt Clásico','Pilates Terapéutico','Flex & Flow')`).catch(() => { });
@@ -828,7 +828,7 @@ async function ensureSchema() {
       END
       WHERE discount_price IS NULL AND price IN (120, 400, 680, 900)
     `).catch(() => { });
-    // ── Migrate class_types: normalize categories for Pilates Room ──
+    // ── Migrate class_types: normalize categories for VARRE24 ──
     await pool.query(`
       UPDATE class_types SET category = 'pilates' WHERE category NOT IN ('pilates','bienestar','funcional','barre','especial');
     `).catch(() => { });
@@ -886,7 +886,7 @@ async function ensureSchema() {
     } catch (legacyTopErr) {
       console.warn("[schema] Legacy session lookup failed:", legacyTopErr?.message || legacyTopErr);
     }
-    // ── Desactivar planes heredados (Pilates Room / Catarsis) ─────────────
+    // ── Desactivar planes heredados (VARRE24 / Catarsis) ─────────────
     await pool.query(`UPDATE plans SET is_active = false WHERE name IN (
       'Clase Suelta','Clase Muestra','Socias Fundadoras',
       '4 Clases','8 Clases','10 Clases','12 Clases','16 Clases','20 Clases'
@@ -1670,10 +1670,10 @@ async function ensureSchema() {
     if (parseInt(instCount.rows[0].count) === 0) {
       await pool.query(`
         INSERT INTO instructors (display_name, email, bio, specialties, is_active) VALUES
-          ('Angie', 'angie@pilatesroom.com.mx', 'Soy una profesional del movimiento apasionada por acompañar a las personas a sentirse mejor en su cuerpo desde un enfoque consciente, funcional y sostenible. Mi enfoque integra fuerza, movilidad y control corporal, adaptándose a cada persona y a cada proceso.', '["Pilates Matt Clásico","Pilates Terapéutico","Flex & Flow","Body Strong"]'::jsonb, true)
+          ('Angie', 'angie@varre24.com', 'Soy una profesional del movimiento apasionada por acompañar a las personas a sentirse mejor en su cuerpo desde un enfoque consciente, funcional y sostenible. Mi enfoque integra fuerza, movilidad y control corporal, adaptándose a cada persona y a cada proceso.', '["Pilates Matt Clásico","Pilates Terapéutico","Flex & Flow","Body Strong"]'::jsonb, true)
         ON CONFLICT DO NOTHING;
       `);
-      console.log("✅ Seeded Pilates Room instructor (Angie)");
+      console.log("✅ Seeded VARRE24 instructor (Angie)");
     }
 
     const classCount = await pool.query("SELECT COUNT(*) FROM classes");
@@ -4052,8 +4052,8 @@ async function mpCreatePreference({ orderId, orderNumber, planName, amount, user
   const body = {
     items: [{
       id: orderId,
-      title: planName || "Membresía Pilates Room",
-      description: `Pilates Room — ${planName || "Membresía"}`,
+      title: planName || "Membresía VARRE24",
+      description: `VARRE24 — ${planName || "Membresía"}`,
       quantity: 1,
       currency_id: MP_CURRENCY,
       unit_price: Number(amount),
@@ -5041,7 +5041,7 @@ app.post("/api/orders/:id/proof", authMiddleware, upload.any(), async (req, res)
               templateKey: "admin_payment_to_verify",
               phone: notifyPhone,
               vars: { alumna: order.user_name || "Una alumna", plan: planName, monto: amount, folio: order.order_number || order.id },
-              fallbackMessage: `🔔 Pilates Room — Pago por validar\n${order.user_name || "Una alumna"} subió comprobante de transferencia.\nPlan: ${planName} · ${amount}\nFolio: ${order.order_number || order.id}\nEntra a Pagos para aprobar y activar su membresía.`,
+              fallbackMessage: `🔔 VARRE24 — Pago por validar\n${order.user_name || "Una alumna"} subió comprobante de transferencia.\nPlan: ${planName} · ${amount}\nFolio: ${order.order_number || order.id}\nEntra a Pagos para aprobar y activar su membresía.`,
             }).catch(() => {});
           }
         } catch (_e) {}
@@ -5303,10 +5303,10 @@ app.post("/api/loyalty/redeem", authMiddleware, async (req, res) => {
 
 // ─── Google Wallet helpers ──────────────────────────────────────────────────
 
-const SITE_URL = process.env.SITE_URL || "https://pilatesroom.com.mx";
+const SITE_URL = process.env.SITE_URL || "https://varre24.com";
 const GW_ISSUER_ID = process.env.GOOGLE_ISSUER_ID || "";
-const GW_ISSUER_NAME = process.env.GOOGLE_ISSUER_NAME || "Pilates Room";
-const GW_PROGRAM_NAME = process.env.GOOGLE_PROGRAM_NAME || "Pilates Room Club";
+const GW_ISSUER_NAME = process.env.GOOGLE_ISSUER_NAME || "VARRE24";
+const GW_PROGRAM_NAME = process.env.GOOGLE_PROGRAM_NAME || "VARRE24 Club";
 const GW_HEX_BG = process.env.GOOGLE_HEX_BACKGROUND_COLOR || "#1a0b26";
 const GW_HEX_BG_EVENT = process.env.GOOGLE_HEX_BACKGROUND_COLOR_EVENT || "#1F0047";
 
@@ -5442,11 +5442,11 @@ async function ensureGoogleWalletClass() {
       programName: GW_PROGRAM_NAME,
       programLogo: {
         sourceUri: { uri: `${SITE_URL}/wallet-program-black.png` },
-        contentDescription: { defaultValue: { language: "es", value: "Pilates Room" } },
+        contentDescription: { defaultValue: { language: "es", value: "VARRE24" } },
       },
       heroImage: {
         sourceUri: { uri: `${SITE_URL}/wallet-hero-black.png` },
-        contentDescription: { defaultValue: { language: "es", value: "Pilates Room" } },
+        contentDescription: { defaultValue: { language: "es", value: "VARRE24" } },
       },
       hexBackgroundColor: GW_HEX_BG,
       reviewStatus: "UNDER_REVIEW",
@@ -5537,7 +5537,7 @@ function buildGoogleWalletSaveUrl({ userId, userName, points, qrCode, membership
   const nonRepeatable = hasMembership && parseBooleanFlag(membership.is_non_repeatable);
 
   // Header label
-  let passHeader = "PILATES ROOM CLUB";
+  let passHeader = "VARRE24 CLUB";
   if (hasEventPass) {
     passHeader = "PASE DE EVENTO";
   } else if (hasMembership) {
@@ -5667,7 +5667,7 @@ function buildGoogleWalletSaveUrl({ userId, userName, points, qrCode, membership
   // Row 5: Points
   textModules.push({
     id: "puntos",
-    header: "PUNTOS PILATES ROOM",
+    header: "PUNTOS VARRE24",
     body: `${points.toLocaleString("es-MX")} pts`,
   });
 
@@ -6573,8 +6573,8 @@ async function generateApplePkpass({ userId, userName, points, qrCode, membershi
   const eventTimeLong = eventStartTimeLabel && eventEndTimeLabel
     ? `${eventStartTimeLabel} - ${eventEndTimeLabel}`
     : (eventStartTimeLabel || "Horario por confirmar");
-  const eventLocationShort = truncateWalletField(activeEventPass?.eventLocation || "Pilates Room", 24);
-  const eventLocationLong = truncateWalletField(activeEventPass?.eventLocation || "Pilates Room", 38);
+  const eventLocationShort = truncateWalletField(activeEventPass?.eventLocation || "VARRE24", 24);
+  const eventLocationLong = truncateWalletField(activeEventPass?.eventLocation || "VARRE24", 38);
   const eventCodeLabel = truncateWalletField(activeEventPass?.passCode || "—", 18);
   const eventRelevantDate = (() => {
     if (!hasEventPass || !hasValidEventDate) return new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
@@ -6847,14 +6847,14 @@ async function generateApplePkpass({ userId, userName, points, qrCode, membershi
 
   backFields.push(
     { key: "cliente", label: "CLIENTE", value: userName },
-    { key: "puntos", label: "PUNTOS PILATES ROOM", value: `${points.toLocaleString("es-MX")} pts` },
+    { key: "puntos", label: "PUNTOS VARRE24", value: `${points.toLocaleString("es-MX")} pts` },
     { key: "web", label: "RESERVAR EN LÍNEA", value: `${SITE_URL}/app/bookings` },
     {
       key: "terms",
       label: "TÉRMINOS",
       value: hasEventPass
         ? "Pase válido para un acceso al evento indicado. Presenta el QR en recepción."
-        : "Válido para clases de Pilates Room. Presenta tu pase al ingresar.",
+        : "Válido para clases de VARRE24. Presenta tu pase al ingresar.",
     }
   );
 
@@ -6915,10 +6915,10 @@ async function generateApplePkpass({ userId, userName, points, qrCode, membershi
     passTypeIdentifier: APPLE_PASS_TYPE_ID,
     serialNumber,
     teamIdentifier: APPLE_TEAM_ID,
-    organizationName: "Pilates Room",
+    organizationName: "VARRE24",
     description: hasEventPass
-      ? `Evento — ${activeEventPass?.eventTitle || "Pilates Room"}`
-      : `${membershipCategoryLabel} — Pilates Room`,
+      ? `Evento — ${activeEventPass?.eventTitle || "VARRE24"}`
+      : `${membershipCategoryLabel} — VARRE24`,
     logoText: "",
     foregroundColor: passForeground,
     backgroundColor: passBackground,
@@ -7245,8 +7245,8 @@ app.get("/api/wallet/apple/pkpass", authMiddleware, async (req, res) => {
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pilates Room">
-<title>Pilates Room — ${userName}</title>
+<meta name="apple-mobile-web-app-title" content="VARRE24">
+<title>VARRE24 — ${userName}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -7278,21 +7278,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <body>
 <div class="pass">
   <div class="header">
-    <div class="logo">Pilates Room</div>
+    <div class="logo">VARRE24</div>
     <div class="badge">Club</div>
   </div>
   <div class="name">${userName}</div>
   <div class="points-section">
     <div class="points-label">Puntos acumulados</div>
     <div class="points">${points}</div>
-    <div class="points-sub">Pilates Room</div>
+    <div class="points-sub">VARRE24</div>
   </div>
   <div class="qr-section">
     <div class="qr-wrap">
       <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrCode)}&bgcolor=FFFFFF&color=1a0b26" alt="QR Code" />
     </div>
   </div>
-  <div class="qr-hint">Tu código de acceso Pilates Room</div>
+  <div class="qr-hint">Tu código de acceso VARRE24</div>
   <div class="fields">
     ${membershipHtml}
     ${nextBookingHtml}
@@ -7336,7 +7336,7 @@ app.get("/api/wallet/events/apple/pkpass", authMiddleware, async (req, res) => {
     const eventTimeLong = eventStartTimeLabel && eventEndTimeLabel
       ? `${eventStartTimeLabel} - ${eventEndTimeLabel}`
       : (eventStartTimeLabel || "Horario por confirmar");
-    const eventLocationLong = truncateWalletField(activeEventPass?.eventLocation || "Pilates Room", 38);
+    const eventLocationLong = truncateWalletField(activeEventPass?.eventLocation || "VARRE24", 38);
 
     if (isAppleWalletConfigured()) {
       const pkpassBuffer = await generateApplePkpass({
@@ -7359,7 +7359,7 @@ app.get("/api/wallet/events/apple/pkpass", authMiddleware, async (req, res) => {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Pase de Evento — Pilates Room</title>
+<title>Pase de Evento — VARRE24</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -7381,7 +7381,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   <div class="pass">
     <div class="header">
       <span class="badge">Pase de evento</span>
-      <div class="title">${activeEventPass.eventTitle || "Evento Pilates Room"}</div>
+      <div class="title">${activeEventPass.eventTitle || "Evento VARRE24"}</div>
     </div>
     <div class="meta">
       <div class="meta-item">
@@ -7394,7 +7394,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
       </div>
       <div class="meta-item" style="grid-column:1 / span 2;">
         <div class="meta-label">Sede</div>
-        <div class="meta-value">${eventLocationLong || "Pilates Room"}</div>
+        <div class="meta-value">${eventLocationLong || "VARRE24"}</div>
       </div>
     </div>
     <div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(activeEventPass.passCode || qrCode)}&bgcolor=FFFFFF&color=1F0047" alt="QR"/></div>
@@ -10119,7 +10119,7 @@ app.post("/api/evolution/send-test", adminMiddleware, async (req, res) => {
     const number = normalisePhone(phone);
     await queueWhatsAppSend(
       number,
-      "✅ Mensaje de prueba desde Pilates Room. ¡WhatsApp conectado correctamente!",
+      "✅ Mensaje de prueba desde VARRE24. ¡WhatsApp conectado correctamente!",
     );
     return res.json({ data: { message: "Mensaje de prueba enviado correctamente" } });
   } catch (err) {
@@ -14312,7 +14312,7 @@ app.put("/api/admin/classes/:id", adminMiddleware, async (req, res) => {
             sendCustomBroadcast({
               to: u.email,
               name: u.display_name || "",
-              subject: subject || "Cambio de instructora — Pilates Room",
+              subject: subject || "Cambio de instructora — VARRE24",
               body,
               headline: `Cambio de instructora`,
             }).catch((err) => {
@@ -15986,7 +15986,7 @@ async function bootServer() {
   // Initialize Google Wallet loyalty class if configured
   ensureGoogleWalletClass().catch(() => { });
   app.listen(PORT, () => {
-    console.log(`🚀 Pilates Room API + Frontend → http://localhost:${PORT}`);
+    console.log(`🚀 VARRE24 API + Frontend → http://localhost:${PORT}`);
   });
 }
 

@@ -293,7 +293,7 @@ const InstructorsList = () => {
                       if (event.buttons !== 1 && event.pointerType !== "touch") return;
                       applyPreviewFocus(event);
                     }}
-                    className="group relative mx-auto block h-[360px] w-full max-w-[300px] touch-none overflow-hidden rounded-[28px] border border-border bg-[#836A5D]/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B79E]"
+                    className="group relative mx-auto block h-[360px] w-full max-w-[300px] touch-none overflow-hidden rounded-[28px] border border-border bg-[#7C0116]/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E7C9CF]"
                     aria-label="Seleccionar enfoque de la foto"
                   >
                     <img
@@ -304,12 +304,12 @@ const InstructorsList = () => {
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                     <div
-                      className="pointer-events-none absolute h-8 w-8 rounded-full border border-[#836A5D]/20 bg-[#836A5D]/10 shadow-[0_0_0_1px_rgba(0,0,0,0.2)] backdrop-blur-sm"
+                      className="pointer-events-none absolute h-8 w-8 rounded-full border border-[#7C0116]/20 bg-[#7C0116]/10 shadow-[0_0_0_1px_rgba(0,0,0,0.2)] backdrop-blur-sm"
                       style={{ left: `${focusX}%`, top: `${focusY}%`, transform: "translate(-50%, -50%)" }}
                     >
                       <div className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
                     </div>
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-3 text-[11px] font-medium text-[#2d2d2d]/80">
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-3 text-[11px] font-medium text-[#2B0911]/80">
                       <span>X {focusX}%</span>
                       <span>Y {focusY}%</span>
                     </div>

@@ -1,11 +1,11 @@
 {
   "formatVersion": 1,
-  "organizationName": "Xolobitos Grooming",
-  "description": "Tarjeta de Lealtad Xolobitos",
-  "logoText": "XOLOBITOS",
+  "organizationName": "VARRE24",
+  "description": "Tarjeta de Lealtad VARRE24",
+  "logoText": "VARRE24",
   "foregroundColor": "rgb(255, 255, 255)",
-  "backgroundColor": "rgb(30, 58, 138)",
-  "labelColor": "rgb(148, 163, 184)",
+  "backgroundColor": "rgb(103, 6, 38)",
+  "labelColor": "rgb(224, 164, 176)",
   "storeCard": {
     "headerFields": [],
     "primaryFields": [],
@@ -22,9 +22,9 @@
   ],
   "locations": [
     {
-      "latitude": 20.387784,
-      "longitude": -99.9541369,
-      "relevantText": "¡Estás cerca de Xolobitos! Muestra tu tarjeta de lealtad"
+      "latitude": 19.396,
+      "longitude": -99.173,
+      "relevantText": "¡Estás cerca de VARRE24! Muestra tu tarjeta de lealtad"
     }
   ],
   "maxDistance": 100

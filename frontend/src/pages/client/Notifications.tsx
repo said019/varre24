@@ -41,7 +41,7 @@ const typeColor: Record<string, string> = {
   error: "text-red-500",
   warning: "text-amber-500",
   info: "text-blue-500",
-  reminder: "text-[#C8B79E]",
+  reminder: "text-[#E7C9CF]",
 };
 
 const Notifications = () => {

@@ -81,7 +81,7 @@ const BookingCard = ({
   const showLateMessage = policy.enabled && booking.status === "confirmed" && !isPast && !insideWindow && policy.late_cancel_message;
   const hasReview = Boolean(booking.has_review);
   return (
-    <div className="flex items-center justify-between rounded-2xl bg-white/60 border border-[#836A5D]/10 p-4" style={{ boxShadow: "0 2px 8px rgba(114,93,81,0.05)" }}>
+    <div className="flex items-center justify-between rounded-2xl bg-white/60 border border-[#7C0116]/10 p-4" style={{ boxShadow: "0 2px 8px rgba(114,93,81,0.05)" }}>
       <div className="space-y-1">
         <p className="font-medium">{booking.class_type_name}</p>
         <p className="text-sm text-muted-foreground">
@@ -91,7 +91,7 @@ const BookingCard = ({
           <p className="text-xs text-muted-foreground">{booking.instructor_name}</p>
         )}
         {booking.guest_name && (
-          <span className="inline-flex items-center gap-1 mt-1.5 rounded-full bg-[#C8B79E]/25 border border-[#836A5D]/20 px-2 py-0.5 text-[10.5px] font-semibold text-[#6C5147]">
+          <span className="inline-flex items-center gap-1 mt-1.5 rounded-full bg-[#E7C9CF]/25 border border-[#7C0116]/20 px-2 py-0.5 text-[10.5px] font-semibold text-[#670626]">
             +1 invitada · {booking.guest_name}
           </span>
         )}
@@ -104,7 +104,7 @@ const BookingCard = ({
           {STATUS_LABELS[booking.status] ?? booking.status}
         </Badge>
         {canRemoveGuest && (
-          <Button variant="ghost" size="sm" className="text-[#6C5147]" onClick={() => onRemoveGuest(booking.id)}>
+          <Button variant="ghost" size="sm" className="text-[#670626]" onClick={() => onRemoveGuest(booking.id)}>
             Quitar invitada
           </Button>
         )}
@@ -292,17 +292,17 @@ const MyBookings = () => {
                 // antes de que /bookings/cancellation-quota descuente las usadas.
                 <Skeleton className="h-4 w-56" />
               ) : (
-                <div className="flex items-center gap-2 text-xs text-[#715B50]">
+                <div className="flex items-center gap-2 text-xs text-[#5C0110]">
                   <span>Cancelaciones gratis en esta membresía:</span>
                   <span className="flex gap-1" aria-label={`${quota.remaining} de ${quota.free_per_membership} disponibles`}>
                     {Array.from({ length: quota.free_per_membership }).map((_, i) => (
                       <span
                         key={i}
-                        className={`inline-block w-2 h-2 rounded-full ${i < quota.used ? "bg-[#836A5D]/25" : "bg-[#1a6b0a]"}`}
+                        className={`inline-block w-2 h-2 rounded-full ${i < quota.used ? "bg-[#7C0116]/25" : "bg-[#1a6b0a]"}`}
                       />
                     ))}
                   </span>
-                  <span className="font-semibold text-[#2d2d2d]">
+                  <span className="font-semibold text-[#2B0911]">
                     {quota.remaining} restante{quota.remaining === 1 ? "" : "s"}
                   </span>
                 </div>

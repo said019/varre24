@@ -101,17 +101,26 @@ varre24/
 
 ## Identidad visual
 
-Tokenizar la paleta (hoy hay 450+ hex sueltos). Paleta derivada de maren + PDF:
+**CORRECCIÓN (2026-06-26):** la paleta NO es terracota/crema (eso fue un supuesto
+derivado de "maren" en una sesión previa). La paleta oficial sale del deck de marca del
+usuario ("Red Pink Bold Modern Fashion" — VARRE24 Marketing Plan): **rojo + rosa bold**.
 
-- Terracota/coral primario `#bc4500`
-- Rosa suave `#f4d1cf`
-- Café oscuro `#752223`
-- Cremas `#faf3ea` / `#f5ecdb`
-- Texto cacao oscuro
+Paleta oficial (deck):
 
-Tipografía: sans-serif minimal (cuerpo) + serif editorial (títulos). Logo/wordmark
-VARRE24, fotos nuevas. Dirección real, canales (WhatsApp, Instagram, TikTok). Se generará
-un **brand board** al iniciar la fase visual.
+- **Cherry Cola** `#7C0116` — primario (CTA, links, firma de marca)
+- **Claret** `#670626` — marca profunda / títulos / superficies oscuras / footer
+- **Pink** `#FFBDC5` — secundario suave / fills rosados
+- **Hibiscus Tonic** `#E0A4B0` — acento rosa empolvado
+
+Neutros derivados para UI: fondo blush `#FFF1F3`, superficie `#FFF7F8`, superficie-2
+`#FFE4E8`, borde `#F3CCD4`, muted `#FBE3E7`, texto principal (ink vino) `#2B0911`, texto
+secundario `#9B5A66`. Tokenizado en `frontend/src/index.css` (:root HSL) +
+`frontend/tailwind.config.ts` (escala `brand.*`).
+
+Tipografía actual: **Inter Tight** (cuerpo) + **Fraunces** (títulos, serif editorial).
+NOTA: el deck usa un display bold/condensado pesado para titulares — pendiente confirmar
+con el usuario si se cambia Fraunces por un display tipo Druk/Anton. Logo/wordmark
+VARRE24 y fotos nuevas: pendientes (hoy se usan assets de Pilates Room).
 
 ## Integraciones
 

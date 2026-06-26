@@ -97,20 +97,20 @@ const Register = () => {
     <div className="min-h-screen bg-background flex">
 
       {/* ── LEFT PANEL — foto del equipo de instructoras ── */}
-      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-[#4A3329]">
+      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-[#2B0911]">
         <img
           src={authPhotoPanel}
-          alt="Equipo de instructoras de Pilates Room"
+          alt="Equipo de instructoras de VARRE24"
           className="absolute inset-0 h-full w-full object-cover object-[50%_42%]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.38)_0%,rgba(74,51,41,0.16)_32%,rgba(74,51,41,0.72)_74%,rgba(74,51,41,0.94)_100%)]" />
 
         {/* glow ambiental */}
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#C8B79E_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#E7C9CF_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <Link to="/" className="block">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
           </Link>
 
           <div>
@@ -120,12 +120,12 @@ const Register = () => {
             </div>
             <h2 className="font-bebas text-[clamp(2.8rem,4.8vw,5.2rem)] leading-[0.9] text-white mb-5 tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               UN ESPACIO
-              <span className="block font-editorial italic font-light text-[#E8D9C5] normal-case">
+              <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
                 para volver a ti.
               </span>
             </h2>
             <p className="text-white/85 text-[0.92rem] leading-[1.7] max-w-[340px] mb-9 font-alilato">
-              Crea tu cuenta para reservar clases, ver tu paquete y unirte a la comunidad de Pilates Room.
+              Crea tu cuenta para reservar clases, ver tu paquete y unirte a la comunidad de VARRE24.
             </p>
             {/* benefits list */}
             <div className="flex flex-col gap-3.5 stagger">
@@ -157,7 +157,7 @@ const Register = () => {
 
           {/* Mobile logo */}
           <Link to="/" className="lg:hidden block mb-8">
-            <img src={pilatesRoomLogo} alt="Pilates Room" className="h-16 w-auto" />
+            <img src={pilatesRoomLogo} alt="VARRE24" className="h-16 w-auto" />
           </Link>
 
           {/* heading */}
@@ -365,7 +365,7 @@ const Register = () => {
           </Link>
 
           <p className="text-center text-xs text-muted-foreground/50 mt-6">
-            © {new Date().getFullYear()} Pilates Room · Jardines del Country, GDL
+            © {new Date().getFullYear()} VARRE24 · Nápoles, CDMX
           </p>
         </div>
       </div>

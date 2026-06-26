@@ -17,7 +17,7 @@ const ProfileLink = ({
       "flex items-center justify-between rounded-2xl border p-4 transition-all duration-200",
       danger
         ? "border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40"
-        : "border-[#836A5D]/15 hover:border-[#836A5D]/30 hover:bg-[#836A5D]/[0.05]"
+        : "border-[#7C0116]/15 hover:border-[#7C0116]/30 hover:bg-[#7C0116]/[0.05]"
     )}
   >
     <div className="flex items-center gap-3.5">
@@ -26,7 +26,7 @@ const ProfileLink = ({
         style={
           danger
             ? { background: "rgba(239,68,68,0.1)", color: "#f87171" }
-            : { background: `${accent ?? "#836A5D"}15`, color: accent ?? "#836A5D" }
+            : { background: `${accent ?? "#7C0116"}15`, color: accent ?? "#7C0116" }
         }
       >
         <Icon size={17} />
@@ -68,20 +68,20 @@ const Profile = () => {
         <div className="max-w-lg mx-auto space-y-6">
 
           {/* ── Header card ── */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#836A5D]/15 bg-gradient-to-br from-[#e2e5da] via-[#e8eadf] to-[#F5ECDB] p-6">
+          <div className="relative overflow-hidden rounded-3xl border border-[#7C0116]/15 bg-gradient-to-br from-[#F3CCD4] via-[#FFE4E8] to-[#FFE4E8] p-6">
             {/* Ambient glow */}
-            <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#836A5D]/15 blur-[40px]" />
-            <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-[#C8B79E]/10 blur-[30px]" />
+            <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#7C0116]/15 blur-[40px]" />
+            <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-[#E7C9CF]/10 blur-[30px]" />
 
             <div className="relative flex items-center gap-4">
               {/* Avatar */}
               <div className="relative flex-shrink-0">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#836A5D] to-[#C8B79E] text-2xl font-bold text-white shadow-xl shadow-[#836A5D]/25">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C0116] to-[#E7C9CF] text-2xl font-bold text-white shadow-xl shadow-[#7C0116]/25">
                   {(user?.photoUrl ?? user?.photo_url)
                     ? <img src={(user?.photoUrl ?? user?.photo_url)!} className="h-20 w-20 rounded-2xl object-cover" alt={name} />
                     : initials}
                 </div>
-                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-[#F5ECDB]" />
+                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-[#FFE4E8]" />
               </div>
 
               {/* Info */}
@@ -92,9 +92,9 @@ const Profile = () => {
                   <p className="text-sm text-muted-foreground mt-0.5">{user.phone}</p>
                 )}
                 {/* Role badge */}
-                <div className="inline-flex items-center gap-1.5 mt-2.5 px-2.5 py-1 rounded-full bg-[#836A5D]/15 border border-[#836A5D]/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#836A5D]" />
-                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-[#836A5D]">
+                <div className="inline-flex items-center gap-1.5 mt-2.5 px-2.5 py-1 rounded-full bg-[#7C0116]/15 border border-[#7C0116]/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#7C0116]" />
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-[#7C0116]">
                     {user?.role === "client"
                       ? (user?.gender === "male" ? "Alumno" : user?.gender === "other" ? "Alumno/a" : "Alumna")
                       : user?.role ?? "Cliente"}
@@ -114,21 +114,21 @@ const Profile = () => {
               icon={User}
               label="Editar perfil"
               description="Nombre, teléfono, foto y más"
-              accent="#C8B79E"
+              accent="#E7C9CF"
             />
             <ProfileLink
               to="/app/profile/membership"
               icon={CreditCard}
               label="Mi membresía"
               description="Clases disponibles y vigencia"
-              accent="#836A5D"
+              accent="#7C0116"
             />
             <ProfileLink
               to="/app/profile/preferences"
               icon={Bell}
               label="Preferencias"
               description="Notificaciones y comunicaciones"
-              accent="#F5ECDB"
+              accent="#FFE4E8"
             />
           </div>
 

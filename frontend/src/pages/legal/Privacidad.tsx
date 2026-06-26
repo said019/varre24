@@ -20,7 +20,7 @@ const Privacidad = () => {
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border px-6 lg:px-[60px] py-4 flex items-center justify-between">
         <button onClick={() => navigate("/")} className="flex items-center bg-transparent border-none cursor-pointer">
-          <img src={pilatesRoomLogo} alt="Pilates Room" className="h-14 w-auto object-contain" />
+          <img src={pilatesRoomLogo} alt="VARRE24" className="h-14 w-auto object-contain" />
         </button>
         <button
           onClick={() => navigate(-1)}
@@ -56,7 +56,7 @@ const Privacidad = () => {
 
             <h2 className="font-syne font-bold text-lg text-foreground mt-8 mb-3">1. Responsable del tratamiento</h2>
             <p>
-              <strong className="text-foreground">Pilates Room</strong>, con domicilio en Jardines del Country, Guadalajara, Jalisco, México, es responsable del tratamiento de los datos personales que recabamos de usted, en los términos de la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).
+              <strong className="text-foreground">VARRE24</strong>, con domicilio en Arizona 14, Piso 3, Col. Nápoles, Benito Juárez, 03810, Ciudad de México, es responsable del tratamiento de los datos personales que recabamos de usted, en los términos de la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).
             </p>
 
             <h2 className="font-syne font-bold text-lg text-foreground mt-8 mb-3">2. Datos personales que recabamos</h2>
@@ -93,7 +93,7 @@ const Privacidad = () => {
 
             <h2 className="font-syne font-bold text-lg text-foreground mt-8 mb-3">5. Derechos ARCO</h2>
             <p>
-              Usted tiene derecho a Acceder, Rectificar, Cancelar u Oponerse (derechos ARCO) al tratamiento de sus datos personales. Para ejercer estos derechos, envíe una solicitud al correo electrónico <strong className="text-primary">pilatesroomoilslove@gmail.com</strong> indicando:
+              Usted tiene derecho a Acceder, Rectificar, Cancelar u Oponerse (derechos ARCO) al tratamiento de sus datos personales. Para ejercer estos derechos, envíe una solicitud al correo electrónico <strong className="text-primary">hola@varre24.com</strong> indicando:
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Nombre completo y datos de contacto.</li>
@@ -124,9 +124,9 @@ const Privacidad = () => {
               Si tiene alguna duda o comentario sobre este Aviso de Privacidad, puede contactarnos en:
             </p>
             <ul className="list-none space-y-1">
-              <li><strong className="text-foreground">Email:</strong> pilatesroomoilslove@gmail.com</li>
-              <li><strong className="text-foreground">Teléfono:</strong> +52 442 123 4567</li>
-              <li><strong className="text-foreground">Dirección:</strong> Jardines del Country, Guadalajara, Jalisco, México</li>
+              <li><strong className="text-foreground">Email:</strong> hola@varre24.com</li>
+              <li><strong className="text-foreground">Teléfono:</strong> +52 33 1907 0086</li>
+              <li><strong className="text-foreground">Dirección:</strong> Arizona 14, Piso 3, Col. Nápoles, Benito Juárez, 03810, CDMX</li>
             </ul>
           </div>
         )}
@@ -134,7 +134,7 @@ const Privacidad = () => {
 
       {/* Footer */}
       <footer className="border-t border-border px-6 lg:px-[60px] py-6 text-center">
-        <p className="text-xs text-muted-foreground/50">© 2026 Pilates Room. Todos los derechos reservados.</p>
+        <p className="text-xs text-muted-foreground/50">© 2026 VARRE24. Todos los derechos reservados.</p>
       </footer>
     </div>
   );

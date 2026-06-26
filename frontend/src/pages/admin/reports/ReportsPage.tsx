@@ -170,7 +170,7 @@ const ReportsPage = () => {
   const DeltaBadge = ({ pct }: { pct: number | null }) => {
     if (pct == null) {
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#836A5D]/10 px-2.5 py-1 text-[11px] font-medium text-[#6C5147]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[#7C0116]/10 px-2.5 py-1 text-[11px] font-medium text-[#670626]">
           <Minus size={11} /> sin comparación
         </span>
       );
@@ -193,24 +193,24 @@ const ReportsPage = () => {
     label,
     value,
     hint,
-    accent = "#836A5D",
+    accent = "#7C0116",
   }: {
     label: string;
     value: React.ReactNode;
     hint?: string;
     accent?: string;
   }) => (
-    <div className="flex flex-col gap-1 py-3 px-4 rounded-xl bg-[#FAF6EE] border border-[#836A5D]/12">
-      <div className="flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase font-semibold text-[#6C5147]/65">
+    <div className="flex flex-col gap-1 py-3 px-4 rounded-xl bg-[#FFF7F8] border border-[#7C0116]/12">
+      <div className="flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase font-semibold text-[#670626]/65">
         <span className="h-[3px] w-3 rounded-full" style={{ background: accent }} />
         {label}
       </div>
       {loadingOverview ? (
         <Skeleton className="h-6 w-20 mt-1" />
       ) : (
-        <div className="text-[1.35rem] leading-tight font-bold text-[#2d2d2d] tabular-nums">{value}</div>
+        <div className="text-[1.35rem] leading-tight font-bold text-[#2B0911] tabular-nums">{value}</div>
       )}
-      {hint && <div className="text-[11px] text-[#6C5147]/70 leading-snug">{hint}</div>}
+      {hint && <div className="text-[11px] text-[#670626]/70 leading-snug">{hint}</div>}
     </div>
   );
 
@@ -220,18 +220,18 @@ const ReportsPage = () => {
         <div className="admin-page max-w-6xl space-y-8">
           {/* ── HEADER ── */}
           <header className="flex flex-col gap-1">
-            <h1 className="font-bebas text-3xl tracking-tight text-[#2d2d2d]">Reportes</h1>
-            <p className="text-[12px] text-[#6C5147]/70">
+            <h1 className="font-bebas text-3xl tracking-tight text-[#2B0911]">Reportes</h1>
+            <p className="text-[12px] text-[#670626]/70">
               Periodo en curso:{" "}
-              <span className="font-semibold text-[#6C5147] capitalize">{currentMonthLabel}</span>
+              <span className="font-semibold text-[#670626] capitalize">{currentMonthLabel}</span>
               {" · "}ventana histórica de 12 meses
             </p>
           </header>
 
           {/* ── INGRESOS DEL MES — destacado ── */}
-          <Card className="border-t-2 overflow-hidden" style={{ borderTopColor: "#836A5D" }}>
+          <Card className="border-t-2 overflow-hidden" style={{ borderTopColor: "#7C0116" }}>
             <CardHeader className="pb-2">
-              <CardTitle className="font-alilato text-sm font-semibold text-[#6C5147]/70 uppercase tracking-[0.14em]">
+              <CardTitle className="font-alilato text-sm font-semibold text-[#670626]/70 uppercase tracking-[0.14em]">
                 Ingresos del mes
               </CardTitle>
             </CardHeader>
@@ -240,7 +240,7 @@ const ReportsPage = () => {
                 <Skeleton className="h-10 w-48" />
               ) : (
                 <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
-                  <div className="font-bebas text-[3.2rem] leading-none text-[#2d2d2d] tabular-nums">
+                  <div className="font-bebas text-[3.2rem] leading-none text-[#2B0911] tabular-nums">
                     {money(n(overview.monthlyRevenue))}
                   </div>
                   <DeltaBadge pct={delta} />
@@ -250,7 +250,7 @@ const ReportsPage = () => {
               <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <Stat
                   label="Reservas"
-                  accent="#988166"
+                  accent="#9B5A66"
                   value={n(overview.monthlyBookings)}
                   hint={
                     n(overview.monthlyBookings) > 0
@@ -260,7 +260,7 @@ const ReportsPage = () => {
                 />
                 <Stat
                   label="Ocupación"
-                  accent="#6C5147"
+                  accent="#670626"
                   value={
                     overview.classOccupancyRate == null
                       ? "—"
@@ -274,47 +274,47 @@ const ReportsPage = () => {
                 />
                 <Stat
                   label="Nuevas alumnas"
-                  accent="#8F7559"
+                  accent="#9B5A66"
                   value={n(overview.newMembersThisMonth)}
                   hint={`Total clientas: ${n(retention.total)}`}
                 />
                 <Stat
                   label="Clases próximas"
-                  accent="#BEA98F"
+                  accent="#E7C9CF"
                   value={n(overview.upcomingClasses)}
                   hint="Programadas a partir de hoy"
                 />
               </div>
 
               {/* línea densa de secundarios */}
-              <dl className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-1 text-[12px] text-[#6C5147]/85">
+              <dl className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-1 text-[12px] text-[#670626]/85">
                 <div className="flex items-center gap-1.5">
-                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#6C5147]/55">Alumnas activas</dt>
-                  <dd className="font-semibold tabular-nums text-[#2d2d2d]">{n(overview.activeMembers)}</dd>
+                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#670626]/55">Alumnas activas</dt>
+                  <dd className="font-semibold tabular-nums text-[#2B0911]">{n(overview.activeMembers)}</dd>
                 </div>
-                <span className="h-3 w-px bg-[#836A5D]/15" />
+                <span className="h-3 w-px bg-[#7C0116]/15" />
                 <div className="flex items-center gap-1.5">
-                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#6C5147]/55">Reseñas</dt>
-                  <dd className="font-semibold tabular-nums text-[#2d2d2d]">{n(overview.reviewsTotal)}</dd>
+                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#670626]/55">Reseñas</dt>
+                  <dd className="font-semibold tabular-nums text-[#2B0911]">{n(overview.reviewsTotal)}</dd>
                   {n(overview.reviewsPending) > 0 && (
                     <span className="text-[10px] text-amber-700 font-medium">
                       ({n(overview.reviewsPending)} pendientes)
                     </span>
                   )}
                 </div>
-                <span className="h-3 w-px bg-[#836A5D]/15" />
+                <span className="h-3 w-px bg-[#7C0116]/15" />
                 <div className="flex items-center gap-1.5">
-                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#6C5147]/55">Calificación general</dt>
-                  <dd className="font-semibold tabular-nums text-[#2d2d2d]">
+                  <dt className="uppercase tracking-[0.14em] text-[10px] text-[#670626]/55">Calificación general</dt>
+                  <dd className="font-semibold tabular-nums text-[#2B0911]">
                     {overview.reviewsAverage ? `${overview.reviewsAverage} ★` : "—"}
                   </dd>
                 </div>
                 {n(overview.reviewsThisMonth) > 0 && (
                   <>
-                    <span className="h-3 w-px bg-[#836A5D]/15" />
+                    <span className="h-3 w-px bg-[#7C0116]/15" />
                     <div className="flex items-center gap-1.5">
-                      <dt className="uppercase tracking-[0.14em] text-[10px] text-[#6C5147]/55">Reseñas este mes</dt>
-                      <dd className="font-semibold tabular-nums text-[#2d2d2d]">{n(overview.reviewsThisMonth)}</dd>
+                      <dt className="uppercase tracking-[0.14em] text-[10px] text-[#670626]/55">Reseñas este mes</dt>
+                      <dd className="font-semibold tabular-nums text-[#2B0911]">{n(overview.reviewsThisMonth)}</dd>
                     </div>
                   </>
                 )}
@@ -325,30 +325,30 @@ const ReportsPage = () => {
           {/* ── DETALLE POR RANGO DE FECHAS ── */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="font-alilato text-sm font-semibold text-[#6C5147]/70 uppercase tracking-[0.14em]">
+              <CardTitle className="font-alilato text-sm font-semibold text-[#670626]/70 uppercase tracking-[0.14em]">
                 Detalle por fechas
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap items-end gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-[#6C5147]/70">Desde</label>
+                  <label className="text-[11px] font-medium text-[#670626]/70">Desde</label>
                   <DatePicker value={rangeStart} onChange={setRangeStart} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-[#6C5147]/70">Hasta</label>
+                  <label className="text-[11px] font-medium text-[#670626]/70">Hasta</label>
                   <DatePicker value={rangeEnd} onChange={setRangeEnd} min={rangeStart} />
                 </div>
                 <div className="ml-auto text-right">
-                  <div className="text-[10px] tracking-[0.18em] uppercase font-semibold text-[#6C5147]/65">
+                  <div className="text-[10px] tracking-[0.18em] uppercase font-semibold text-[#670626]/65">
                     Total del período
                   </div>
-                  <div className="text-[1.35rem] leading-tight font-bold text-[#2d2d2d] tabular-nums">
+                  <div className="text-[1.35rem] leading-tight font-bold text-[#2B0911] tabular-nums">
                     {loadingDetail
                       ? <Loader2 size={18} className="animate-spin inline" />
                       : money(n(detail.total))}
                   </div>
-                  <div className="text-[11px] text-[#6C5147]/70">
+                  <div className="text-[11px] text-[#670626]/70">
                     {n(detail.count)} orden{n(detail.count) === 1 ? "" : "es"} aprobada{n(detail.count) === 1 ? "" : "s"}
                   </div>
                 </div>
@@ -364,7 +364,7 @@ const ReportsPage = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-[10px] tracking-[0.14em] uppercase text-[#6C5147]/60 border-b border-[#836A5D]/15">
+                      <tr className="text-[10px] tracking-[0.14em] uppercase text-[#670626]/60 border-b border-[#7C0116]/15">
                         <th className="text-left font-semibold py-2 pr-3">Fecha</th>
                         <th className="text-left font-semibold py-2 pr-3">Cliente</th>
                         <th className="text-left font-semibold py-2 pr-3">Plan</th>
@@ -374,24 +374,24 @@ const ReportsPage = () => {
                     </thead>
                     <tbody>
                       {loadingDetail ? (
-                        <tr><td colSpan={5} className="py-6 text-center text-[#6C5147]/60">
+                        <tr><td colSpan={5} className="py-6 text-center text-[#670626]/60">
                           <Loader2 size={16} className="animate-spin inline mr-2" />Cargando…
                         </td></tr>
                       ) : detailOrders.length === 0 ? (
-                        <tr><td colSpan={5} className="py-6 text-center text-[#6C5147]/60">
+                        <tr><td colSpan={5} className="py-6 text-center text-[#670626]/60">
                           No hay órdenes aprobadas en este período.
                         </td></tr>
                       ) : (
                         detailOrders.map((o) => (
-                          <tr key={o.id} className="border-b border-[#836A5D]/8 last:border-0">
-                            <td className="py-2.5 pr-3 text-[#6C5147] whitespace-nowrap">{fmtDateTime(o.created_at)}</td>
+                          <tr key={o.id} className="border-b border-[#7C0116]/8 last:border-0">
+                            <td className="py-2.5 pr-3 text-[#670626] whitespace-nowrap">{fmtDateTime(o.created_at)}</td>
                             <td className="py-2.5 pr-3">
-                              <div className="font-medium text-[#2d2d2d]">{o.client_name || "—"}</div>
-                              <div className="text-[11px] text-[#6C5147]/60">{o.client_email}</div>
+                              <div className="font-medium text-[#2B0911]">{o.client_name || "—"}</div>
+                              <div className="text-[11px] text-[#670626]/60">{o.client_email}</div>
                             </td>
-                            <td className="py-2.5 pr-3 text-[#6C5147]">{o.plan_name || "—"}</td>
-                            <td className="py-2.5 pr-3 text-[#6C5147]">{paymentLabel(o.payment_method)}</td>
-                            <td className="py-2.5 text-right font-semibold text-[#2d2d2d] tabular-nums">{money(n(o.total_amount))}</td>
+                            <td className="py-2.5 pr-3 text-[#670626]">{o.plan_name || "—"}</td>
+                            <td className="py-2.5 pr-3 text-[#670626]">{paymentLabel(o.payment_method)}</td>
+                            <td className="py-2.5 text-right font-semibold text-[#2B0911] tabular-nums">{money(n(o.total_amount))}</td>
                           </tr>
                         ))
                       )}
@@ -406,63 +406,63 @@ const ReportsPage = () => {
           <Card>
             <CardHeader className="pb-3 flex flex-row items-end justify-between gap-4">
               <div>
-                <CardTitle className="font-alilato text-sm font-semibold text-[#6C5147]/70 uppercase tracking-[0.14em]">
+                <CardTitle className="font-alilato text-sm font-semibold text-[#670626]/70 uppercase tracking-[0.14em]">
                   Ingresos por mes
                 </CardTitle>
-                <p className="text-[11px] text-[#6C5147]/55 mt-0.5">
+                <p className="text-[11px] text-[#670626]/55 mt-0.5">
                   Últimos 12 meses, solo meses con movimiento
                 </p>
               </div>
               <div className="flex items-center gap-5 text-right">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#6C5147]/55 font-semibold">Total 12m</p>
-                  <p className="font-bebas text-2xl text-[#2d2d2d] tabular-nums leading-none mt-0.5">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#670626]/55 font-semibold">Total 12m</p>
+                  <p className="font-bebas text-2xl text-[#2B0911] tabular-nums leading-none mt-0.5">
                     {money(totalRevenue)}
                   </p>
                 </div>
-                <div className="border-l border-[#836A5D]/15 pl-5">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#6C5147]/55 font-semibold">Órdenes</p>
-                  <p className="font-bebas text-2xl text-[#2d2d2d] tabular-nums leading-none mt-0.5">{totalOrders}</p>
+                <div className="border-l border-[#7C0116]/15 pl-5">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#670626]/55 font-semibold">Órdenes</p>
+                  <p className="font-bebas text-2xl text-[#2B0911] tabular-nums leading-none mt-0.5">{totalOrders}</p>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               {activeMonths.length === 0 ? (
-                <p className="text-sm text-[#6C5147]/70 py-8 text-center italic">
+                <p className="text-sm text-[#670626]/70 py-8 text-center italic">
                   Aún no hay ingresos registrados en los últimos 12 meses.
                 </p>
               ) : (
                 <>
-                  <ul className="divide-y divide-[#836A5D]/10">
+                  <ul className="divide-y divide-[#7C0116]/10">
                     {[...activeMonths].reverse().map((row) => {
                       const pct = maxAmount > 0 ? (row.amount / maxAmount) * 100 : 0;
                       const isCurrent = current && row.monthStart === current.monthStart;
                       return (
                         <li key={row.monthStart} className="py-3 flex items-center gap-4">
                           <div className="w-32 shrink-0">
-                            <p className="text-[13px] font-medium text-[#2d2d2d] capitalize leading-tight">
+                            <p className="text-[13px] font-medium text-[#2B0911] capitalize leading-tight">
                               {row.label}
                             </p>
                             {isCurrent && (
-                              <p className="text-[10px] uppercase tracking-[0.16em] text-[#836A5D] font-semibold">
+                              <p className="text-[10px] uppercase tracking-[0.16em] text-[#7C0116] font-semibold">
                                 en curso
                               </p>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="h-2 rounded-full bg-[#836A5D]/8 overflow-hidden">
+                            <div className="h-2 rounded-full bg-[#7C0116]/8 overflow-hidden">
                               <div
                                 className="h-full rounded-full transition-[width] duration-700"
                                 style={{
                                   width: `${pct}%`,
-                                  background: isCurrent ? "#836A5D" : "#C8B79E",
+                                  background: isCurrent ? "#7C0116" : "#E7C9CF",
                                 }}
                               />
                             </div>
                           </div>
                           <div className="text-right shrink-0 tabular-nums">
-                            <p className="text-[14px] font-bold text-[#2d2d2d]">{money(row.amount)}</p>
-                            <p className="text-[11px] text-[#6C5147]/65">
+                            <p className="text-[14px] font-bold text-[#2B0911]">{money(row.amount)}</p>
+                            <p className="text-[11px] text-[#670626]/65">
                               {row.count} orden{row.count !== 1 ? "es" : ""}
                             </p>
                           </div>
@@ -471,7 +471,7 @@ const ReportsPage = () => {
                     })}
                   </ul>
                   {idleMonths > 0 && (
-                    <p className="mt-4 text-[11px] text-[#6C5147]/55 italic">
+                    <p className="mt-4 text-[11px] text-[#670626]/55 italic">
                       Otros {idleMonths} meses sin movimientos.
                     </p>
                   )}
@@ -483,19 +483,19 @@ const ReportsPage = () => {
           {/* ── DESEMPEÑO POR CLASE ── */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="font-alilato text-sm font-semibold text-[#6C5147]/70 uppercase tracking-[0.14em]">
+              <CardTitle className="font-alilato text-sm font-semibold text-[#670626]/70 uppercase tracking-[0.14em]">
                 Desempeño por tipo de clase
               </CardTitle>
-              <p className="text-[11px] text-[#6C5147]/55 mt-0.5">Datos acumulados, todas las fechas</p>
+              <p className="text-[11px] text-[#670626]/55 mt-0.5">Datos acumulados, todas las fechas</p>
             </CardHeader>
             <CardContent>
               {classRows.length === 0 ? (
-                <p className="text-sm text-[#6C5147]/70 py-8 text-center italic">Sin clases registradas aún.</p>
+                <p className="text-sm text-[#670626]/70 py-8 text-center italic">Sin clases registradas aún.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-[#836A5D]/15 text-[10px] uppercase tracking-[0.14em] text-[#6C5147]/65 font-semibold">
+                      <tr className="border-b border-[#7C0116]/15 text-[10px] uppercase tracking-[0.14em] text-[#670626]/65 font-semibold">
                         <th className="text-left py-2.5 pr-4">Clase</th>
                         <th className="text-right py-2.5 px-3">Próximas</th>
                         <th className="text-right py-2.5 px-3">Impartidas</th>
@@ -509,22 +509,22 @@ const ReportsPage = () => {
                       {classRows.map((c) => {
                         const rate = c.bookings > 0 ? Math.round((c.attended / c.bookings) * 100) : null;
                         return (
-                          <tr key={c.name} className="border-b border-[#836A5D]/10 last:border-0">
-                            <td className="py-3 pr-4 font-medium text-[#2d2d2d]">{c.name}</td>
-                            <td className="text-right tabular-nums px-3 text-[#6C5147]">{c.classesUpcoming}</td>
-                            <td className="text-right tabular-nums px-3 text-[#6C5147]">{c.classesDone}</td>
-                            <td className="text-right tabular-nums px-3 font-semibold text-[#2d2d2d]">{c.bookings}</td>
-                            <td className="text-right tabular-nums px-3 text-[#6C5147]">{c.attended}</td>
+                          <tr key={c.name} className="border-b border-[#7C0116]/10 last:border-0">
+                            <td className="py-3 pr-4 font-medium text-[#2B0911]">{c.name}</td>
+                            <td className="text-right tabular-nums px-3 text-[#670626]">{c.classesUpcoming}</td>
+                            <td className="text-right tabular-nums px-3 text-[#670626]">{c.classesDone}</td>
+                            <td className="text-right tabular-nums px-3 font-semibold text-[#2B0911]">{c.bookings}</td>
+                            <td className="text-right tabular-nums px-3 text-[#670626]">{c.attended}</td>
                             <td className="text-right tabular-nums px-3">
                               {rate == null ? (
-                                <span className="text-[#6C5147]/45">—</span>
+                                <span className="text-[#670626]/45">—</span>
                               ) : (
                                 <span
                                   className={
                                     rate >= 80
                                       ? "text-emerald-700 font-semibold"
                                       : rate >= 50
-                                        ? "text-[#725D51] font-semibold"
+                                        ? "text-[#7C0116] font-semibold"
                                         : "text-amber-700 font-semibold"
                                   }
                                 >
@@ -532,13 +532,13 @@ const ReportsPage = () => {
                                 </span>
                               )}
                             </td>
-                            <td className="text-right tabular-nums pl-3 text-[#6C5147]/70">{c.cancelled}</td>
+                            <td className="text-right tabular-nums pl-3 text-[#670626]/70">{c.cancelled}</td>
                           </tr>
                         );
                       })}
                     </tbody>
                   </table>
-                  <p className="mt-3 text-[10px] uppercase tracking-[0.14em] text-[#6C5147]/45">
+                  <p className="mt-3 text-[10px] uppercase tracking-[0.14em] text-[#670626]/45">
                     Reservas excluye canceladas · % asistencia = asistidas / reservas
                   </p>
                 </div>
@@ -549,19 +549,19 @@ const ReportsPage = () => {
           {/* ── INSTRUCTORAS ── */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="font-alilato text-sm font-semibold text-[#6C5147]/70 uppercase tracking-[0.14em]">
+              <CardTitle className="font-alilato text-sm font-semibold text-[#670626]/70 uppercase tracking-[0.14em]">
                 Instructoras
               </CardTitle>
-              <p className="text-[11px] text-[#6C5147]/55 mt-0.5">Solo instructoras activas</p>
+              <p className="text-[11px] text-[#670626]/55 mt-0.5">Solo instructoras activas</p>
             </CardHeader>
             <CardContent>
               {instructorRows.length === 0 ? (
-                <p className="text-sm text-[#6C5147]/70 py-8 text-center italic">Sin instructoras registradas.</p>
+                <p className="text-sm text-[#670626]/70 py-8 text-center italic">Sin instructoras registradas.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-[#836A5D]/15 text-[10px] uppercase tracking-[0.14em] text-[#6C5147]/65 font-semibold">
+                      <tr className="border-b border-[#7C0116]/15 text-[10px] uppercase tracking-[0.14em] text-[#670626]/65 font-semibold">
                         <th className="text-left py-2.5 pr-4">Instructora</th>
                         <th className="text-right py-2.5 px-3">Impartidas</th>
                         <th className="text-right py-2.5 px-3">Próximas</th>
@@ -571,19 +571,19 @@ const ReportsPage = () => {
                     </thead>
                     <tbody>
                       {instructorRows.map((i) => (
-                        <tr key={i.id} className="border-b border-[#836A5D]/10 last:border-0">
-                          <td className="py-3 pr-4 font-medium text-[#2d2d2d]">{i.name}</td>
-                          <td className="text-right tabular-nums px-3 font-semibold text-[#2d2d2d]">
+                        <tr key={i.id} className="border-b border-[#7C0116]/10 last:border-0">
+                          <td className="py-3 pr-4 font-medium text-[#2B0911]">{i.name}</td>
+                          <td className="text-right tabular-nums px-3 font-semibold text-[#2B0911]">
                             {i.classesDone}
                           </td>
-                          <td className="text-right tabular-nums px-3 text-[#6C5147]">{i.classesUpcoming}</td>
-                          <td className="text-right tabular-nums px-3 text-[#6C5147]">{i.uniqueStudents}</td>
-                          <td className="text-right tabular-nums pl-3 text-[#6C5147]">{i.attended}</td>
+                          <td className="text-right tabular-nums px-3 text-[#670626]">{i.classesUpcoming}</td>
+                          <td className="text-right tabular-nums px-3 text-[#670626]">{i.uniqueStudents}</td>
+                          <td className="text-right tabular-nums pl-3 text-[#670626]">{i.attended}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  <p className="mt-3 text-[10px] uppercase tracking-[0.14em] text-[#6C5147]/45">
+                  <p className="mt-3 text-[10px] uppercase tracking-[0.14em] text-[#670626]/45">
                     Impartidas = completadas o ya pasadas · Alumnas únicas excluye reservas canceladas
                   </p>
                 </div>

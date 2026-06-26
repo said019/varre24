@@ -49,23 +49,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* ── Pilates Room brand palette (escala oficial) ── */
+        /* ── VARRE24 brand palette (Red Pink Bold: cherry · claret · pink) ── */
         brand: {
-          50:  "#BEA98F",
-          100: "#AA9376",
-          200: "#988166",
-          300: "#8F7559",
-          400: "#725D51",
-          500: "#665346",
-          600: "#5F4B3D",
-          700: "#544331",
-          cream: "#F5ECDB",
+          50:  "#FFE4E8",
+          100: "#FFBDC5",
+          200: "#E0A4B0",
+          300: "#C76B7E",
+          400: "#7C0116",
+          500: "#6E0114",
+          600: "#670626",
+          700: "#52041D",
+          cream: "#FFE4E8",
         },
         /* alias compat: tokens viejos siguen apuntando a la nueva paleta */
         punto: {
-          cream: "#F5ECDB",
-          green: "#BEA98F",
-          taupe: "#725D51",
+          cream: "#FFE4E8",
+          green: "#E0A4B0",
+          taupe: "#7C0116",
         },
       },
       borderRadius: {
@@ -74,14 +74,14 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        /* ── Brand fonts ── */
-        gulfs:     ['"Gulfs"', '"Bebas Neue"', 'sans-serif'],
-        alilato:   ['"Alilato"', '"Inter Tight"', '"Inter"', 'sans-serif'],
+        /* ── Brand fonts: Anton (display/títulos) · Fraunces (editorial) · Inter Tight (cuerpo) ── */
+        gulfs:     ['"Anton"', '"Arial Narrow"', '"Inter Tight"', 'sans-serif'],
+        alilato:   ['"Inter Tight"', '"Inter"', 'sans-serif'],
         editorial: ['"Fraunces"', '"Georgia"', 'serif'],
-        /* ── Aliases ── */
-        bebas: ['"Gulfs"', '"Bebas Neue"', 'sans-serif'],
-        syne:  ['"Alilato"', '"Inter Tight"', 'sans-serif'],
-        dm:    ['"Alilato"', '"Inter Tight"', 'sans-serif'],
+        /* ── Aliases (display viejo → Anton; body viejo → Inter Tight) ── */
+        bebas: ['"Anton"', '"Arial Narrow"', '"Inter Tight"', 'sans-serif'],
+        syne:  ['"Inter Tight"', 'sans-serif'],
+        dm:    ['"Inter Tight"', 'sans-serif'],
       },
       letterSpacing: {
         tightest: "-0.04em",

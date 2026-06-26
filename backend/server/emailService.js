@@ -1,5 +1,5 @@
 /**
- * Pilates Room — Email Service (Resend)
+ * VARRE24 — Email Service (Resend)
  * Branded HTML templates matching the studio's visual identity.
  */
 
@@ -13,22 +13,22 @@ if (process.env.RESEND_API_KEY) {
   }
 }
 
-const FROM_EMAIL = process.env.EMAIL_FROM || "Pilates Room <onboarding@resend.dev>";
-const SITE_URL = String(process.env.SITE_URL || process.env.APP_URL || "https://pilatesroom.com.mx").replace(/\/+$/, "");
+const FROM_EMAIL = process.env.EMAIL_FROM || "VARRE24 <onboarding@resend.dev>";
+const SITE_URL = String(process.env.SITE_URL || process.env.APP_URL || "https://varre24.com").replace(/\/+$/, "");
 const LOGO_URL = `${SITE_URL}/pr-logo-email.png`;
 
 // ─── Brand palette (matches website — placeholder warm/feminine) ─────────────
 const B = {
-  bg:      "#FAF4EB",   // page background — warm cream
+  bg:      "#FFF1F3",   // page background — blush VARRE24
   card:    "#ffffff",   // card background — white
-  border:  "#EADFD1",   // subtle border — warm soft
-  brown:   "#8B6B5E",   // primary accent — cacao cálido
-  green:   "#C9A295",   // secondary accent — blush rose (nombre legacy)
-  dark:    "#2d2d2d",   // main text
-  body:    "#5a524a",   // body text
-  muted:   "#8B7A6E",   // muted/secondary text — warm
-  cream:   "#F7EFE5",   // light cream
-  sage10:  "#F7E8DF",   // very light blush for backgrounds (nombre legacy)
+  border:  "#F3CCD4",   // subtle border — soft pink
+  brown:   "#7C0116",   // primary accent — Cherry Cola (nombre legacy)
+  green:   "#E0A4B0",   // secondary accent — Hibiscus (nombre legacy)
+  dark:    "#2B0911",   // main text — ink vino
+  body:    "#5A3F46",   // body text — rosa-marrón
+  muted:   "#9B5A66",   // muted/secondary text
+  cream:   "#FFE4E8",   // light pink
+  sage10:  "#FFE9EC",   // very light blush for backgrounds (nombre legacy)
   amber:   "#b45309",   // warning/alert
 };
 
@@ -51,7 +51,7 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Pilates Room</title>
+  <title>VARRE24</title>
   <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
 </head>
 <body style="margin:0;padding:0;background-color:${B.bg};">
@@ -77,7 +77,7 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
         <!-- Logo -->
         <tr><td align="center" style="padding:32px 40px 4px;">
           <a href="${SITE_URL}" style="text-decoration:none;">
-            <img src="${LOGO_URL}" alt="Pilates Room" width="200" height="auto"
+            <img src="${LOGO_URL}" alt="VARRE24" width="200" height="auto"
                  style="display:block;max-width:200px;" />
           </a>
         </td></tr>
@@ -86,7 +86,7 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
         <tr><td align="center" style="padding:0 40px 20px;">
           <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;
                     letter-spacing:2.5px;text-transform:uppercase;color:${B.muted};margin:0;">
-            Pilates &middot; Bienestar &middot; Equilibrio
+            Barre &middot; Pilates &middot; Bienestar
           </p>
         </td></tr>
 
@@ -107,8 +107,8 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
         <tr><td align="center" style="padding:20px 40px 28px;">
           <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;
                     color:${B.muted};margin:0;line-height:1.7;">
-            © ${new Date().getFullYear()} Pilates Room · Centro Oils&Love<br>
-            <a href="${SITE_URL}" style="color:${B.brown};text-decoration:none;">pilatesroom.com.mx</a>
+            © ${new Date().getFullYear()} VARRE24 · Nápoles, CDMX<br>
+            <a href="${SITE_URL}" style="color:${B.brown};text-decoration:none;">varre24.com</a>
           </p>
         </td></tr>
 
@@ -159,8 +159,8 @@ function pill(text, color) {
 }
 function alertBox(text, type = "info") {
   const colors = {
-    info:    { bg: `${B.green}15`, border: B.green, text: "#5A3F2F" },
-    success: { bg: `${B.green}15`, border: B.green, text: "#5A3F2F" },
+    info:    { bg: `${B.green}15`, border: B.green, text: "#5C0110" },
+    success: { bg: `${B.green}15`, border: B.green, text: "#5C0110" },
     warning: { bg: "#fef3c7",      border: "#f59e0b", text: "#92400e" },
     error:   { bg: "#fef2f2",      border: "#ef4444", text: "#991b1b" },
   };
@@ -216,7 +216,7 @@ async function sendMembershipActivated(opts) {
   const classesText = classLimit ? `${classLimit} clases` : "Ilimitadas";
   const content = `
     ${h1(`¡Bienvenida, ${name.split(" ")[0]}!`)}
-    ${p("Tu membresía en Pilates Room ha sido activada. Es momento de moverte con propósito.")}
+    ${p("Tu membresía en VARRE24 ha sido activada. Es momento de moverte con propósito.")}
     ${infoTable([
       infoRow("Plan", planName),
       infoRow("Clases incluidas", classesText),
@@ -231,7 +231,7 @@ async function sendMembershipActivated(opts) {
     ctaUrl: `${SITE_URL}/app/classes`,
     ctaText: "Reservar clases",
   });
-  await sendEmail({ to, subject: `Tu membresía está activa — Pilates Room`, html });
+  await sendEmail({ to, subject: `Tu membresía está activa — VARRE24`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -332,7 +332,7 @@ async function sendWeeklyReminder(opts) {
 
   const content = `
     ${h1(`¡Hola ${name.split(" ")[0]}! ¿Ya programaste tu semana?`)}
-    ${p("Nueva semana, nuevas oportunidades para moverte. Estos son los horarios disponibles en Pilates Room.")}
+    ${p("Nueva semana, nuevas oportunidades para moverte. Estos son los horarios disponibles en VARRE24.")}
     ${p(classesText)}
     ${expiryNote}
     ${h2("Tu cuerpo te lo agradece")}
@@ -344,7 +344,7 @@ async function sendWeeklyReminder(opts) {
     ctaUrl: `${SITE_URL}/app/classes`,
     ctaText: "Programar mi semana",
   });
-  await sendEmail({ to, subject: `Programa tu semana — Pilates Room`, html });
+  await sendEmail({ to, subject: `Programa tu semana — VARRE24`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -383,7 +383,7 @@ async function sendRenewalReminder(opts) {
     to,
     subject: isLastClass
       ? `Te queda 1 clase — Renueva tu membresía`
-      : `Tu membresía vence pronto — Pilates Room`,
+      : `Tu membresía vence pronto — VARRE24`,
     html,
   });
 }
@@ -399,18 +399,18 @@ async function sendPasswordResetEmail(opts) {
   );
   const content = `
     ${h1(`Recupera tu contraseña, ${firstName}`)}
-    ${p("Recibimos una solicitud para cambiar la contraseña de tu cuenta en Pilates Room.")}
+    ${p("Recibimos una solicitud para cambiar la contraseña de tu cuenta en VARRE24.")}
     ${p("Si fuiste tú, haz clic en el botón de abajo para crear una contraseña nueva. Este enlace expira en <strong>2 horas</strong>.")}
     ${alertBox("Si no solicitaste este cambio, puedes ignorar este correo. Tu cuenta seguirá segura.", "info")}
     ${small(`Si el botón no funciona, copia y pega este enlace en tu navegador:<br><a href="${resolvedResetUrl}" style="color:${B.brown};word-break:break-all;">${resolvedResetUrl}</a>`)}
   `;
   const html = baseLayout({
-    preheader: "Recupera el acceso a tu cuenta de Pilates Room",
+    preheader: "Recupera el acceso a tu cuenta de VARRE24",
     content,
     ctaUrl: resolvedResetUrl,
     ctaText: "Restablecer contraseña",
   });
-  await sendEmail({ to, subject: "Restablecer contraseña — Pilates Room", html });
+  await sendEmail({ to, subject: "Restablecer contraseña — VARRE24", html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -425,12 +425,12 @@ async function sendOrderRejected(opts) {
     ${p("Si crees que hubo un error, contáctanos por WhatsApp o acércate al estudio. ¡Estamos para ayudarte!")}
   `;
   const html = baseLayout({
-    preheader: "Tu comprobante de pago fue revisado — Pilates Room",
+    preheader: "Tu comprobante de pago fue revisado — VARRE24",
     content,
     ctaUrl: `${SITE_URL}/app/checkout`,
     ctaText: "Reintentar pago",
   });
-  await sendEmail({ to, subject: "Comprobante no aprobado — Pilates Room", html });
+  await sendEmail({ to, subject: "Comprobante no aprobado — VARRE24", html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -477,12 +477,12 @@ async function sendBirthdayGreeting({ to, name, message, ctaUrl, ctaText }) {
     </td></tr>
   `;
   const html = baseLayout({
-    preheader: `${firstName}, hoy celebramos contigo · Pilates Room`,
+    preheader: `${firstName}, hoy celebramos contigo · VARRE24`,
     content,
     ctaUrl: ctaUrl || `${SITE_URL}/app/classes`,
     ctaText: ctaText || "Reservar mi clase de cumpleaños",
   });
-  await sendEmail({ to, subject: `🎂 ¡Feliz cumpleaños, ${firstName}! — Pilates Room`, html });
+  await sendEmail({ to, subject: `🎂 ¡Feliz cumpleaños, ${firstName}! — VARRE24`, html });
 }
 
 async function sendCustomBroadcast({ to, name, subject, body, ctaUrl, ctaText, headline }) {
@@ -498,7 +498,7 @@ async function sendCustomBroadcast({ to, name, subject, body, ctaUrl, ctaText, h
     ctaUrl: ctaUrl || "",
     ctaText: ctaText || "",
   });
-  await sendEmail({ to, subject: subject || "Pilates Room — Mensaje del estudio", html });
+  await sendEmail({ to, subject: subject || "VARRE24 — Mensaje del estudio", html });
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
