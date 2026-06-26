@@ -23,7 +23,7 @@ export function MagneticButton({ children, href, onClick, className }: MagneticB
 
   const common = {
     className,
-    style: { x, y },
+    style: reduce ? undefined : { x, y },
     onMouseMove: onMove,
     onMouseLeave: reset,
     whileTap: reduce ? undefined : { scale: 0.96 },
