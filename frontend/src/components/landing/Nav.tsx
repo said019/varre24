@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const LINKS = [
   { label: "Clases", href: "#clases" },
-  { label: "Experience", href: "#contacto" },
+  { label: "Experience", href: "#experience" },
   { label: "Planes", href: "#planes" },
   { label: "Contacto", href: "#contacto" },
 ];

@@ -5,7 +5,7 @@ import { EXPERIENCES } from "./data";
 export function ExperienceClass() {
   const reduce = useReducedMotion();
   return (
-    <section className="bg-[#2B0911] px-6 py-20 text-[#FFF1F3] sm:px-10 lg:px-16">
+    <section id="experience" className="bg-[#2B0911] px-6 py-20 text-[#FFF1F3] sm:px-10 lg:px-16">
       <Reveal>
         <p className="font-alilato text-xs uppercase tracking-[0.24em] text-[#FFBDC5]">Experience Class</p>
         <h2 className="font-bebas mt-2 text-[clamp(2.4rem,6vw,5rem)] leading-none tracking-tight">
