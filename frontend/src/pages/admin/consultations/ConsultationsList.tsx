@@ -85,7 +85,7 @@ const ConsultationsList = () => {
       <AdminLayout>
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-[#2B0911]">Consultas</h1>
+            <h1 className="text-2xl font-bold text-[#2A211B]">Consultas</h1>
             <p className="text-sm text-muted-foreground">Gestiona las consultas de nutrición y descargas musculares</p>
           </div>
 

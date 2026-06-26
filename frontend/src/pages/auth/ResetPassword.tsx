@@ -56,7 +56,7 @@ const ResetPassword = () => {
     <div className="min-h-screen bg-background flex">
 
       {/* ── LEFT PANEL — foto ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2B0911]">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2A211B]">
         <img
           src={authPhoto}
           alt="Equipo de instructoras de VARRE24"
@@ -64,7 +64,7 @@ const ResetPassword = () => {
           style={{ height: 'auto', aspectRatio: '1600/1067' }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.55)_0%,rgba(74,51,41,0.20)_30%,rgba(74,51,41,0.85)_72%,rgba(74,51,41,0.97)_100%)]" />
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#E7C9CF_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#D5C4B8_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <Link to="/" className="block">
             <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
@@ -76,7 +76,7 @@ const ResetPassword = () => {
             </div>
             <h2 className="font-bebas text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] text-white tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               UN NUEVO
-              <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
+              <span className="block font-editorial italic font-light text-[#E8DDD5] normal-case">
                 comienzo.
               </span>
             </h2>

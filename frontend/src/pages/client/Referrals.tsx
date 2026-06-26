@@ -90,10 +90,10 @@ const Referrals = () => {
         <div className="space-y-5 max-w-2xl">
           {/* Header */}
           <div>
-            <h1 className="text-xl font-bold text-[#2B0911] flex items-center gap-2">
+            <h1 className="text-xl font-bold text-[#2A211B] flex items-center gap-2">
               <Gift size={20} /> Invita y gana 10%
             </h1>
-            <p className="text-sm text-[#5C0110] mt-1">
+            <p className="text-sm text-[#4A3D32] mt-1">
               Comparte tu código con amigas. Cuando alguien lo use en su <strong>primera compra</strong>,
               tú recibes un <strong>10% de descuento</strong> para tu siguiente paquete.
             </p>
@@ -116,8 +116,8 @@ const Referrals = () => {
           )}
 
           {/* Tarjeta con el código */}
-          <div className="rounded-2xl border border-[#7C0116]/20 bg-gradient-to-br from-[#7C0116]/[0.06] via-[#E7C9CF]/[0.04] to-transparent p-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#7C0116]/70 font-semibold mb-2">Tu código</p>
+          <div className="rounded-2xl border border-[#5B4A3E]/20 bg-gradient-to-br from-[#5B4A3E]/[0.06] via-[#D5C4B8]/[0.04] to-transparent p-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#5B4A3E]/70 font-semibold mb-2">Tu código</p>
             {codeLoading ? (
               <Skeleton className="h-12 w-48" />
             ) : (
@@ -126,16 +126,16 @@ const Referrals = () => {
                 className="group flex items-center gap-3"
                 title="Toca para copiar"
               >
-                <span className="font-bebas text-[2.8rem] leading-none tracking-wide text-[#2B0911] group-hover:text-[#7C0116] transition-colors">
+                <span className="font-bebas text-[2.8rem] leading-none tracking-wide text-[#2A211B] group-hover:text-[#5B4A3E] transition-colors">
                   {code}
                 </span>
-                <Copy size={18} className="text-[#7C0116]/40 group-hover:text-[#7C0116]" />
+                <Copy size={18} className="text-[#5B4A3E]/40 group-hover:text-[#5B4A3E]" />
               </button>
             )}
             {codeLoading ? (
               <Skeleton className="h-3 w-44 mt-2" />
             ) : (
-              <p className="text-[11px] text-[#7C0116]/60 mt-2">
+              <p className="text-[11px] text-[#5B4A3E]/60 mt-2">
                 Toca el código para copiarlo · {usesCount} {usesCount === 1 ? "persona ya lo usó" : "personas ya lo usaron"}
               </p>
             )}
@@ -167,21 +167,21 @@ const Referrals = () => {
           </div>
 
           {/* Cómo funciona */}
-          <div className="rounded-2xl border border-[#7C0116]/15 bg-white/50 p-5 space-y-3">
-            <h2 className="text-sm font-bold text-[#2B0911] flex items-center gap-2">
-              <Sparkles size={14} className="text-[#7C0116]" /> Cómo funciona
+          <div className="rounded-2xl border border-[#5B4A3E]/15 bg-white/50 p-5 space-y-3">
+            <h2 className="text-sm font-bold text-[#2A211B] flex items-center gap-2">
+              <Sparkles size={14} className="text-[#5B4A3E]" /> Cómo funciona
             </h2>
-            <ol className="space-y-2.5 text-sm text-[#5C0110]">
+            <ol className="space-y-2.5 text-sm text-[#4A3D32]">
               <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#7C0116] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">1</span>
-                <span>Comparte tu código <strong className="text-[#2B0911] font-mono">{code || "—"}</strong> con personas que aún no son parte de VARRE24.</span>
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#5B4A3E] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">1</span>
+                <span>Comparte tu código <strong className="text-[#2A211B] font-mono">{code || "—"}</strong> con personas que aún no son parte de VARRE24.</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#7C0116] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">2</span>
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#5B4A3E] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">2</span>
                 <span>Lo escriben en el checkout (campo <em>"¿Tienes un código?"</em>) antes de su <strong>primera compra</strong>.</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#7C0116] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">3</span>
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#5B4A3E] text-white text-[0.65rem] font-semibold flex items-center justify-center mt-0.5">3</span>
                 <span>Cuando su pago se aprueba, automáticamente recibes <strong>10% de descuento</strong> para tu próximo paquete.</span>
               </li>
             </ol>

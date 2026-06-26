@@ -19,16 +19,16 @@ const LOGO_URL = `${SITE_URL}/pr-logo-email.png`;
 
 // ─── Brand palette (matches website — placeholder warm/feminine) ─────────────
 const B = {
-  bg:      "#FFF1F3",   // page background — blush VARRE24
-  card:    "#ffffff",   // card background — white
-  border:  "#F3CCD4",   // subtle border — soft pink
-  brown:   "#7C0116",   // primary accent — Cherry Cola (nombre legacy)
-  green:   "#E0A4B0",   // secondary accent — Hibiscus (nombre legacy)
-  dark:    "#2B0911",   // main text — ink vino
-  body:    "#5A3F46",   // body text — rosa-marrón
-  muted:   "#9B5A66",   // muted/secondary text
-  cream:   "#FFE4E8",   // light pink
-  sage10:  "#FFE9EC",   // very light blush for backgrounds (nombre legacy)
+  bg:      "#F6F2EB",   // page background — sunlit-veil
+  card:    "#FBF8F4",   // card background — warm white
+  border:  "#E8DDD5",   // subtle border — warm
+  brown:   "#5B4A3E",   // primary accent — urban-espresso
+  green:   "#B5A593",   // secondary accent — oat taupe (nombre legacy)
+  dark:    "#2A211B",   // main text — espresso-900
+  body:    "#5B4A3E",   // body text — espresso
+  muted:   "#8A8077",   // muted/secondary text — pavement
+  cream:   "#E8DED4",   // ivory-silk
+  sage10:  "#F6F2EB",   // very light cream for backgrounds (nombre legacy)
   amber:   "#b45309",   // warning/alert
 };
 
@@ -159,8 +159,8 @@ function pill(text, color) {
 }
 function alertBox(text, type = "info") {
   const colors = {
-    info:    { bg: `${B.green}15`, border: B.green, text: "#5C0110" },
-    success: { bg: `${B.green}15`, border: B.green, text: "#5C0110" },
+    info:    { bg: `${B.green}15`, border: B.green, text: "#4A3D32" },
+    success: { bg: `${B.green}15`, border: B.green, text: "#4A3D32" },
     warning: { bg: "#fef3c7",      border: "#f59e0b", text: "#92400e" },
     error:   { bg: "#fef2f2",      border: "#ef4444", text: "#991b1b" },
   };

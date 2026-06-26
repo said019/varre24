@@ -26,8 +26,8 @@ const INTENSITIES = [
 ];
 
 const CATEGORIES = [
-  { value: "pilates", label: "🧘 Pilates", badge: "bg-[#E7C9CF]/20 text-[#E7C9CF]" },
-  { value: "bienestar", label: "� Bienestar", badge: "bg-[#7C0116]/20 text-[#7C0116]" },
+  { value: "pilates", label: "🧘 Pilates", badge: "bg-[#D5C4B8]/20 text-[#D5C4B8]" },
+  { value: "bienestar", label: "� Bienestar", badge: "bg-[#5B4A3E]/20 text-[#5B4A3E]" },
 ];
 
 const INTENSITY_BADGE: Record<string, string> = {
@@ -41,7 +41,7 @@ const EMPTY = {
   name: "", subtitle: "", description: "",
   category: "pilates" as ClassType["category"],
   intensity: "media" as ClassType["intensity"],
-  color: "#E7C9CF", emoji: "🧘",
+  color: "#D5C4B8", emoji: "🧘",
   level: "Todos los niveles", duration_min: 50, capacity: 15,
   sort_order: 0,
 };

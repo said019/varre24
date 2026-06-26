@@ -9,7 +9,7 @@ import { ContactFooter } from "@/components/landing/ContactFooter";
 
 export default function Index() {
   return (
-    <div className="bg-[#FFF1F3]">
+    <div className="bg-[#F6F2EB]">
       <Nav />
       <main>
         <Hero />

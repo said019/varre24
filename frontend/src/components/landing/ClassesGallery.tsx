@@ -1,13 +1,13 @@
 import { Reveal, MagneticButton } from "@/lib/motion";
 import { CLASSES, waLink } from "./data";
 
-const TINTS = ["bg-[#670626] text-[#FFF1F3]", "bg-[#FFF1F3] text-[#2B0911]", "bg-[#FFBDC5] text-[#2B0911]", "bg-[#FFF1F3] text-[#2B0911]", "bg-[#7C0116] text-[#FFF1F3]"];
+const TINTS = ["bg-[#3A2F26] text-[#F6F2EB]", "bg-[#F6F2EB] text-[#2A211B]", "bg-[#CBBFAF] text-[#2A211B]", "bg-[#F6F2EB] text-[#2A211B]", "bg-[#5B4A3E] text-[#F6F2EB]"];
 
 export function ClassesGallery() {
   return (
-    <section id="clases" className="bg-[#FFF1F3]">
+    <section id="clases" className="bg-[#F6F2EB]">
       <Reveal className="px-6 pt-20 pb-8 sm:px-10 lg:px-16">
-        <h2 className="font-bebas text-[clamp(2.6rem,7vw,6rem)] leading-none tracking-tight text-[#2B0911]">
+        <h2 className="font-bebas text-[clamp(2.6rem,7vw,6rem)] leading-none tracking-tight text-[#2A211B]">
           LAS CLASES
         </h2>
       </Reveal>

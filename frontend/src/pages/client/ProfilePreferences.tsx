@@ -46,13 +46,13 @@ const ProfilePreferences = () => {
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
         <div className="max-w-md space-y-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#E7C9CF]">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#D5C4B8]">
             <ArrowLeft size={16} className="mr-2" />Perfil
           </Button>
           <h1 className="text-xl font-bold">Preferencias de notificación</h1>
           <div className="space-y-4">
             {items.map(({ key, label, desc }) => (
-              <div key={key} className="flex items-center justify-between rounded-xl border border-[#7C0116]/15 p-4 hover:border-[#E7C9CF]/30 transition-colors">
+              <div key={key} className="flex items-center justify-between rounded-xl border border-[#5B4A3E]/15 p-4 hover:border-[#D5C4B8]/30 transition-colors">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">{label}</Label>
                   <p className="text-xs text-muted-foreground">{desc}</p>
@@ -65,7 +65,7 @@ const ProfilePreferences = () => {
             ))}
           </div>
           <Button
-            className="w-full bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] hover:from-[#7C0116]/90 hover:to-[#E7C9CF]/90 text-white font-medium"
+            className="w-full bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:from-[#5B4A3E]/90 hover:to-[#D5C4B8]/90 text-white font-medium"
             onClick={() => mutation.mutate()}
             disabled={mutation.isPending}
           >

@@ -103,15 +103,15 @@ const Dashboard = () => {
 
           {/* ── Greeting ── */}
           <section className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(340px,0.45fr)]">
-            <div className="relative overflow-hidden rounded-[1.75rem] bg-[#7C0116] p-6 text-[#FFF7F8] shadow-[0_30px_90px_-58px_rgba(47,40,35,0.95)] sm:p-8">
+            <div className="relative overflow-hidden rounded-[1.75rem] bg-[#5B4A3E] p-6 text-[#FBF8F4] shadow-[0_30px_90px_-58px_rgba(47,40,35,0.95)] sm:p-8">
               <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[linear-gradient(90deg,transparent,rgba(200,183,158,0.16))]" />
-              <p className="relative text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#E7C9CF]">Bienvenida</p>
+              <p className="relative text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#D5C4B8]">Bienvenida</p>
               <div className="relative mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                  <h1 className="font-alilato text-4xl font-bold leading-[0.95] tracking-[0] text-[#FFF7F8] sm:text-5xl">
+                  <h1 className="font-alilato text-4xl font-bold leading-[0.95] tracking-[0] text-[#FBF8F4] sm:text-5xl">
                     Hola, {firstName || "Cristopher"}
                   </h1>
-                  <p className="mt-4 max-w-[58ch] text-sm leading-6 text-[#FFF1F3]/68">
+                  <p className="mt-4 max-w-[58ch] text-sm leading-6 text-[#F6F2EB]/68">
                     Tu resumen de clases, membresía y pendientes del estudio para hoy.
                   </p>
                 </div>
@@ -124,12 +124,12 @@ const Dashboard = () => {
                     <Link
                       key={to}
                       to={to}
-                      className="group flex min-h-[6.8rem] flex-col justify-between rounded-2xl border border-[#FFF1F3]/12 bg-[#FFF1F3]/8 p-3 no-underline transition-all hover:-translate-y-0.5 hover:bg-[#FFF1F3]/12"
+                      className="group flex min-h-[6.8rem] flex-col justify-between rounded-2xl border border-[#F6F2EB]/12 bg-[#F6F2EB]/8 p-3 no-underline transition-all hover:-translate-y-0.5 hover:bg-[#F6F2EB]/12"
                     >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFF1F3]/12 text-[#FFF7F8]">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F6F2EB]/12 text-[#FBF8F4]">
                         <Icon size={18} />
                       </span>
-                      <span className="flex items-center justify-between text-xs font-semibold text-[#FFF1F3]/78">
+                      <span className="flex items-center justify-between text-xs font-semibold text-[#F6F2EB]/78">
                         {label}
                         <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
                       </span>
@@ -145,15 +145,15 @@ const Dashboard = () => {
                 { label: "Créditos", value: creditsLabel, loading: loadingMembership },
                 { label: "Próximas", value: `${upcomingBookings.length}`, loading: loadingBookings },
               ].map((stat) => (
-                <div key={stat.label} className="rounded-[1.35rem] border border-[#7C0116]/12 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_18px_50px_-38px_rgba(84,67,49,0.58)] backdrop-blur">
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#7C0116]/48">{stat.label}</p>
+                <div key={stat.label} className="rounded-[1.35rem] border border-[#5B4A3E]/12 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_18px_50px_-38px_rgba(84,67,49,0.58)] backdrop-blur">
+                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/48">{stat.label}</p>
                   {/* Gate en loading: evita el parpadeo de "Sin membresía" / "Sin
                       plan activo" antes de que /memberships/my responda en el
                       primer render (cache fría / recarga). */}
                   {stat.loading ? (
                     <Skeleton className="mt-3 h-7 w-24" />
                   ) : (
-                    <p className="mt-3 truncate text-xl font-bold text-[#2B0911]">{stat.value}</p>
+                    <p className="mt-3 truncate text-xl font-bold text-[#2A211B]">{stat.value}</p>
                   )}
                 </div>
               ))}
@@ -165,8 +165,8 @@ const Dashboard = () => {
               {/* ── Membresía ── */}
               <div>
                 <div className="mb-3 flex items-end justify-between gap-3">
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#7C0116]/52">Mi membresía</p>
-                  <Link to="/app/checkout" className="text-xs font-semibold text-[#7C0116] no-underline hover:text-[#2B0911]">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">Mi membresía</p>
+                  <Link to="/app/checkout" className="text-xs font-semibold text-[#5B4A3E] no-underline hover:text-[#2A211B]">
                     Ver planes
                   </Link>
                 </div>
@@ -175,15 +175,15 @@ const Dashboard = () => {
                 ) : membership ? (
                   <MembershipCard membership={membership} />
                 ) : (
-                  <div className="rounded-[1.35rem] border border-[#7C0116]/14 bg-white/54 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_22px_60px_-42px_rgba(84,67,49,0.58)]">
+                  <div className="rounded-[1.35rem] border border-[#5B4A3E]/14 bg-white/54 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_22px_60px_-42px_rgba(84,67,49,0.58)]">
                     <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                       <div>
-                        <p className="text-lg font-bold text-[#2B0911]">No tienes membresía activa</p>
-                        <p className="mt-1 max-w-[48ch] text-sm text-[#5C0110]/62">
+                        <p className="text-lg font-bold text-[#2A211B]">No tienes membresía activa</p>
+                        <p className="mt-1 max-w-[48ch] text-sm text-[#4A3D32]/62">
                           Elige un plan para reservar clases y ver tus créditos disponibles.
                         </p>
                       </div>
-                      <Button asChild className="bg-[#7C0116] text-[#FFF1F3] hover:bg-[#670626]">
+                      <Button asChild className="bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
                         <Link to="/app/checkout">Adquirir membresía</Link>
                       </Button>
                     </div>
@@ -194,42 +194,42 @@ const Dashboard = () => {
               {/* ── Próximas clases ── */}
               <div>
                 <div className="mb-3 flex items-end justify-between gap-3">
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#7C0116]/52">Próximas clases</p>
-                  <Link to="/app/classes" className="text-xs font-semibold text-[#7C0116] no-underline hover:text-[#2B0911]">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">Próximas clases</p>
+                  <Link to="/app/classes" className="text-xs font-semibold text-[#5B4A3E] no-underline hover:text-[#2A211B]">
                     Reservar
                   </Link>
                 </div>
                 {loadingBookings ? (
                   <Skeleton className="h-32 w-full rounded-[1.35rem]" />
                 ) : upcomingBookings.length === 0 ? (
-                  <div className="rounded-[1.35rem] border border-dashed border-[#7C0116]/18 bg-[#7C0116]/[0.035] p-8 text-center">
-                    <p className="text-base font-semibold text-[#2B0911]">No tienes clases próximas</p>
-                    <p className="mt-1 text-sm text-[#5C0110]/58">Reserva desde el calendario semanal del estudio.</p>
-                    <Button asChild className="mt-5 bg-[#7C0116] text-[#FFF1F3] hover:bg-[#670626]">
+                  <div className="rounded-[1.35rem] border border-dashed border-[#5B4A3E]/18 bg-[#5B4A3E]/[0.035] p-8 text-center">
+                    <p className="text-base font-semibold text-[#2A211B]">No tienes clases próximas</p>
+                    <p className="mt-1 text-sm text-[#4A3D32]/58">Reserva desde el calendario semanal del estudio.</p>
+                    <Button asChild className="mt-5 bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
                       <Link to="/app/classes">Reservar ahora</Link>
                     </Button>
                   </div>
                 ) : (
                   <div className="grid gap-3 md:grid-cols-2">
                     {upcomingBookings.map((b) => (
-                      <div key={b.id} className="rounded-[1.15rem] border border-[#7C0116]/12 bg-white/58 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
+                      <div key={b.id} className="rounded-[1.15rem] border border-[#5B4A3E]/12 bg-white/58 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
                         <div className="flex items-center gap-4">
-                          <div className="shrink-0 rounded-2xl bg-[#7C0116] px-3 py-2 text-center text-[#FFF7F8]">
+                          <div className="shrink-0 rounded-2xl bg-[#5B4A3E] px-3 py-2 text-center text-[#FBF8F4]">
                             <p className="tabular text-lg font-bold leading-none">
                               {b.start_time ? format(safeParse(b.start_time), "HH:mm") : "—"}
                             </p>
-                            <p className="mt-1 text-[10px] capitalize text-[#FFF1F3]/65">
+                            <p className="mt-1 text-[10px] capitalize text-[#F6F2EB]/65">
                               {b.start_time ? format(safeParse(b.start_time), "EEE d", { locale: es }) : ""}
                             </p>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-bold text-[#2B0911]">{b.class_type_name}</p>
-                            <p className="mt-0.5 truncate text-xs text-[#5C0110]/58">{b.instructor_name ?? b.class_type_name}</p>
+                            <p className="truncate text-sm font-bold text-[#2A211B]">{b.class_type_name}</p>
+                            <p className="mt-0.5 truncate text-xs text-[#4A3D32]/58">{b.instructor_name ?? b.class_type_name}</p>
                           </div>
                           <Badge
                             className={b.status === "waitlist"
-                              ? "border border-[#E7C9CF]/40 bg-[#E7C9CF]/20 text-[#7C0116]"
-                              : "bg-[#7C0116] text-[#FFF1F3]"}
+                              ? "border border-[#D5C4B8]/40 bg-[#D5C4B8]/20 text-[#5B4A3E]"
+                              : "bg-[#5B4A3E] text-[#F6F2EB]"}
                           >
                             {b.status === "waitlist" ? "Espera" : "Confirmada"}
                           </Badge>
@@ -245,24 +245,24 @@ const Dashboard = () => {
               {/* ── CTA Adquirir / Renovar ── */}
               {(noMembership || isLowCredits) && (
                 <Link to="/app/checkout" className="block no-underline">
-                  <div className="relative overflow-hidden rounded-[1.35rem] border border-[#7C0116]/14 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_22px_60px_-42px_rgba(84,67,49,0.64)] transition-all hover:-translate-y-0.5">
+                  <div className="relative overflow-hidden rounded-[1.35rem] border border-[#5B4A3E]/14 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_22px_60px_-42px_rgba(84,67,49,0.64)] transition-all hover:-translate-y-0.5">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7C0116]/10 text-[#7C0116]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5B4A3E]/10 text-[#5B4A3E]">
                           <Sparkles size={18} />
                         </div>
                         <div>
-                          <p className="font-bold text-[#2B0911]">
+                          <p className="font-bold text-[#2A211B]">
                             {noMembership ? "Adquiere tu membresía" : "Renueva tu plan"}
                           </p>
-                          <p className="mt-0.5 text-xs text-[#5C0110]/58">
+                          <p className="mt-0.5 text-xs text-[#4A3D32]/58">
                             {noMembership
                               ? "Elige el plan ideal para ti"
                               : `${classesRemaining} clase${classesRemaining === 1 ? "" : "s"} restantes`}
                           </p>
                         </div>
                       </div>
-                      <ArrowRight size={16} className="shrink-0 text-[#7C0116]" />
+                      <ArrowRight size={16} className="shrink-0 text-[#5B4A3E]" />
                     </div>
                   </div>
                 </Link>
@@ -271,21 +271,21 @@ const Dashboard = () => {
               {/* ── Órdenes pendientes ── */}
               {pendingOrders.length > 0 && (
                 <div>
-                  <p className="mb-3 flex items-center gap-1.5 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#7C0116]/52">
+                  <p className="mb-3 flex items-center gap-1.5 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">
                     <CreditCard size={12} />
                     {pendingOrders.length === 1 ? "Orden pendiente" : "Órdenes pendientes"}
                   </p>
                   <div className="space-y-3">
                     {pendingOrders.map((o: any) => (
-                      <div key={o.id} className="rounded-[1.15rem] border border-[#7C0116]/12 bg-white/60 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
+                      <div key={o.id} className="rounded-[1.15rem] border border-[#5B4A3E]/12 bg-white/60 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-0.5">
-                            <p className="font-bold text-sm text-[#2B0911]">{o.plan_name}</p>
-                            <p className="text-xs text-[#5C0110]/58">
+                            <p className="font-bold text-sm text-[#2A211B]">{o.plan_name}</p>
+                            <p className="text-xs text-[#4A3D32]/58">
                               ${Number(o.total_amount).toLocaleString("es-MX")} MXN · {o.payment_method === "card" ? "Tarjeta en línea" : o.payment_method === "cash" ? "Tarjeta (estudio)" : "Transferencia"}
                             </p>
                             {o.order_number && (
-                              <p className="font-mono text-[10px] text-[#7C0116]/50">Orden: {o.order_number}</p>
+                              <p className="font-mono text-[10px] text-[#5B4A3E]/50">Orden: {o.order_number}</p>
                             )}
                           </div>
                           <Badge
@@ -302,7 +302,7 @@ const Dashboard = () => {
                           </Badge>
                         </div>
                         {o.status === "pending_payment" && (
-                          <Button asChild size="sm" className="mt-3 w-full bg-[#7C0116] text-[#FFF1F3] hover:bg-[#670626]">
+                          <Button asChild size="sm" className="mt-3 w-full bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
                             {o.payment_method === "card" ? (
                               <Link to="/app/orders">
                                 <CreditCard size={13} className="mr-1.5" />Completar pago
@@ -339,8 +339,8 @@ const Dashboard = () => {
                       <div key={c.id} className="rounded-[1.15rem] border border-amber-300/35 bg-amber-50/55 p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-0.5">
-                            <p className="font-bold text-sm text-[#2B0911]">{c.complement_name}</p>
-                            <p className="text-xs text-[#5C0110]/58">Especialista: {c.specialist}</p>
+                            <p className="font-bold text-sm text-[#2A211B]">{c.complement_name}</p>
+                            <p className="text-xs text-[#4A3D32]/58">Especialista: {c.specialist}</p>
                             {c.status === "scheduled" && c.scheduled_date && (
                               <p className="mt-1 flex items-center gap-1 text-xs font-medium text-green-700">
                                 <CalendarCheck size={11} />
@@ -361,7 +361,7 @@ const Dashboard = () => {
                           </p>
                         )}
                         {c.notes && (
-                          <p className="mt-2 text-xs italic text-[#5C0110]/45">Nota: {c.notes}</p>
+                          <p className="mt-2 text-xs italic text-[#4A3D32]/45">Nota: {c.notes}</p>
                         )}
                       </div>
                     ))}

@@ -32,9 +32,9 @@ const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 type ClassCat = "pilates" | "bienestar" | "all";
 
 const CAT_COLORS: Record<ClassCat, { bg: string; text: string; border: string; dot: string }> = {
-  pilates:   { bg: "bg-[#E7C9CF]/15", text: "text-[#4a5638]",  border: "border-[#E7C9CF]/40", dot: "bg-[#6b7a52]"  },
-  bienestar: { bg: "bg-[#7C0116]/15", text: "text-[#670626]",  border: "border-[#7C0116]/40", dot: "bg-[#9B5A66]"  },
-  all:       { bg: "bg-[#7C0116]/[0.06]",      text: "text-[#2B0911]/70",   border: "border-[#7C0116]/20",     dot: "bg-[#7C0116]/40"   },
+  pilates:   { bg: "bg-[#D5C4B8]/15", text: "text-[#4a5638]",  border: "border-[#D5C4B8]/40", dot: "bg-[#6b7a52]"  },
+  bienestar: { bg: "bg-[#5B4A3E]/15", text: "text-[#3A2F26]",  border: "border-[#5B4A3E]/40", dot: "bg-[#8A8077]"  },
+  all:       { bg: "bg-[#5B4A3E]/[0.06]",      text: "text-[#2A211B]/70",   border: "border-[#5B4A3E]/20",     dot: "bg-[#5B4A3E]/40"   },
 };
 
 const CAT_LABELS: Record<ClassCat, string> = {
@@ -82,14 +82,14 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
   const endDate = membership.endDate ?? membership.end_date;
 
   return (
-    <div className="rounded-[1.5rem] border border-[#7C0116]/14 bg-white/58 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_18px_50px_-40px_rgba(74,51,41,0.42)] backdrop-blur">
+    <div className="rounded-[1.5rem] border border-[#5B4A3E]/14 bg-white/58 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_18px_50px_-40px_rgba(74,51,41,0.42)] backdrop-blur">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl border", colors.bg, colors.border)}>
             <Sparkles size={18} className={colors.text} />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-[#2B0911]">{membership.planName ?? membership.plan_name}</p>
+            <p className="truncate text-sm font-bold text-[#2A211B]">{membership.planName ?? membership.plan_name}</p>
             <div className="mt-1 flex items-center gap-2">
               <span className={cn("h-2 w-2 rounded-full", colors.dot)} />
               <span className={cn("text-[0.68rem] font-bold uppercase tracking-[0.16em]", colors.text)}>
@@ -99,20 +99,20 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:min-w-[16rem]">
-          <div className="rounded-2xl border border-[#7C0116]/10 bg-[#FFF1F3]/70 px-4 py-3">
+          <div className="rounded-2xl border border-[#5B4A3E]/10 bg-[#F6F2EB]/70 px-4 py-3">
             <div className={cn("text-2xl font-bold leading-none", colors.text)}>
               {isUnlimited ? "∞" : remaining}
             </div>
-            <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#5C0110]/60">
+            <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#4A3D32]/60">
               {isUnlimited ? "Ilimitado" : "Clases"}
             </div>
           </div>
           {endDate && (
-            <div className="rounded-2xl border border-[#7C0116]/10 bg-[#FFF1F3]/70 px-4 py-3 text-right">
-              <div className="text-sm font-bold text-[#2B0911]">
+            <div className="rounded-2xl border border-[#5B4A3E]/10 bg-[#F6F2EB]/70 px-4 py-3 text-right">
+              <div className="text-sm font-bold text-[#2A211B]">
                 {new Date(endDate).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}
               </div>
-              <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#5C0110]/60">
+              <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#4A3D32]/60">
                 Vence
               </div>
             </div>
@@ -204,33 +204,33 @@ const BookClasses = () => {
       <ClientLayout>
         <div className="mx-auto w-full max-w-7xl space-y-6">
           {/* Header */}
-          <section className="relative overflow-hidden rounded-[2rem] border border-[#7C0116]/12 bg-[#FFF1F3]/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_24px_70px_-52px_rgba(74,51,41,0.6)] backdrop-blur sm:p-6">
-            <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#E7C9CF]/20 blur-3xl" />
+          <section className="relative overflow-hidden rounded-[2rem] border border-[#5B4A3E]/12 bg-[#F6F2EB]/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_24px_70px_-52px_rgba(74,51,41,0.6)] backdrop-blur sm:p-6">
+            <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#D5C4B8]/20 blur-3xl" />
             <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#7C0116]/58">
+                <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#5B4A3E]/58">
                   Reserva semanal
                 </p>
-                <h1 className="mt-2 font-alilato text-3xl font-bold leading-none tracking-[0] text-[#2B0911] sm:text-4xl">
+                <h1 className="mt-2 font-alilato text-3xl font-bold leading-none tracking-[0] text-[#2A211B] sm:text-4xl">
                   Elige tu clase
                 </h1>
-                <p className="mt-3 max-w-[56ch] text-sm leading-6 text-[#5C0110]/72">
+                <p className="mt-3 max-w-[56ch] text-sm leading-6 text-[#4A3D32]/72">
                   Revisa cupos por día y confirma el horario que mejor acompañe tu semana.
                 </p>
               </div>
-              <div className="flex items-center gap-2 self-start rounded-2xl border border-[#7C0116]/12 bg-white/62 p-1.5 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.55)] lg:self-auto">
+              <div className="flex items-center gap-2 self-start rounded-2xl border border-[#5B4A3E]/12 bg-white/62 p-1.5 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.55)] lg:self-auto">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setWeekStart((w) => subWeeks(w, 1))}
-                  className="h-11 w-11 rounded-xl text-[#2B0911] hover:bg-[#7C0116]/10"
+                  className="h-11 w-11 rounded-xl text-[#2A211B] hover:bg-[#5B4A3E]/10"
                   aria-label="Semana anterior"
                 >
                   <ChevronLeft size={18} />
                 </Button>
                 <div className="min-w-[12.5rem] px-3 text-center">
-                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#7C0116]/55">Semana</p>
-                  <p className="mt-0.5 text-sm font-bold text-[#2B0911]">
+                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/55">Semana</p>
+                  <p className="mt-0.5 text-sm font-bold text-[#2A211B]">
                     {format(weekStart, "d MMM", { locale: es })} – {format(weekEnd, "d MMM yyyy", { locale: es })}
                   </p>
                 </div>
@@ -238,7 +238,7 @@ const BookClasses = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setWeekStart((w) => addWeeks(w, 1))}
-                  className="h-11 w-11 rounded-xl text-[#2B0911] hover:bg-[#7C0116]/10"
+                  className="h-11 w-11 rounded-xl text-[#2A211B] hover:bg-[#5B4A3E]/10"
                   aria-label="Semana siguiente"
                 >
                   <ChevronRight size={18} />
@@ -267,18 +267,18 @@ const BookClasses = () => {
                 </div>
               </div>
             )}
-            <div className="rounded-[1.5rem] border border-[#7C0116]/12 bg-white/55 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
+            <div className="rounded-[1.5rem] border border-[#5B4A3E]/12 bg-white/55 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-[#7C0116]/55">Disponibles</p>
+                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-[#5B4A3E]/55">Disponibles</p>
                   {/* Gate: evita el flash de "0" antes de que carguen clases/membresía. */}
                   {(loadingClasses || loadingMembership) ? (
                     <Skeleton className="mt-2 h-8 w-12" />
                   ) : (
-                    <p className="mt-2 text-3xl font-bold leading-none text-[#2B0911]">{bookableThisWeek}</p>
+                    <p className="mt-2 text-3xl font-bold leading-none text-[#2A211B]">{bookableThisWeek}</p>
                   )}
                 </div>
-                <CalendarDays size={22} className="text-[#7C0116]/55" />
+                <CalendarDays size={22} className="text-[#5B4A3E]/55" />
               </div>
             </div>
             <div className="rounded-[1.5rem] border border-emerald-500/18 bg-emerald-50/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
@@ -299,9 +299,9 @@ const BookClasses = () => {
 
           {/* Filter hint */}
           {membershipCat && membershipCat !== "all" && (
-            <div className="flex items-center gap-2 rounded-2xl border border-[#7C0116]/10 bg-white/42 px-4 py-3 text-xs">
+            <div className="flex items-center gap-2 rounded-2xl border border-[#5B4A3E]/10 bg-white/42 px-4 py-3 text-xs">
               <CheckCircle2 size={13} className={CAT_COLORS[membershipCat].text} />
-              <span className="text-[#5C0110]/72">
+              <span className="text-[#4A3D32]/72">
                 Tu membresía <span className={cn("font-semibold", CAT_COLORS[membershipCat].text)}>{CAT_LABELS[membershipCat]}</span> solo permite reservar clases de esa categoría.
               </span>
             </div>
@@ -323,15 +323,15 @@ const BookClasses = () => {
           )}
 
           {/* Week grid */}
-          <section className="overflow-hidden rounded-[2rem] border border-[#7C0116]/12 bg-white/48 shadow-[inset_0_1px_0_rgba(255,255,255,0.76),0_26px_78px_-56px_rgba(74,51,41,0.58)] backdrop-blur">
+          <section className="overflow-hidden rounded-[2rem] border border-[#5B4A3E]/12 bg-white/48 shadow-[inset_0_1px_0_rgba(255,255,255,0.76),0_26px_78px_-56px_rgba(74,51,41,0.58)] backdrop-blur">
             <div className="overflow-x-auto">
-              <div className="grid min-w-[980px] grid-cols-7 divide-x divide-[#7C0116]/10">
+              <div className="grid min-w-[980px] grid-cols-7 divide-x divide-[#5B4A3E]/10">
               {days.map((day, i) => (
-                <div key={i} className="min-h-[36rem] bg-[#FFF1F3]/20">
-                  <div className="sticky top-0 z-[1] border-b border-[#7C0116]/10 bg-[#FFF7F8]/92 px-4 py-4 text-center backdrop-blur">
-                    <div className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5C0110]/58">{DAYS[i]}</div>
-                    <div className="mt-1 text-2xl font-bold leading-none text-[#2B0911]">{format(day, "d")}</div>
-                    <div className="mt-2 text-[0.68rem] font-semibold text-[#7C0116]/58">
+                <div key={i} className="min-h-[36rem] bg-[#F6F2EB]/20">
+                  <div className="sticky top-0 z-[1] border-b border-[#5B4A3E]/10 bg-[#FBF8F4]/92 px-4 py-4 text-center backdrop-blur">
+                    <div className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#4A3D32]/58">{DAYS[i]}</div>
+                    <div className="mt-1 text-2xl font-bold leading-none text-[#2A211B]">{format(day, "d")}</div>
+                    <div className="mt-2 text-[0.68rem] font-semibold text-[#5B4A3E]/58">
                       {classesForDay(day).length} {classesForDay(day).length === 1 ? "clase" : "clases"}
                     </div>
                   </div>
@@ -361,22 +361,22 @@ const BookClasses = () => {
                             className={cn(
                               "group relative w-full overflow-hidden rounded-2xl border p-4 text-left text-xs transition-all duration-200 active:scale-[0.99]",
                               isBooked  && "border-emerald-500/30 bg-emerald-50/80 shadow-[0_14px_34px_-28px_rgba(4,120,87,0.65)]",
-                              !isBooked && !disabled && cn(c.border, "cursor-pointer bg-white/72 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.48)] hover:-translate-y-0.5 hover:border-[#7C0116]/35 hover:bg-[#FFF7F8]"),
-                              !isBooked && isPast  && "cursor-not-allowed border-[#7C0116]/10 bg-white/20 opacity-42",
-                              !isBooked && locked  && "cursor-not-allowed border-[#7C0116]/10 bg-white/24 opacity-45",
+                              !isBooked && !disabled && cn(c.border, "cursor-pointer bg-white/72 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.48)] hover:-translate-y-0.5 hover:border-[#5B4A3E]/35 hover:bg-[#FBF8F4]"),
+                              !isBooked && isPast  && "cursor-not-allowed border-[#5B4A3E]/10 bg-white/20 opacity-42",
+                              !isBooked && locked  && "cursor-not-allowed border-[#5B4A3E]/10 bg-white/24 opacity-45",
                             )}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", isBooked ? "bg-emerald-500" : c.dot)} />
-                                  <p className={cn("truncate text-sm font-bold", isBooked ? "text-emerald-900" : "text-[#2B0911]")}>
+                                  <p className={cn("truncate text-sm font-bold", isBooked ? "text-emerald-900" : "text-[#2A211B]")}>
                                     {cls.class_type_name}
                                   </p>
                                   <ClassCategoryBadge classTypeName={cls.class_type_name ?? ""} />
                                 </div>
-                                <p className="mt-3 flex items-center gap-1.5 text-lg font-bold leading-none text-[#2B0911]">
-                                  <Clock size={14} className="text-[#7C0116]/58" />
+                                <p className="mt-3 flex items-center gap-1.5 text-lg font-bold leading-none text-[#2A211B]">
+                                  <Clock size={14} className="text-[#5B4A3E]/58" />
                                   {cls.start_time ? format(safeParse(cls.start_time), "HH:mm") : "—"}
                                 </p>
                               </div>
@@ -386,13 +386,13 @@ const BookClasses = () => {
                                 </span>
                               )}
                               {locked && (
-                                <span className="rounded-full bg-[#7C0116]/8 p-1 text-[#5C0110]/45">
+                                <span className="rounded-full bg-[#5B4A3E]/8 p-1 text-[#4A3D32]/45">
                                   <Lock size={13} />
                                 </span>
                               )}
                             </div>
-                            <div className="mt-4 flex items-center justify-between border-t border-[#7C0116]/10 pt-3">
-                              <span className="text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-[#5C0110]/52">
+                            <div className="mt-4 flex items-center justify-between border-t border-[#5B4A3E]/10 pt-3">
+                              <span className="text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-[#4A3D32]/52">
                                 50 min
                               </span>
                               <span className={cn(
@@ -400,8 +400,8 @@ const BookClasses = () => {
                                 isBooked
                                   ? "bg-emerald-100 text-emerald-700"
                                   : disabled
-                                    ? "bg-[#7C0116]/8 text-[#5C0110]/42"
-                                    : "bg-[#7C0116]/10 text-[#7C0116]"
+                                    ? "bg-[#5B4A3E]/8 text-[#4A3D32]/42"
+                                    : "bg-[#5B4A3E]/10 text-[#5B4A3E]"
                               )}>
                                 {isBooked ? "Reservada" : disabled ? "No disponible" : "Reservar"}
                               </span>
@@ -410,8 +410,8 @@ const BookClasses = () => {
                         );
                       })}
                       {classesForDay(day).length === 0 && (
-                        <div className="rounded-2xl border border-dashed border-[#7C0116]/14 p-5 text-center">
-                          <p className="text-xs font-semibold text-[#5C0110]/52">Sin clases</p>
+                        <div className="rounded-2xl border border-dashed border-[#5B4A3E]/14 p-5 text-center">
+                          <p className="text-xs font-semibold text-[#4A3D32]/52">Sin clases</p>
                         </div>
                       )}
                     </div>
@@ -427,10 +427,10 @@ const BookClasses = () => {
             <div className="flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-50/80 px-3 py-1.5 text-xs font-semibold text-emerald-700">
               <CheckCircle2 size={12} /> Reservada
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-[#7C0116]/15 bg-white/55 px-3 py-1.5 text-xs font-semibold text-[#7C0116]">
+            <div className="flex items-center gap-2 rounded-full border border-[#5B4A3E]/15 bg-white/55 px-3 py-1.5 text-xs font-semibold text-[#5B4A3E]">
               <CalendarDays size={12} /> Disponible
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-[#7C0116]/10 bg-[#7C0116]/[0.04] px-3 py-1.5 text-xs font-semibold text-[#5C0110]/55">
+            <div className="flex items-center gap-2 rounded-full border border-[#5B4A3E]/10 bg-[#5B4A3E]/[0.04] px-3 py-1.5 text-xs font-semibold text-[#4A3D32]/55">
               <Lock size={11} /> No disponible
             </div>
           </div>

@@ -87,7 +87,7 @@ export const BookingDialog = ({ classData, open, onOpenChange, onSuccess }: Prop
     }
   };
 
-  const accentColor = classData.color ?? "#9B5A66";
+  const accentColor = classData.color ?? "#8A8077";
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!loading) { setDone(false); onOpenChange(v); } }}>

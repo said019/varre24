@@ -78,7 +78,7 @@ const ProfileEdit = () => {
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
         <div className="max-w-md space-y-5">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#E7C9CF]">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#D5C4B8]">
             <ArrowLeft size={16} className="mr-2" />Perfil
           </Button>
           <h1 className="text-xl font-bold">Editar perfil</h1>
@@ -108,7 +108,7 @@ const ProfileEdit = () => {
                   type={type ?? "text"}
                   placeholder={placeholder}
                   {...register(name)}
-                  className="bg-secondary border-border focus:border-[#E7C9CF] transition-colors"
+                  className="bg-secondary border-border focus:border-[#D5C4B8] transition-colors"
                 />
                 {errors[name] && <p className="text-xs text-destructive">{errors[name]?.message}</p>}
               </div>
@@ -119,7 +119,7 @@ const ProfileEdit = () => {
               <Label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Sexo</Label>
               <select
                 {...register("gender")}
-                className="w-full rounded-md bg-secondary border border-border px-3 py-2.5 text-sm text-foreground focus:border-[#E7C9CF] focus:outline-none transition-colors"
+                className="w-full rounded-md bg-secondary border border-border px-3 py-2.5 text-sm text-foreground focus:border-[#D5C4B8] focus:outline-none transition-colors"
               >
                 <option value="">Selecciona…</option>
                 <option value="female">Femenino</option>
@@ -133,12 +133,12 @@ const ProfileEdit = () => {
               <Textarea
                 placeholder="Alergias, condiciones médicas relevantes..."
                 {...register("healthNotes")}
-                className="bg-secondary border-border focus:border-[#E7C9CF] transition-colors"
+                className="bg-secondary border-border focus:border-[#D5C4B8] transition-colors"
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] hover:from-[#7C0116]/90 hover:to-[#E7C9CF]/90 text-white font-medium"
+              className="w-full bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:from-[#5B4A3E]/90 hover:to-[#D5C4B8]/90 text-white font-medium"
               disabled={mutation.isPending}
             >
               {mutation.isPending ? <Loader2 className="animate-spin mr-2" size={16} /> : null}

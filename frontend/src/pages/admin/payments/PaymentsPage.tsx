@@ -65,15 +65,15 @@ const StepBar = ({ step }: { step: number }) => (
         <div key={i} className="flex items-center gap-0">
           <div className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
-            done && "bg-[#7C0116]/20 text-[#7C0116] border border-[#7C0116]/30",
-            active && "bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] text-white shadow-[0_0_16px_rgba(131,106,93,0.4)]",
-            !done && !active && "bg-[#7C0116]/[0.06] text-[#2B0911]/25 border border-[#7C0116]/15"
+            done && "bg-[#5B4A3E]/20 text-[#5B4A3E] border border-[#5B4A3E]/30",
+            active && "bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] text-white shadow-[0_0_16px_rgba(131,106,93,0.4)]",
+            !done && !active && "bg-[#5B4A3E]/[0.06] text-[#2A211B]/25 border border-[#5B4A3E]/15"
           )}>
             <span className={cn(
               "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-              done && "bg-[#7C0116] text-white",
-              active && "bg-[#7C0116]/15 text-[#2B0911]",
-              !done && !active && "bg-[#7C0116]/10 text-[#2B0911]/30"
+              done && "bg-[#5B4A3E] text-white",
+              active && "bg-[#5B4A3E]/15 text-[#2A211B]",
+              !done && !active && "bg-[#5B4A3E]/10 text-[#2A211B]/30"
             )}>
               {done ? "✓" : i + 1}
             </span>
@@ -82,7 +82,7 @@ const StepBar = ({ step }: { step: number }) => (
           {i < 2 && (
             <div className={cn(
               "w-8 h-px mx-1 transition-all",
-              done ? "bg-[#7C0116]/50" : "bg-[#7C0116]/10"
+              done ? "bg-[#5B4A3E]/50" : "bg-[#5B4A3E]/10"
             )} />
           )}
         </div>
@@ -142,12 +142,12 @@ const CashAssignment = () => {
       {/* ── Step 1: Buscar cliente ─────────────────────────── */}
       {step === 1 && (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5">
-            <h3 className="text-sm font-semibold text-[#2B0911]/60 uppercase tracking-wider mb-4">Buscar cliente</h3>
+          <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5">
+            <h3 className="text-sm font-semibold text-[#2A211B]/60 uppercase tracking-wider mb-4">Buscar cliente</h3>
             <div className="relative">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#E7C9CF]/60" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#D5C4B8]/60" />
               <Input
-                className="pl-9 bg-[#7C0116]/[0.06] border-[#7C0116]/15 focus:border-[#7C0116]/50 focus:ring-[#7C0116]/20 text-[#2B0911] placeholder:text-[#7C0116]/40 rounded-xl"
+                className="pl-9 bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 focus:border-[#5B4A3E]/50 focus:ring-[#5B4A3E]/20 text-[#2A211B] placeholder:text-[#5B4A3E]/40 rounded-xl"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Nombre, email o teléfono…"
@@ -157,7 +157,7 @@ const CashAssignment = () => {
           </div>
 
           {usersLoading && (
-            <div className="flex items-center justify-center py-8 text-[#E7C9CF]/60">
+            <div className="flex items-center justify-center py-8 text-[#D5C4B8]/60">
               <Loader2 className="animate-spin mr-2" size={16} /> Buscando…
             </div>
           )}
@@ -166,24 +166,24 @@ const CashAssignment = () => {
             {filteredUsers.map((u) => (
               <button
                 key={u.id}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] hover:bg-[#7C0116]/5 hover:border-[#7C0116]/25 transition-all group text-left"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:bg-[#5B4A3E]/5 hover:border-[#5B4A3E]/25 transition-all group text-left"
                 onClick={() => { setSelectedUser(u); setStep(2); }}
               >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7C0116]/30 to-[#E7C9CF]/20 border border-[#7C0116]/30 flex items-center justify-center text-sm font-bold text-[#7C0116] shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#5B4A3E]/30 to-[#D5C4B8]/20 border border-[#5B4A3E]/30 flex items-center justify-center text-sm font-bold text-[#5B4A3E] shrink-0">
                   {u.displayName?.[0]?.toUpperCase() ?? "?"}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-[#2B0911]/90 truncate">{u.displayName}</p>
-                  <p className="text-xs text-[#2B0911]/35 truncate">
+                  <p className="font-semibold text-sm text-[#2A211B]/90 truncate">{u.displayName}</p>
+                  <p className="text-xs text-[#2A211B]/35 truncate">
                     {u.email}
                     {u.phone ? ` · ${u.phone}` : ""}
                   </p>
                 </div>
-                <ArrowRight size={14} className="text-[#2B0911]/20 group-hover:text-[#7C0116]/60 transition-colors shrink-0" />
+                <ArrowRight size={14} className="text-[#2A211B]/20 group-hover:text-[#5B4A3E]/60 transition-colors shrink-0" />
               </button>
             ))}
             {filteredUsers.length === 0 && !usersLoading && (
-              <p className="text-center py-6 text-[#2B0911]/30 text-sm">No se encontraron clientes</p>
+              <p className="text-center py-6 text-[#2A211B]/30 text-sm">No se encontraron clientes</p>
             )}
           </div>
         </div>
@@ -193,15 +193,15 @@ const CashAssignment = () => {
       {step === 2 && (
         <div className="space-y-5">
           {/* Cliente seleccionado */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-[#7C0116]/8 border border-[#7C0116]/20">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C0116] to-[#E7C9CF] flex items-center justify-center text-xs font-bold text-white">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-[#5B4A3E]/8 border border-[#5B4A3E]/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] flex items-center justify-center text-xs font-bold text-white">
               {selectedUser?.displayName?.[0]?.toUpperCase()}
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#2B0911]/90">{selectedUser?.displayName}</p>
-              <p className="text-xs text-[#2B0911]/40">{selectedUser?.email}</p>
+              <p className="text-sm font-semibold text-[#2A211B]/90">{selectedUser?.displayName}</p>
+              <p className="text-xs text-[#2A211B]/40">{selectedUser?.email}</p>
             </div>
-            <Button variant="ghost" size="sm" className="ml-auto text-[#2B0911]/30 hover:text-[#2B0911]/60 text-xs" onClick={() => setStep(1)}>
+            <Button variant="ghost" size="sm" className="ml-auto text-[#2A211B]/30 hover:text-[#2A211B]/60 text-xs" onClick={() => setStep(1)}>
               <ChevronLeft size={12} className="mr-1" /> Cambiar
             </Button>
           </div>
@@ -210,9 +210,9 @@ const CashAssignment = () => {
           {Object.entries(planGroups).map(([group, items]) => {
             if (!items.length) return null;
             const groupColors: Record<string, string> = {
-              pilates: "text-[#E7C9CF]",
-              bienestar: "text-[#7C0116]",
-              otro: "text-[#2B0911]/50",
+              pilates: "text-[#D5C4B8]",
+              bienestar: "text-[#5B4A3E]",
+              otro: "text-[#2A211B]/50",
             };
             const groupLabels: Record<string, string> = {
               pilates: "Paquetes Pilates",
@@ -231,8 +231,8 @@ const CashAssignment = () => {
                       className={cn(
                         "w-full flex items-center justify-between p-3.5 rounded-xl border transition-all text-left group",
                         selectedPlan?.id === p.id
-                          ? "border-[#7C0116]/50 bg-gradient-to-r from-[#7C0116]/10 to-[#E7C9CF]/5 shadow-[0_0_16px_rgba(131,106,93,0.12)]"
-                          : "border-[#7C0116]/15 bg-[#7C0116]/[0.04] hover:border-[#7C0116]/25 hover:bg-[#7C0116]/5"
+                          ? "border-[#5B4A3E]/50 bg-gradient-to-r from-[#5B4A3E]/10 to-[#D5C4B8]/5 shadow-[0_0_16px_rgba(131,106,93,0.12)]"
+                          : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25 hover:bg-[#5B4A3E]/5"
                       )}
                       onClick={() => setSelectedPlan(p)}
                     >
@@ -240,12 +240,12 @@ const CashAssignment = () => {
                         <div className={cn(
                           "w-2 h-2 rounded-full shrink-0 transition-all",
                           selectedPlan?.id === p.id
-                            ? "bg-[#7C0116] shadow-[0_0_8px_#7C0116]"
-                            : "bg-[#7C0116]/12 group-hover:bg-[#7C0116]/50"
+                            ? "bg-[#5B4A3E] shadow-[0_0_8px_#5B4A3E]"
+                            : "bg-[#5B4A3E]/12 group-hover:bg-[#5B4A3E]/50"
                         )} />
                         <div>
-                          <p className="text-sm font-semibold text-[#2B0911]/85">{p.name}</p>
-                          <p className="text-xs text-[#2B0911]/30">
+                          <p className="text-sm font-semibold text-[#2A211B]/85">{p.name}</p>
+                          <p className="text-xs text-[#2A211B]/30">
                             {p.classLimit === null ? "Ilimitado" : `${p.classLimit} clases`}
                             {p.durationDays ? ` · ${p.durationDays} días` : ""}
                           </p>
@@ -253,7 +253,7 @@ const CashAssignment = () => {
                       </div>
                       <span className={cn(
                         "text-sm font-bold transition-colors",
-                        selectedPlan?.id === p.id ? "text-[#7C0116]" : "text-[#2B0911]/60 group-hover:text-[#2B0911]/90"
+                        selectedPlan?.id === p.id ? "text-[#5B4A3E]" : "text-[#2A211B]/60 group-hover:text-[#2A211B]/90"
                       )}>
                         ${Number(p.price).toLocaleString()} MXN
                       </span>
@@ -265,11 +265,11 @@ const CashAssignment = () => {
           })}
 
           <div className="flex gap-3 pt-2">
-            <Button variant="outline" className="border-[#7C0116]/15 text-[#2B0911]/50 hover:text-[#2B0911] hover:border-[#7C0116]/25" onClick={() => setStep(1)}>
+            <Button variant="outline" className="border-[#5B4A3E]/15 text-[#2A211B]/50 hover:text-[#2A211B] hover:border-[#5B4A3E]/25" onClick={() => setStep(1)}>
               <ChevronLeft size={14} className="mr-1" /> Volver
             </Button>
             <Button
-              className="flex-1 bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] hover:opacity-90 text-white font-semibold shadow-[0_0_20px_rgba(131,106,93,0.3)]"
+              className="flex-1 bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 text-white font-semibold shadow-[0_0_20px_rgba(131,106,93,0.3)]"
               disabled={!selectedPlan}
               onClick={() => setStep(3)}
             >
@@ -283,37 +283,37 @@ const CashAssignment = () => {
       {step === 3 && (
         <div className="space-y-5">
           {/* Resumen */}
-          <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#7C0116]/15 flex items-center gap-2">
-              <Sparkles size={14} className="text-[#FFE4E8]" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#2B0911]/50">Resumen de la membresía</span>
+          <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] overflow-hidden">
+            <div className="px-5 py-3 border-b border-[#5B4A3E]/15 flex items-center gap-2">
+              <Sparkles size={14} className="text-[#E8DED4]" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#2A211B]/50">Resumen de la membresía</span>
             </div>
             <div className="p-5 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[#2B0911]/50">Cliente</span>
+                <span className="text-sm text-[#2A211B]/50">Cliente</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#7C0116] to-[#E7C9CF] flex items-center justify-center text-[9px] font-bold text-white">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] flex items-center justify-center text-[9px] font-bold text-white">
                     {selectedUser?.displayName?.[0]?.toUpperCase()}
                   </div>
-                  <span className="text-sm font-semibold text-[#2B0911]/90">{selectedUser?.displayName}</span>
+                  <span className="text-sm font-semibold text-[#2A211B]/90">{selectedUser?.displayName}</span>
                 </div>
               </div>
-              <div className="h-px bg-[#7C0116]/[0.06]" />
+              <div className="h-px bg-[#5B4A3E]/[0.06]" />
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[#2B0911]/50">Plan</span>
-                <span className="text-sm font-semibold text-[#2B0911]/90">{selectedPlan?.name}</span>
+                <span className="text-sm text-[#2A211B]/50">Plan</span>
+                <span className="text-sm font-semibold text-[#2A211B]/90">{selectedPlan?.name}</span>
               </div>
-              <div className="h-px bg-[#7C0116]/[0.06]" />
+              <div className="h-px bg-[#5B4A3E]/[0.06]" />
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[#2B0911]/50">Total</span>
-                <span className="text-lg font-bold text-[#7C0116]">${Number(selectedPlan?.price).toLocaleString()} MXN</span>
+                <span className="text-sm text-[#2A211B]/50">Total</span>
+                <span className="text-lg font-bold text-[#5B4A3E]">${Number(selectedPlan?.price).toLocaleString()} MXN</span>
               </div>
             </div>
           </div>
 
           {/* Método de pago */}
-          <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-[#2B0911]/40 mb-3 block">Método de pago</Label>
+          <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-[#2A211B]/40 mb-3 block">Método de pago</Label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {PAYMENT_METHODS.map(({ value, label, icon: Icon }) => (
                 <button
@@ -321,8 +321,8 @@ const CashAssignment = () => {
                   className={cn(
                     "flex flex-col items-center gap-2 p-3 rounded-xl border transition-all",
                     paymentMethod === value
-                      ? "border-[#7C0116]/50 bg-[#7C0116]/10 text-[#7C0116]"
-                      : "border-[#7C0116]/15 bg-[#7C0116]/[0.04] text-[#2B0911]/40 hover:border-[#7C0116]/20 hover:text-[#2B0911]/70"
+                      ? "border-[#5B4A3E]/50 bg-[#5B4A3E]/10 text-[#5B4A3E]"
+                      : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] text-[#2A211B]/40 hover:border-[#5B4A3E]/20 hover:text-[#2A211B]/70"
                   )}
                   onClick={() => setPaymentMethod(value)}
                 >
@@ -334,11 +334,11 @@ const CashAssignment = () => {
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" className="border-[#7C0116]/15 text-[#2B0911]/50 hover:text-[#2B0911] hover:border-[#7C0116]/25" onClick={() => setStep(2)}>
+            <Button variant="outline" className="border-[#5B4A3E]/15 text-[#2A211B]/50 hover:text-[#2A211B] hover:border-[#5B4A3E]/25" onClick={() => setStep(2)}>
               <ChevronLeft size={14} className="mr-1" /> Volver
             </Button>
             <Button
-              className="flex-1 bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] hover:opacity-90 text-white font-bold shadow-[0_0_24px_rgba(131,106,93,0.35)] h-11"
+              className="flex-1 bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 text-white font-bold shadow-[0_0_24px_rgba(131,106,93,0.35)] h-11"
               onClick={() => assignMutation.mutate()}
               disabled={assignMutation.isPending}
             >
@@ -425,7 +425,7 @@ const PendingOrders = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-[#7C0116]/60">
+      <div className="flex items-center justify-center py-20 text-[#5B4A3E]/60">
         <Loader2 className="animate-spin mr-2" size={16} /> Cargando…
       </div>
     );
@@ -434,9 +434,9 @@ const PendingOrders = () => {
   if (!orders.length) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <CheckCircle2 size={32} className="text-[#E7C9CF]/40 mb-3" />
-        <p className="text-[#2B0911]/40 text-sm font-medium">No hay órdenes pendientes</p>
-        <p className="text-[#2B0911]/25 text-xs mt-1">Todas las órdenes han sido procesadas</p>
+        <CheckCircle2 size={32} className="text-[#D5C4B8]/40 mb-3" />
+        <p className="text-[#2A211B]/40 text-sm font-medium">No hay órdenes pendientes</p>
+        <p className="text-[#2A211B]/25 text-xs mt-1">Todas las órdenes han sido procesadas</p>
       </div>
     );
   }
@@ -495,19 +495,19 @@ const PendingOrders = () => {
             {/* Client info + amount */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7C0116]/30 to-[#E7C9CF]/20 border border-[#7C0116]/30 flex items-center justify-center text-sm font-bold text-[#7C0116] shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#5B4A3E]/30 to-[#D5C4B8]/20 border border-[#5B4A3E]/30 flex items-center justify-center text-sm font-bold text-[#5B4A3E] shrink-0">
                   {(o.userName ?? "?")[0]?.toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-[#2B0911]/90">{o.userName ?? "—"}</p>
-                  <p className="text-xs text-[#2B0911]/40">{o.planName ?? "Plan"}</p>
+                  <p className="font-semibold text-sm text-[#2A211B]/90">{o.userName ?? "—"}</p>
+                  <p className="text-xs text-[#2A211B]/40">{o.planName ?? "Plan"}</p>
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <p className="font-bold text-sm text-[#2B0911]/90">
+                <p className="font-bold text-sm text-[#2A211B]/90">
                   ${Number(o.totalAmount ?? o.total_amount ?? 0).toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
                 </p>
-                <p className="text-[10px] text-[#2B0911]/35">
+                <p className="text-[10px] text-[#2A211B]/35">
                   {o.createdAt ? new Date(o.createdAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                 </p>
               </div>
@@ -521,7 +521,7 @@ const PendingOrders = () => {
                     key={p.id}
                     type="button"
                     onClick={() => setPreviewUrl(p.file_url)}
-                    className="block aspect-square rounded-xl overflow-hidden border border-[#7C0116]/15 hover:border-[#7C0116]/40"
+                    className="block aspect-square rounded-xl overflow-hidden border border-[#5B4A3E]/15 hover:border-[#5B4A3E]/40"
                   >
                     <img src={p.file_url} alt={p.file_name || "Comprobante"} className="w-full h-full object-cover" />
                   </button>
@@ -531,7 +531,7 @@ const PendingOrders = () => {
               <button
                 type="button"
                 onClick={() => setPreviewUrl(o.proofUrl)}
-                className="mt-2 text-xs text-[#7C0116] underline"
+                className="mt-2 text-xs text-[#5B4A3E] underline"
               >
                 Ver comprobante
               </button>
@@ -575,8 +575,8 @@ const PendingOrders = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setPreviewUrl(null)}>
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-auto p-2" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center p-3 pb-2">
-              <p className="text-sm font-semibold text-[#2B0911]/80">Comprobante de pago</p>
-              <button onClick={() => setPreviewUrl(null)} className="text-[#2B0911]/40 hover:text-[#2B0911] text-lg">✕</button>
+              <p className="text-sm font-semibold text-[#2A211B]/80">Comprobante de pago</p>
+              <button onClick={() => setPreviewUrl(null)} className="text-[#2A211B]/40 hover:text-[#2A211B] text-lg">✕</button>
             </div>
             {previewUrl.includes("application/pdf") || previewUrl.endsWith(".pdf") ? (
               <iframe src={previewUrl} className="w-full h-[60vh] rounded-lg border-0" title="Comprobante PDF" />
@@ -614,9 +614,9 @@ const PaymentsHistory = () => {
   );
 
   const methodStyles: Record<string, string> = {
-    cash: "text-[#670626] border-[#7C0116]/30 bg-[#7C0116]/10",
-    card: "text-[#4a5638] border-[#E7C9CF]/30 bg-[#E7C9CF]/10",
-    transfer: "text-[#670626] border-[#7C0116]/30 bg-[#7C0116]/10",
+    cash: "text-[#3A2F26] border-[#5B4A3E]/30 bg-[#5B4A3E]/10",
+    card: "text-[#4a5638] border-[#D5C4B8]/30 bg-[#D5C4B8]/10",
+    transfer: "text-[#3A2F26] border-[#5B4A3E]/30 bg-[#5B4A3E]/10",
   };
   const methodLabels: Record<string, string> = { cash: "Efectivo", card: "Tarjeta", transfer: "Transferencia", online: "En línea" };
   // Origen del pago: 'order' = portal del cliente, 'membership'/'walkin' = registrado por admin
@@ -625,7 +625,7 @@ const PaymentsHistory = () => {
   const originStyle = (src: string) =>
     src === "order"
       ? "text-emerald-700 border-emerald-200 bg-emerald-50"
-      : "text-[#670626] border-[#7C0116]/25 bg-[#7C0116]/[0.08]";
+      : "text-[#3A2F26] border-[#5B4A3E]/25 bg-[#5B4A3E]/[0.08]";
   const fmtOpDate = (raw: any) => {
     if (!raw) return "—";
     const d = new Date(raw);
@@ -639,37 +639,37 @@ const PaymentsHistory = () => {
   return (
     <div className="space-y-4">
       {/* Filtros */}
-      <div className="flex flex-wrap items-end gap-3 p-4 rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/[0.03]">
+      <div className="flex flex-wrap items-end gap-3 p-4 rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.03]">
         <div className="space-y-1">
-          <Label className="text-[11px] text-[#670626]/70">Desde</Label>
+          <Label className="text-[11px] text-[#3A2F26]/70">Desde</Label>
           <DatePicker value={start} onChange={(v) => { setStart(v); setVisible(PAGE_SIZE); }} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[11px] text-[#670626]/70">Hasta</Label>
+          <Label className="text-[11px] text-[#3A2F26]/70">Hasta</Label>
           <DatePicker value={end} onChange={(v) => { setEnd(v); setVisible(PAGE_SIZE); }} min={start || undefined} />
         </div>
         {(start || end) && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-[#670626]">
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-[#3A2F26]">
             Limpiar
           </Button>
         )}
         <div className="ml-auto text-right">
-          <div className="text-[10px] tracking-[0.16em] uppercase font-semibold text-[#670626]/60">
+          <div className="text-[10px] tracking-[0.16em] uppercase font-semibold text-[#3A2F26]/60">
             Total {start || end ? "del período" : "mostrado"}
           </div>
-          <div className="text-lg font-bold text-[#2B0911] tabular-nums">
+          <div className="text-lg font-bold text-[#2A211B] tabular-nums">
             {isFetching ? <Loader2 size={16} className="animate-spin inline" /> : `$${periodTotal.toLocaleString("es-MX")} MXN`}
           </div>
-          <div className="text-[11px] text-[#670626]/60">{allPayments.length} pago{allPayments.length === 1 ? "" : "s"}</div>
+          <div className="text-[11px] text-[#3A2F26]/60">{allPayments.length} pago{allPayments.length === 1 ? "" : "s"}</div>
         </div>
       </div>
 
       {isFetching && !allPayments.length ? (
-        <div className="flex justify-center py-16"><Loader2 size={22} className="animate-spin text-[#7C0116]/50" /></div>
+        <div className="flex justify-center py-16"><Loader2 size={22} className="animate-spin text-[#5B4A3E]/50" /></div>
       ) : !allPayments.length ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <History size={32} className="text-[#2B0911]/10 mb-3" />
-          <p className="text-[#2B0911]/30 text-sm">
+          <History size={32} className="text-[#2A211B]/10 mb-3" />
+          <p className="text-[#2A211B]/30 text-sm">
             {start || end ? "Sin pagos en este período" : "Sin pagos registrados aún"}
           </p>
         </div>
@@ -677,23 +677,23 @@ const PaymentsHistory = () => {
         <>
           <div className="space-y-2">
             {payments.map((p: any) => (
-              <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] hover:bg-[#7C0116]/[0.06] transition-colors">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C0116]/20 to-[#E7C9CF]/10 border border-[#7C0116]/20 flex items-center justify-center shrink-0">
-                  <CreditCard size={13} className="text-[#7C0116]/70" />
+              <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:bg-[#5B4A3E]/[0.06] transition-colors">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#5B4A3E]/20 to-[#D5C4B8]/10 border border-[#5B4A3E]/20 flex items-center justify-center shrink-0">
+                  <CreditCard size={13} className="text-[#5B4A3E]/70" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#2B0911]/85 truncate">{p.userName ?? p.userId ?? "—"}</p>
-                  <p className="text-xs text-[#2B0911]/40">{p.planName ?? "—"}</p>
-                  <p className="text-[11px] text-[#2B0911]/30">Operación: {fmtOpDate(p.created_at ?? p.createdAt)}</p>
+                  <p className="text-sm font-semibold text-[#2A211B]/85 truncate">{p.userName ?? p.userId ?? "—"}</p>
+                  <p className="text-xs text-[#2A211B]/40">{p.planName ?? "—"}</p>
+                  <p className="text-[11px] text-[#2A211B]/30">Operación: {fmtOpDate(p.created_at ?? p.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-end">
                   <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full border", originStyle(p.source))}>
                     {originLabel(p.source)}
                   </span>
-                  <span className={cn("text-[11px] font-semibold px-2.5 py-1 rounded-full border", methodStyles[p.method] ?? "text-[#2B0911]/40 border-[#7C0116]/15 bg-[#7C0116]/[0.06]")}>
+                  <span className={cn("text-[11px] font-semibold px-2.5 py-1 rounded-full border", methodStyles[p.method] ?? "text-[#2A211B]/40 border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.06]")}>
                     {methodLabels[p.method] ?? p.method ?? "—"}
                   </span>
-                  <span className="text-sm font-bold text-[#2B0911]/90">${Number(p.total_amount ?? p.amount ?? 0).toLocaleString()} MXN</span>
+                  <span className="text-sm font-bold text-[#2A211B]/90">${Number(p.total_amount ?? p.amount ?? 0).toLocaleString()} MXN</span>
                 </div>
               </div>
             ))}
@@ -723,12 +723,12 @@ const PaymentsPage = () => {
         <div className="admin-page max-w-3xl">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#2B0911] mb-1">Pagos</h1>
-            <p className="text-sm text-[#2B0911]/35">Asigna paquetes cobrados en estudio, verifica pagos pendientes y consulta el historial</p>
+            <h1 className="text-3xl font-bold text-[#2A211B] mb-1">Pagos</h1>
+            <p className="text-sm text-[#2A211B]/35">Asigna paquetes cobrados en estudio, verifica pagos pendientes y consulta el historial</p>
           </div>
 
           {/* Tab switcher */}
-          <div className="flex gap-1 p-1 rounded-xl bg-[#7C0116]/[0.06] border border-[#7C0116]/15 w-fit mb-8">
+          <div className="flex gap-1 p-1 rounded-xl bg-[#5B4A3E]/[0.06] border border-[#5B4A3E]/15 w-fit mb-8">
             {([["cash", "Asignación manual"], ["pending", "Pendientes"], ["history", "Historial"]] as const).map(([val, label]) => (
               <button
                 key={val}
@@ -736,8 +736,8 @@ const PaymentsPage = () => {
                 className={cn(
                   "px-5 py-2 rounded-lg text-sm font-semibold transition-all",
                   activeTab === val
-                    ? "bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] text-white shadow-[0_0_14px_rgba(131,106,93,0.3)]"
-                    : "text-[#2B0911]/40 hover:text-[#2B0911]/70"
+                    ? "bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] text-white shadow-[0_0_14px_rgba(131,106,93,0.3)]"
+                    : "text-[#2A211B]/40 hover:text-[#2A211B]/70"
                 )}
               >
                 {label}

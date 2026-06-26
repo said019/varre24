@@ -212,14 +212,14 @@ export default function DiscountCodesPage() {
           {/* Header */}
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
-              <h1 className="text-2xl font-bold text-[#2B0911] flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-[#2A211B] flex items-center gap-2">
                 <Tag size={22} /> Cupones de descuento
               </h1>
-              <p className="text-sm text-[#5C0110]">
+              <p className="text-sm text-[#4A3D32]">
                 Crea cupones de % o monto fijo con cupos limitados, fecha de expiración y compra mínima.
               </p>
             </div>
-            <Button onClick={openCreate} className="bg-[#7C0116] hover:bg-[#670626] text-white">
+            <Button onClick={openCreate} className="bg-[#5B4A3E] hover:bg-[#3A2F26] text-white">
               <Plus size={14} className="mr-2" /> Nuevo cupón
             </Button>
           </div>
@@ -230,7 +230,7 @@ export default function DiscountCodesPage() {
               {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}
             </div>
           ) : codes.length === 0 ? (
-            <div className="text-center py-16 text-[#7C0116]/60 text-sm">
+            <div className="text-center py-16 text-[#5B4A3E]/60 text-sm">
               <Tag size={32} className="mx-auto mb-2 opacity-40" />
               No hay cupones creados todavía.
             </div>
@@ -242,25 +242,25 @@ export default function DiscountCodesPage() {
                 const exhausted = usesLeft === 0;
                 const inactive = !c.isActive || isExpired || exhausted;
                 return (
-                  <div key={c.id} className={`rounded-xl border p-4 transition-shadow hover:shadow-sm ${inactive ? "border-gray-300/50 bg-gray-50/40 opacity-70" : "border-[#7C0116]/15 bg-white"}`}>
+                  <div key={c.id} className={`rounded-xl border p-4 transition-shadow hover:shadow-sm ${inactive ? "border-gray-300/50 bg-gray-50/40 opacity-70" : "border-[#5B4A3E]/15 bg-white"}`}>
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => copyCode(c.code)}
-                            className="font-mono font-bold text-lg text-[#2B0911] hover:text-[#7C0116] transition-colors"
+                            className="font-mono font-bold text-lg text-[#2A211B] hover:text-[#5B4A3E] transition-colors"
                             title="Copiar código"
                           >
                             {c.code}
                           </button>
                           <button
                             onClick={() => copyCode(c.code)}
-                            className="text-[#7C0116]/40 hover:text-[#7C0116]"
+                            className="text-[#5B4A3E]/40 hover:text-[#5B4A3E]"
                           >
                             <Copy size={12} />
                           </button>
                         </div>
-                        <p className="text-sm font-semibold text-[#7C0116] mt-0.5 flex items-center gap-1">
+                        <p className="text-sm font-semibold text-[#5B4A3E] mt-0.5 flex items-center gap-1">
                           {c.discountType === "percent" ? <Percent size={12} /> : <DollarSign size={12} />}
                           {c.discountType === "percent"
                             ? `${c.discountValue}% off`
@@ -280,22 +280,22 @@ export default function DiscountCodesPage() {
                       </div>
                     </div>
 
-                    <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[#5C0110]">
-                      <span className="rounded-full bg-[#7C0116]/[0.06] px-2 py-0.5">
+                    <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[#4A3D32]">
+                      <span className="rounded-full bg-[#5B4A3E]/[0.06] px-2 py-0.5">
                         Usos: <strong>{c.usesCount || 0}</strong>{c.maxUses ? ` / ${c.maxUses}` : " · ilimitado"}
                       </span>
                       {c.expiresAt && (
-                        <span className="rounded-full bg-[#7C0116]/[0.06] px-2 py-0.5">
+                        <span className="rounded-full bg-[#5B4A3E]/[0.06] px-2 py-0.5">
                           Vence: <strong>{format(new Date(c.expiresAt), "d MMM yyyy", { locale: es })}</strong>
                         </span>
                       )}
                       {Number(c.minOrderAmount) > 0 && (
-                        <span className="rounded-full bg-[#7C0116]/[0.06] px-2 py-0.5">
+                        <span className="rounded-full bg-[#5B4A3E]/[0.06] px-2 py-0.5">
                           Mínimo: <strong>${Number(c.minOrderAmount).toLocaleString("es-MX")}</strong>
                         </span>
                       )}
                       {c.channel && c.channel !== "all" && (
-                        <span className="rounded-full bg-[#7C0116]/[0.06] px-2 py-0.5">Canal: <strong>{c.channel}</strong></span>
+                        <span className="rounded-full bg-[#5B4A3E]/[0.06] px-2 py-0.5">Canal: <strong>{c.channel}</strong></span>
                       )}
                     </div>
 
@@ -348,7 +348,7 @@ export default function DiscountCodesPage() {
                   className="font-mono uppercase"
                   disabled={!!editing}
                 />
-                {editing && <p className="text-[10px] text-[#7C0116]/60 mt-1">El código no se puede cambiar después de crearlo.</p>}
+                {editing && <p className="text-[10px] text-[#5B4A3E]/60 mt-1">El código no se puede cambiar después de crearlo.</p>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -404,7 +404,7 @@ export default function DiscountCodesPage() {
                   placeholder="ej. 1000"
                 />
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#7C0116]/15 bg-[#7C0116]/[0.04] px-3 py-2">
+              <div className="flex items-center justify-between rounded-lg border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] px-3 py-2">
                 <Label className="text-xs">Activo</Label>
                 <Switch checked={form.isActive} onCheckedChange={(v) => setForm({ ...form, isActive: v })} />
               </div>
@@ -414,7 +414,7 @@ export default function DiscountCodesPage() {
               <Button
                 onClick={handleSubmit}
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="bg-[#7C0116] hover:bg-[#670626] text-white"
+                className="bg-[#5B4A3E] hover:bg-[#3A2F26] text-white"
               >
                 {(createMutation.isPending || updateMutation.isPending) ? "Guardando…" : (editing ? "Actualizar" : "Crear")}
               </Button>
@@ -429,7 +429,7 @@ export default function DiscountCodesPage() {
               <DialogTitle className="flex items-center gap-2">
                 <Users size={16} /> Usos del cupón
                 {redemptionsFor && (
-                  <span className="font-mono text-sm bg-[#7C0116]/10 text-[#7C0116] px-2 py-0.5 rounded">
+                  <span className="font-mono text-sm bg-[#5B4A3E]/10 text-[#5B4A3E] px-2 py-0.5 rounded">
                     {redemptionsFor.code}
                   </span>
                 )}
@@ -437,30 +437,30 @@ export default function DiscountCodesPage() {
             </DialogHeader>
             <div className="space-y-3 max-h-[60vh] overflow-y-auto">
               {redemptionsQuery.isLoading ? (
-                <div className="flex items-center justify-center py-10 text-[#7C0116]/70 text-sm">
+                <div className="flex items-center justify-center py-10 text-[#5B4A3E]/70 text-sm">
                   <Loader2 size={16} className="animate-spin mr-2" /> Cargando…
                 </div>
               ) : redemptions.length === 0 ? (
-                <p className="text-center py-10 text-sm text-[#5C0110] italic">
+                <p className="text-center py-10 text-sm text-[#4A3D32] italic">
                   Nadie ha usado este cupón todavía.
                 </p>
               ) : (
                 <>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#7C0116]/60 font-semibold px-1">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B4A3E]/60 font-semibold px-1">
                     {redemptions.length} {redemptions.length === 1 ? "uso" : "usos"} · más recientes primero
                   </p>
-                  <ul className="divide-y divide-[#7C0116]/10 rounded-xl border border-[#7C0116]/15 bg-white">
+                  <ul className="divide-y divide-[#5B4A3E]/10 rounded-xl border border-[#5B4A3E]/15 bg-white">
                     {redemptions.map((r) => {
                       const st = STATUS_LABEL[r.status] || { label: r.status, tone: "text-gray-600 bg-gray-50 border-gray-200" };
                       const when = format(new Date(r.createdAt), "d MMM yyyy, HH:mm", { locale: es });
                       return (
                         <li key={r.orderId} className="p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-[#2B0911] truncate">{r.userName}</p>
-                            <p className="text-[11px] text-[#7C0116]/70 truncate">
+                            <p className="text-sm font-semibold text-[#2A211B] truncate">{r.userName}</p>
+                            <p className="text-[11px] text-[#5B4A3E]/70 truncate">
                               {r.userEmail} · {r.planName ?? "—"} · <span className="font-mono">{r.orderNumber}</span>
                             </p>
-                            <p className="text-[11px] text-[#7C0116]/55">
+                            <p className="text-[11px] text-[#5B4A3E]/55">
                               {when} · {PAYMENT_LABEL[r.paymentMethod] ?? r.paymentMethod}
                             </p>
                           </div>
@@ -468,7 +468,7 @@ export default function DiscountCodesPage() {
                             <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wide rounded-full border font-semibold ${st.tone}`}>
                               {st.label}
                             </span>
-                            <p className="text-sm font-bold text-[#2B0911]">${r.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className="text-sm font-bold text-[#2A211B]">${r.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                             <p className="text-[10px] text-emerald-700 font-semibold">−${r.discountAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} descuento</p>
                           </div>
                         </li>

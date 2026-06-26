@@ -14,9 +14,9 @@ interface ScheduleSlot {
 const DAYS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
 
 const LABEL_STYLE: Record<string, string> = {
-  PILATES: "bg-[#E7C9CF]/20 text-[#4a5638] border border-[#E7C9CF]/30",
-  BIENESTAR: "bg-[#7C0116]/20 text-[#670626] border border-[#7C0116]/30",
-  ESPECIAL: "bg-[#7C0116]/10 text-[#2B0911]/70 border border-[#7C0116]/20",
+  PILATES: "bg-[#D5C4B8]/20 text-[#4a5638] border border-[#D5C4B8]/30",
+  BIENESTAR: "bg-[#5B4A3E]/20 text-[#3A2F26] border border-[#5B4A3E]/30",
+  ESPECIAL: "bg-[#5B4A3E]/10 text-[#2A211B]/70 border border-[#5B4A3E]/20",
 };
 
 const AdminSchedule = () => {
@@ -247,7 +247,7 @@ const AdminSchedule = () => {
 
       {/* Delete confirm */}
       {deleteId && (
-        <div className="fixed inset-0 bg-[#7C0116]/20 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[#5B4A3E]/20 flex items-center justify-center z-50 p-4">
           <div className="bg-background border border-border rounded-2xl p-6 max-w-sm w-full">
             <h3 className="font-semibold text-foreground mb-2">Eliminar slot</h3>
             <p className="text-sm text-muted-foreground mb-6">

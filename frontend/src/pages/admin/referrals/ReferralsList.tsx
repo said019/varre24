@@ -128,7 +128,7 @@ const ReferralsList = () => {
         {loadingSummary ? (
           <Skeleton className="h-7 w-20" />
         ) : (
-          <p className="text-2xl font-bold text-[#670626] tabular-nums">{value ?? "—"}</p>
+          <p className="text-2xl font-bold text-[#3A2F26] tabular-nums">{value ?? "—"}</p>
         )}
       </CardContent>
     </Card>
@@ -139,8 +139,8 @@ const ReferralsList = () => {
       <AdminLayout>
         <div className="admin-page max-w-6xl">
           <div className="mb-6">
-            <h1 className="admin-title font-bold text-[#670626]">Referidos</h1>
-            <p className="mt-1 text-sm text-[#670626]/55">
+            <h1 className="admin-title font-bold text-[#3A2F26]">Referidos</h1>
+            <p className="mt-1 text-sm text-[#3A2F26]/55">
               Cuando una referida hace su primera compra, su referidora gana un crédito. <strong>Tú decides</strong> si lo apruebas: solo los aprobados se aplican en su próxima compra.
             </p>
           </div>
@@ -149,7 +149,7 @@ const ReferralsList = () => {
           {(loadingPending || pending.length > 0) && (
             <Card className="mb-6 border-amber-300/60 bg-amber-50/40">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2 text-[#670626]">
+                <CardTitle className="text-base flex items-center gap-2 text-[#3A2F26]">
                   <Clock size={16} className="text-amber-600" />
                   Descuentos por aprobar
                   {pending.length > 0 && (
@@ -165,17 +165,17 @@ const ReferralsList = () => {
                     {pending.map((p) => (
                       <div key={p.id} className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-white/70 p-3.5 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
-                          <p className="font-semibold text-[#670626] leading-tight">{p.referrerName ?? "—"}</p>
+                          <p className="font-semibold text-[#3A2F26] leading-tight">{p.referrerName ?? "—"}</p>
                           <p className="text-[11px] text-muted-foreground truncate">{p.referrerEmail}</p>
-                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#670626]/75">
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#3A2F26]/75">
                             <span className="inline-flex items-center gap-1">
-                              <Users size={11} className="text-[#7C0116]" />
-                              Refirió a <strong className="text-[#670626]">{p.totalReferred}</strong> · <strong className="text-emerald-700">{p.totalConverted}</strong> compraron
+                              <Users size={11} className="text-[#5B4A3E]" />
+                              Refirió a <strong className="text-[#3A2F26]">{p.totalReferred}</strong> · <strong className="text-emerald-700">{p.totalConverted}</strong> compraron
                             </span>
                             {p.referredName && (
-                              <span>Última: <strong className="text-[#670626]">{p.referredName}</strong></span>
+                              <span>Última: <strong className="text-[#3A2F26]">{p.referredName}</strong></span>
                             )}
-                            <span className="rounded-full bg-[#7C0116]/10 px-2 py-0.5 font-semibold text-[#7C0116]">−{Number(p.discountPercent)}%</span>
+                            <span className="rounded-full bg-[#5B4A3E]/10 px-2 py-0.5 font-semibold text-[#5B4A3E]">−{Number(p.discountPercent)}%</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
@@ -207,10 +207,10 @@ const ReferralsList = () => {
 
           {/* KPIs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            {metric("Total referidos", summary?.total ?? 0, <Gift size={15} />, "#7C0116")}
-            {metric("Pendientes", summary?.pending ?? 0, <Clock size={15} />, "#9B5A66")}
-            {metric("Canjeados", summary?.rewarded ?? 0, <CheckCircle2 size={15} />, "#670626")}
-            {metric("Conversión", `${summary?.conversion ?? 0}%`, <TrendingUp size={15} />, "#E7C9CF")}
+            {metric("Total referidos", summary?.total ?? 0, <Gift size={15} />, "#5B4A3E")}
+            {metric("Pendientes", summary?.pending ?? 0, <Clock size={15} />, "#8A8077")}
+            {metric("Canjeados", summary?.rewarded ?? 0, <CheckCircle2 size={15} />, "#3A2F26")}
+            {metric("Conversión", `${summary?.conversion ?? 0}%`, <TrendingUp size={15} />, "#D5C4B8")}
           </div>
 
           {/* Top referidores */}
@@ -220,18 +220,18 @@ const ReferralsList = () => {
                 <CardTitle className="text-base">Top alumnas que más refieren</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="divide-y divide-[#7C0116]/10">
+                <div className="divide-y divide-[#5B4A3E]/10">
                   {summary.top.map((t, i) => (
                     <div key={t.id} className="flex items-center justify-between py-2.5">
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="font-bebas text-lg text-[#7C0116] w-5 text-center tabular-nums">{i + 1}</span>
+                        <span className="font-bebas text-lg text-[#5B4A3E] w-5 text-center tabular-nums">{i + 1}</span>
                         <div className="min-w-0">
-                          <p className="font-medium text-sm text-[#670626] truncate">{t.name}</p>
+                          <p className="font-medium text-sm text-[#3A2F26] truncate">{t.name}</p>
                           <p className="text-[11px] text-muted-foreground truncate">{t.email}</p>
                         </div>
                       </div>
                       <div className="text-right shrink-0 tabular-nums">
-                        <p className="text-sm font-semibold text-[#670626]">{t.total} referida{t.total !== 1 ? "s" : ""}</p>
+                        <p className="text-sm font-semibold text-[#3A2F26]">{t.total} referida{t.total !== 1 ? "s" : ""}</p>
                         <p className="text-[11px] text-muted-foreground">{t.rewarded} canjearon</p>
                       </div>
                     </div>
@@ -270,7 +270,7 @@ const ReferralsList = () => {
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="text-center py-12">
-                  <Gift size={28} className="mx-auto text-[#E7C9CF]/50 mb-2" />
+                  <Gift size={28} className="mx-auto text-[#D5C4B8]/50 mb-2" />
                   <p className="text-sm text-muted-foreground">
                     {search || filter !== "all"
                       ? "No hay resultados con esos filtros."
@@ -281,7 +281,7 @@ const ReferralsList = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-[#7C0116]/15 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <tr className="border-b border-[#5B4A3E]/15 text-[11px] uppercase tracking-wide text-muted-foreground">
                         <th className="text-left py-2.5 px-4 font-semibold">Referidor</th>
                         <th className="text-left py-2.5 px-4 font-semibold">Código</th>
                         <th className="text-left py-2.5 px-4 font-semibold">Referido</th>
@@ -293,16 +293,16 @@ const ReferralsList = () => {
                     </thead>
                     <tbody>
                       {filtered.map((r) => (
-                        <tr key={r.id} className="border-b border-[#7C0116]/10 last:border-0 hover:bg-[#7C0116]/[0.03]">
+                        <tr key={r.id} className="border-b border-[#5B4A3E]/10 last:border-0 hover:bg-[#5B4A3E]/[0.03]">
                           <td className="py-3 px-4">
-                            <p className="font-medium text-[#670626] leading-tight">{r.referrerName ?? "—"}</p>
+                            <p className="font-medium text-[#3A2F26] leading-tight">{r.referrerName ?? "—"}</p>
                             <p className="text-[11px] text-muted-foreground truncate max-w-[200px]">{r.referrerEmail}</p>
                           </td>
                           <td className="py-3 px-4">
-                            <code className="text-[11px] font-mono text-[#7C0116] bg-[#E7C9CF]/15 px-1.5 py-0.5 rounded">{r.code ?? "—"}</code>
+                            <code className="text-[11px] font-mono text-[#5B4A3E] bg-[#D5C4B8]/15 px-1.5 py-0.5 rounded">{r.code ?? "—"}</code>
                           </td>
                           <td className="py-3 px-4">
-                            <p className="font-medium text-[#670626] leading-tight">{r.referredName ?? "—"}</p>
+                            <p className="font-medium text-[#3A2F26] leading-tight">{r.referredName ?? "—"}</p>
                             <p className="text-[11px] text-muted-foreground truncate max-w-[200px]">{r.referredEmail}</p>
                           </td>
                           <td className="py-3 px-4 text-xs text-muted-foreground tabular-nums">

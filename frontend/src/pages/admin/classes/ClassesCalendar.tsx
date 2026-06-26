@@ -31,9 +31,9 @@ import { ClassCategoryBadge } from "@/components/ClassCategoryBadge";
 
 /* ── Palette ── */
 const PALETTE_COLORS = [
-  { label: "Taupe", value: "#7C0116" },
-  { label: "Sage", value: "#E7C9CF" },
-  { label: "Crema", value: "#FFE4E8" },
+  { label: "Taupe", value: "#5B4A3E" },
+  { label: "Sage", value: "#D5C4B8" },
+  { label: "Crema", value: "#E8DED4" },
   { label: "Azul", value: "#3B82F6" },
   { label: "Esmeralda", value: "#10B981" },
   { label: "Naranja", value: "#F97316" },
@@ -104,7 +104,7 @@ type ClassFormData = z.infer<typeof classSchema>;
 
 const typeSchema = z.object({
   name: z.string().min(1),
-  color: z.string().default("#E7C9CF"),
+  color: z.string().default("#D5C4B8"),
   category: z.enum(["pilates", "bienestar"]).default("pilates"),
   defaultDuration: z.coerce.number().min(1),
   maxCapacity: z.coerce.number().min(1),
@@ -197,7 +197,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  confirmed: "bg-[#7C0116]/15 text-[#7C0116]",
+  confirmed: "bg-[#5B4A3E]/15 text-[#5B4A3E]",
   checked_in: "bg-emerald-500/15 text-emerald-600",
   waitlist: "bg-amber-500/15 text-amber-600",
   no_show: "bg-red-500/15 text-red-600",
@@ -411,7 +411,7 @@ const ClassAttendees = ({ classId }: { classId: string }) => {
                     {isWalkIn ? "Walk-in / Sin cuenta" : (r.planName ?? r.plan_name ?? "")}
                   </p>
                   {memberHasGuest && (
-                    <span className="inline-flex items-center gap-1 mt-1 rounded-full bg-[#E7C9CF]/25 border border-[#7C0116]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#670626]">
+                    <span className="inline-flex items-center gap-1 mt-1 rounded-full bg-[#D5C4B8]/25 border border-[#5B4A3E]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#3A2F26]">
                       +1 invitada · {guestName} · cuenta como 2
                     </span>
                   )}
@@ -448,7 +448,7 @@ const ClassAttendees = ({ classId }: { classId: string }) => {
                     memberHasGuest ? (
                       <Button
                         variant="ghost" size="icon"
-                        className="h-6 w-6 text-[#670626]"
+                        className="h-6 w-6 text-[#3A2F26]"
                         title={`Quitar a ${guestName}`}
                         onClick={() => {
                           if (window.confirm(`¿Quitar a ${guestName} de la reserva de ${memberName}? Se libera 1 lugar y se devuelve 1 crédito si aplica.`)) {
@@ -462,7 +462,7 @@ const ClassAttendees = ({ classId }: { classId: string }) => {
                     ) : (
                       <Button
                         variant="ghost" size="icon"
-                        className="h-6 w-6 text-[#7C0116]"
+                        className="h-6 w-6 text-[#5B4A3E]"
                         title="Agregar invitada"
                         onClick={() => {
                           setGuestEditor({ bookingId, userName: memberName ?? "esta alumna" });
@@ -500,7 +500,7 @@ const ClassAttendees = ({ classId }: { classId: string }) => {
           <div className="space-y-3">
             {guestEditor && (
               <p className="text-xs text-muted-foreground">
-                Reserva de <strong className="text-[#2B0911]">{guestEditor.userName}</strong>. Se descuenta 1 crédito de su paquete y se ocupa 1 lugar adicional en la clase.
+                Reserva de <strong className="text-[#2A211B]">{guestEditor.userName}</strong>. Se descuenta 1 crédito de su paquete y se ocupa 1 lugar adicional en la clase.
               </p>
             )}
             <div className="space-y-1">
@@ -570,12 +570,12 @@ const ClassesCalendar = () => {
         <div className="admin-page max-w-6xl">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
-              <h1 className="admin-title font-bold text-[#670626]">Clases</h1>
-              <p className="mt-1 text-xs text-[#670626]/55 sm:text-sm">Gestiona calendario, tipos, generación semanal e instructoras.</p>
+              <h1 className="admin-title font-bold text-[#3A2F26]">Clases</h1>
+              <p className="mt-1 text-xs text-[#3A2F26]/55 sm:text-sm">Gestiona calendario, tipos, generación semanal e instructoras.</p>
               <div className="mt-3"><CourtesyButton /></div>
             </div>
             <div className="w-full sm:w-auto overflow-x-auto">
-              <div className="flex min-w-max items-center gap-1 border-b border-[#7C0116]/15">
+              <div className="flex min-w-max items-center gap-1 border-b border-[#5B4A3E]/15">
               {TABS.map(({ key, label, icon: Icon }) => {
                 const active = tab === key;
                 return (
@@ -585,8 +585,8 @@ const ClassesCalendar = () => {
                     className={cn(
                       "relative flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors -mb-px border-b-2 sm:px-4",
                       active
-                        ? "text-[#670626] border-[#7C0116]"
-                        : "text-[#670626]/55 border-transparent hover:text-[#670626]"
+                        ? "text-[#3A2F26] border-[#5B4A3E]"
+                        : "text-[#3A2F26]/55 border-transparent hover:text-[#3A2F26]"
                     )}
                   >
                     <Icon size={14} />
@@ -815,15 +815,15 @@ function CalendarTab({
         <div className="flex items-center justify-center gap-2 sm:gap-3">
           <button
             onClick={() => shiftWeek(-7)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-[#670626]/60 hover:bg-[#7C0116]/8 hover:text-[#670626] transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[#3A2F26]/60 hover:bg-[#5B4A3E]/8 hover:text-[#3A2F26] transition-colors"
             aria-label="Semana anterior"
           >
             <ChevronLeft size={14} />
           </button>
-          <span className="text-center text-xs font-medium text-[#670626] tabular-nums sm:text-sm">{weekLabel}</span>
+          <span className="text-center text-xs font-medium text-[#3A2F26] tabular-nums sm:text-sm">{weekLabel}</span>
           <button
             onClick={() => shiftWeek(7)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-[#670626]/60 hover:bg-[#7C0116]/8 hover:text-[#670626] transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[#3A2F26]/60 hover:bg-[#5B4A3E]/8 hover:text-[#3A2F26] transition-colors"
             aria-label="Semana siguiente"
           >
             <ChevronRight size={14} />
@@ -834,7 +834,7 @@ function CalendarTab({
             type="button"
             onClick={() => setDuplicateOpen(true)}
             disabled={duplicateWeekMutation.isPending || classes.length === 0}
-            className="text-xs text-[#670626] hover:text-[#7C0116] underline-offset-2 hover:underline transition-colors disabled:opacity-30 disabled:hover:no-underline disabled:hover:text-[#670626]"
+            className="text-xs text-[#3A2F26] hover:text-[#5B4A3E] underline-offset-2 hover:underline transition-colors disabled:opacity-30 disabled:hover:no-underline disabled:hover:text-[#3A2F26]"
             title="Replicar la semana actual a N semanas adelante"
           >
             {duplicateWeekMutation.isPending ? "Duplicando…" : "Duplicar adelante"}
@@ -843,7 +843,7 @@ function CalendarTab({
             type="button"
             onClick={handleClearWeek}
             disabled={clearWeekMutation.isPending || classes.length === 0}
-            className="text-xs text-[#670626]/50 hover:text-destructive underline-offset-2 hover:underline transition-colors disabled:opacity-30 disabled:hover:no-underline disabled:hover:text-[#670626]/50"
+            className="text-xs text-[#3A2F26]/50 hover:text-destructive underline-offset-2 hover:underline transition-colors disabled:opacity-30 disabled:hover:no-underline disabled:hover:text-[#3A2F26]/50"
           >
             {clearWeekMutation.isPending ? "Limpiando…" : "Limpiar semana"}
           </button>
@@ -857,11 +857,11 @@ function CalendarTab({
             <DialogTitle>Duplicar semana adelante</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 text-sm">
-            <p className="text-[#670626]/75 leading-relaxed">
+            <p className="text-[#3A2F26]/75 leading-relaxed">
               Se replicarán las <strong>{classes.length} clases</strong> de la semana <strong>{weekLabel}</strong> hacia las próximas semanas, manteniendo tipo, instructora, hora y capacidad. Si una clase idéntica ya existe en la semana destino, se salta.
             </p>
             <div className="space-y-1.5">
-              <Label className="text-xs uppercase tracking-wide text-[#670626]/70">¿Cuántas semanas adelante?</Label>
+              <Label className="text-xs uppercase tracking-wide text-[#3A2F26]/70">¿Cuántas semanas adelante?</Label>
               <div className="flex items-center gap-3">
                 <Input
                   type="number"
@@ -874,19 +874,19 @@ function CalendarTab({
                   }}
                   className="w-24"
                 />
-                <span className="text-xs text-[#670626]/55">
+                <span className="text-xs text-[#3A2F26]/55">
                   semana{duplicateWeeks === 1 ? "" : "s"} (máx 12)
                 </span>
               </div>
             </div>
-            <div className="rounded-lg bg-[#E7C9CF]/10 border border-[#E7C9CF]/25 px-3 py-2 text-[11px] text-[#670626] leading-snug">
+            <div className="rounded-lg bg-[#D5C4B8]/10 border border-[#D5C4B8]/25 px-3 py-2 text-[11px] text-[#3A2F26] leading-snug">
               Atajos:{" "}
               {[1, 2, 4, 8].map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => setDuplicateWeeks(n)}
-                  className={`ml-1 underline-offset-2 hover:underline ${duplicateWeeks === n ? "font-semibold text-[#7C0116]" : ""}`}
+                  className={`ml-1 underline-offset-2 hover:underline ${duplicateWeeks === n ? "font-semibold text-[#5B4A3E]" : ""}`}
                 >
                   {n}
                 </button>
@@ -900,7 +900,7 @@ function CalendarTab({
             <Button
               onClick={() => duplicateWeekMutation.mutate(duplicateWeeks)}
               disabled={duplicateWeekMutation.isPending || classes.length === 0}
-              className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white"
+              className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white"
             >
               {duplicateWeekMutation.isPending
                 ? "Duplicando…"
@@ -912,7 +912,7 @@ function CalendarTab({
 
       {isMobile ? (
         <div className="space-y-3">
-          <div className="overflow-x-auto rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-2">
+          <div className="overflow-x-auto rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-2">
             <div className="flex min-w-max gap-2">
               {days.map((day) => {
                 const dayKey = format(day, "yyyy-MM-dd");
@@ -926,24 +926,24 @@ function CalendarTab({
                     className={cn(
                       "flex min-h-[52px] min-w-[76px] flex-col items-center justify-center rounded-xl border px-2 text-xs transition-colors",
                       isActive
-                        ? "border-[#7C0116]/60 bg-gradient-to-r from-[#7C0116]/20 to-[#E7C9CF]/20 text-[#2B0911]"
-                        : "border-[#7C0116]/15 bg-[#7C0116]/10 text-[#2B0911]/70",
+                        ? "border-[#5B4A3E]/60 bg-gradient-to-r from-[#5B4A3E]/20 to-[#D5C4B8]/20 text-[#2A211B]"
+                        : "border-[#5B4A3E]/15 bg-[#5B4A3E]/10 text-[#2A211B]/70",
                     )}
                   >
                     <span className="text-[10px] uppercase">{DAYS_ES[day.getDay()]}</span>
                     <span className="text-base font-bold leading-none">{format(day, "d")}</span>
-                    <span className="mt-0.5 text-[10px] text-[#2B0911]/55">{count} cls</span>
+                    <span className="mt-0.5 text-[10px] text-[#2A211B]/55">{count} cls</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-3">
+          <div className="rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-3">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div>
-                <p className="text-xs uppercase tracking-widest text-[#2B0911]/45">{DAYS_ES[mobileDayDate.getDay()]}</p>
-                <p className="text-sm font-semibold text-[#2B0911]">{format(mobileDayDate, "d 'de' MMMM", { locale: es })}</p>
+                <p className="text-xs uppercase tracking-widest text-[#2A211B]/45">{DAYS_ES[mobileDayDate.getDay()]}</p>
+                <p className="text-sm font-semibold text-[#2A211B]">{format(mobileDayDate, "d 'de' MMMM", { locale: es })}</p>
               </div>
               <Button size="sm" className="h-9" onClick={() => openCreate(mobileDay)}>
                 <Plus size={14} className="mr-1" /> Nueva
@@ -951,7 +951,7 @@ function CalendarTab({
             </div>
 
             {mobileClasses.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[#7C0116]/15 p-6 text-center text-xs text-[#2B0911]/45">
+              <div className="rounded-lg border border-dashed border-[#5B4A3E]/15 p-6 text-center text-xs text-[#2A211B]/45">
                 Sin clases programadas para este día.
               </div>
             ) : (
@@ -961,16 +961,16 @@ function CalendarTab({
                     key={c.id}
                     type="button"
                     onClick={() => { setSelectedClass(c); setSheetOpen(true); }}
-                    className="w-full rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/10 p-3 text-left"
-                    style={{ borderLeftColor: c.classTypeColor ?? "#E7C9CF", borderLeftWidth: 3 }}
+                    className="w-full rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/10 p-3 text-left"
+                    style={{ borderLeftColor: c.classTypeColor ?? "#D5C4B8", borderLeftWidth: 3 }}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                          <p className="truncate text-sm font-semibold text-[#2B0911]">{c.classTypeName ?? "Clase"}</p>
+                          <p className="truncate text-sm font-semibold text-[#2A211B]">{c.classTypeName ?? "Clase"}</p>
                           <ClassCategoryBadge classTypeName={c.classTypeName ?? ""} />
                         </div>
-                        <p className="text-xs text-[#2B0911]/60">
+                        <p className="text-xs text-[#2A211B]/60">
                           {c.startTime ? format(parseISO(c.startTime), "HH:mm") : "—"}
                           {" - "}
                           {c.endTime ? format(parseISO(c.endTime), "HH:mm") : "—"}
@@ -989,14 +989,14 @@ function CalendarTab({
                         />
                       ) : (
                         <span
-                          className="flex h-6 w-6 items-center justify-center rounded-full text-[0.6rem] font-bold text-[#2B0911]"
-                          style={{ background: c.classTypeColor ?? "#E7C9CF" }}
+                          className="flex h-6 w-6 items-center justify-center rounded-full text-[0.6rem] font-bold text-[#2A211B]"
+                          style={{ background: c.classTypeColor ?? "#D5C4B8" }}
                         >
                           {(c.instructorName ?? "?")[0].toUpperCase()}
                         </span>
                       )}
-                      <span className="truncate text-xs text-[#2B0911]/60">{c.instructorName ?? "—"}</span>
-                      <span className="ml-auto text-xs text-[#2B0911]/55">
+                      <span className="truncate text-xs text-[#2A211B]/60">{c.instructorName ?? "—"}</span>
+                      <span className="ml-auto text-xs text-[#2A211B]/55">
                         {(c.bookedCount ?? c.currentBookings ?? 0)}/{c.maxCapacity ?? c.capacity ?? "?"}
                       </span>
                     </div>
@@ -1018,15 +1018,15 @@ function CalendarTab({
                     className="mb-3 flex cursor-pointer flex-col items-center group"
                     onClick={() => openCreate(format(day, "yyyy-MM-dd"))}
                   >
-                    <span className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#670626]/45">
+                    <span className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#3A2F26]/45">
                       {DAYS_ES[day.getDay()]}
                     </span>
                     <span
                       className={cn(
                         "flex h-9 w-9 items-center justify-center rounded-full font-bebas text-2xl leading-none tabular-nums transition-colors",
                         isToday
-                          ? "bg-[#7C0116] text-[#FFE4E8]"
-                          : "text-[#670626] group-hover:bg-[#7C0116]/8",
+                          ? "bg-[#5B4A3E] text-[#E8DED4]"
+                          : "text-[#3A2F26] group-hover:bg-[#5B4A3E]/8",
                       )}
                     >
                       {format(day, "d")}
@@ -1036,22 +1036,22 @@ function CalendarTab({
                     {dayClasses.map((c) => {
                       const booked = c.bookedCount ?? c.currentBookings ?? 0;
                       const cap    = c.maxCapacity ?? c.capacity ?? 7;
-                      const accent = c.classTypeColor ?? "#7C0116";
+                      const accent = c.classTypeColor ?? "#5B4A3E";
                       return (
                         <div
                           key={c.id}
                           onClick={() => { setSelectedClass(c); setSheetOpen(true); }}
-                          className="cursor-pointer rounded-xl border border-[#7C0116]/12 bg-white p-2.5 transition-all hover:-translate-y-0.5 hover:border-[#7C0116]/40"
+                          className="cursor-pointer rounded-xl border border-[#5B4A3E]/12 bg-white p-2.5 transition-all hover:-translate-y-0.5 hover:border-[#5B4A3E]/40"
                           style={{ boxShadow: "0 2px 8px rgba(114,93,81,0.06)" }}
                         >
                           <div className="mb-0.5 flex items-baseline justify-between gap-1.5">
-                            <span className="font-bebas text-base leading-none tabular-nums text-[#670626]">
+                            <span className="font-bebas text-base leading-none tabular-nums text-[#3A2F26]">
                               {c.startTime ? format(parseISO(c.startTime), "HH:mm") : "—"}
                             </span>
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: accent }} />
                           </div>
                           <div className="flex items-center gap-1 flex-wrap">
-                            <p className="truncate text-[11px] font-medium leading-tight text-[#670626]">
+                            <p className="truncate text-[11px] font-medium leading-tight text-[#3A2F26]">
                               {c.classTypeName ?? "Clase"}
                             </p>
                             <ClassCategoryBadge classTypeName={c.classTypeName ?? ""} />
@@ -1061,13 +1061,13 @@ function CalendarTab({
                               <img src={c.instructorPhoto} alt="" className="h-4 w-4 rounded-full object-cover" />
                             ) : (
                               <span
-                                className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold text-[#FFE4E8]"
+                                className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold text-[#E8DED4]"
                                 style={{ background: accent }}
                               >
                                 {(c.instructorName ?? "?")[0].toUpperCase()}
                               </span>
                             )}
-                            <span className="truncate text-[10px] text-[#670626]/65">{c.instructorName ?? "—"}</span>
+                            <span className="truncate text-[10px] text-[#3A2F26]/65">{c.instructorName ?? "—"}</span>
                           </div>
                           {/* Dots de ocupación */}
                           <div className="mt-1.5 flex items-center gap-[2px]">
@@ -1076,11 +1076,11 @@ function CalendarTab({
                                 key={idx}
                                 className={cn(
                                   "h-1 flex-1 rounded-full",
-                                  idx < booked ? "bg-[#7C0116]" : "bg-[#E7C9CF]/30",
+                                  idx < booked ? "bg-[#5B4A3E]" : "bg-[#D5C4B8]/30",
                                 )}
                               />
                             ))}
-                            <span className="ml-1 shrink-0 text-[9px] font-medium tabular-nums text-[#670626]/55">
+                            <span className="ml-1 shrink-0 text-[9px] font-medium tabular-nums text-[#3A2F26]/55">
                               {booked}/{cap}
                             </span>
                           </div>
@@ -1092,7 +1092,7 @@ function CalendarTab({
                     })}
                     <button
                       onClick={() => openCreate(format(day, "yyyy-MM-dd"))}
-                      className="flex w-full items-center justify-center rounded-lg py-1.5 text-[#7C0116]/35 transition-colors hover:bg-[#7C0116]/[0.06] hover:text-[#7C0116]/70"
+                      className="flex w-full items-center justify-center rounded-lg py-1.5 text-[#5B4A3E]/35 transition-colors hover:bg-[#5B4A3E]/[0.06] hover:text-[#5B4A3E]/70"
                       aria-label="Crear clase"
                     >
                       <Plus size={13} />
@@ -1145,7 +1145,7 @@ function CalendarTab({
             <div className="space-y-1"><Label>Notas</Label><Input {...form.register("notes")} /></div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
-              <Button type="submit" disabled={createMutation.isPending} className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white">Crear</Button>
+              <Button type="submit" disabled={createMutation.isPending} className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white">Crear</Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -1160,9 +1160,9 @@ function CalendarTab({
               {/* Instructor with avatar */}
               <div className="flex items-center gap-3">
                 {selectedClass.instructorPhoto ? (
-                  <img src={selectedClass.instructorPhoto} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-offset-1" style={{ outline: `2px solid ${selectedClass.classTypeColor ?? "#E7C9CF"}` }} />
+                  <img src={selectedClass.instructorPhoto} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-offset-1" style={{ outline: `2px solid ${selectedClass.classTypeColor ?? "#D5C4B8"}` }} />
                 ) : (
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[#2B0911] text-sm" style={{ background: selectedClass.classTypeColor ?? "#E7C9CF" }}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-[#2A211B] text-sm" style={{ background: selectedClass.classTypeColor ?? "#D5C4B8" }}>
                     {(selectedClass.instructorName ?? "?")[0].toUpperCase()}
                   </span>
                 )}
@@ -1180,9 +1180,9 @@ function CalendarTab({
 
               {/* ── Cambio de instructora ── */}
               {!selectedClass.isCancelled && (
-                <div className="pt-2 border-t border-[#7C0116]/15 mt-2">
-                  <Label className="text-xs uppercase tracking-wide text-[#670626]/70">Cambiar instructora</Label>
-                  <p className="text-[11px] text-[#670626]/55 mt-1 mb-2 leading-snug">
+                <div className="pt-2 border-t border-[#5B4A3E]/15 mt-2">
+                  <Label className="text-xs uppercase tracking-wide text-[#3A2F26]/70">Cambiar instructora</Label>
+                  <p className="text-[11px] text-[#3A2F26]/55 mt-1 mb-2 leading-snug">
                     Las alumnas reservadas serán notificadas automáticamente por email y WhatsApp.
                   </p>
                   <div className="flex gap-2">
@@ -1214,7 +1214,7 @@ function CalendarTab({
                         changeInstructorMutation.mutate({ classId: selectedClass.id, instructorId: newInstructorId });
                       }}
                       disabled={changeInstructorMutation.isPending || !newInstructorId}
-                      className="bg-[#7C0116] text-white hover:bg-[#670626]"
+                      className="bg-[#5B4A3E] text-white hover:bg-[#3A2F26]"
                     >
                       {changeInstructorMutation.isPending ? "..." : "Cambiar"}
                     </Button>
@@ -1261,7 +1261,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
   const [editing, setEditing] = useState<ClassType | null>(null);
   const form = useForm<TypeFormData>({
     resolver: zodResolver(typeSchema),
-    defaultValues: { color: "#E7C9CF", category: "pilates", defaultDuration: 50, maxCapacity: 10, isActive: true },
+    defaultValues: { color: "#D5C4B8", category: "pilates", defaultDuration: 50, maxCapacity: 10, isActive: true },
   });
 
   const createMutation = useMutation({
@@ -1301,7 +1301,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
     setOpen(true);
   };
   const openCreate = () => {
-    form.reset({ color: "#E7C9CF", category: "pilates", defaultDuration: 50, maxCapacity: 10, isActive: true });
+    form.reset({ color: "#D5C4B8", category: "pilates", defaultDuration: 50, maxCapacity: 10, isActive: true });
     setEditing(null);
     setOpen(true);
   };
@@ -1310,7 +1310,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
     <>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <p className="text-sm text-muted-foreground">{types.length} tipos registrados</p>
-        <Button size="sm" onClick={openCreate} className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white">
+        <Button size="sm" onClick={openCreate} className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white">
           <Plus size={14} className="mr-1" />Nuevo tipo
         </Button>
       </div>
@@ -1318,21 +1318,21 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
       {isMobile ? (
         <div className="space-y-2">
           {types.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-[#7C0116]/15 p-6 text-center text-xs text-[#2B0911]/45">
+            <div className="rounded-lg border border-dashed border-[#5B4A3E]/15 p-6 text-center text-xs text-[#2A211B]/45">
               Sin tipos registrados.
             </div>
           ) : (
             types.map((t) => (
-              <div key={t.id} className="rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/10 p-3">
+              <div key={t.id} className="rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/10 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="h-3.5 w-3.5 rounded-full" style={{ backgroundColor: t.color }} />
-                      <p className="truncate text-sm font-semibold text-[#2B0911]">{t.name}</p>
+                      <p className="truncate text-sm font-semibold text-[#2A211B]">{t.name}</p>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      {t.category === "bienestar" && <Badge className="bg-[#7C0116]/20 text-[#7C0116] border border-[#7C0116]/30">Bienestar</Badge>}
-                      {t.category === "pilates" && <Badge className="bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30">Pilates</Badge>}
+                      {t.category === "bienestar" && <Badge className="bg-[#5B4A3E]/20 text-[#5B4A3E] border border-[#5B4A3E]/30">Bienestar</Badge>}
+                      {t.category === "pilates" && <Badge className="bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30">Pilates</Badge>}
                       {!t.category && <Badge variant="secondary">—</Badge>}
                       <Badge variant="outline">{(t.defaultDuration ?? t.durationMin ?? "—") + " min"}</Badge>
                       <Badge variant="outline">{(t.maxCapacity ?? t.capacity ?? "—") + " cupos"}</Badge>
@@ -1353,7 +1353,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
                 <div className="mt-2">
                   <Badge
                     variant={t.isActive !== false ? "default" : "secondary"}
-                    className={t.isActive !== false ? "bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30" : ""}
+                    className={t.isActive !== false ? "bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30" : ""}
                   >
                     {t.isActive !== false ? "Activo" : "Inactivo"}
                   </Badge>
@@ -1382,8 +1382,8 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
                   <TableCell><div className="w-6 h-6 rounded-full shadow-sm" style={{ backgroundColor: t.color }} /></TableCell>
                   <TableCell className="font-medium">{t.name}</TableCell>
                   <TableCell>
-                    {t.category === "bienestar" && <Badge className="bg-[#7C0116]/20 text-[#7C0116] border border-[#7C0116]/30">Bienestar</Badge>}
-                    {t.category === "pilates" && <Badge className="bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30">Pilates</Badge>}
+                    {t.category === "bienestar" && <Badge className="bg-[#5B4A3E]/20 text-[#5B4A3E] border border-[#5B4A3E]/30">Bienestar</Badge>}
+                    {t.category === "pilates" && <Badge className="bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30">Pilates</Badge>}
                     {!t.category && <Badge variant="secondary">—</Badge>}
                   </TableCell>
                   <TableCell>{(t.defaultDuration ?? t.durationMin ?? "—") + " min"}</TableCell>
@@ -1391,7 +1391,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
                   <TableCell>
                     <Badge
                       variant={t.isActive !== false ? "default" : "secondary"}
-                      className={t.isActive !== false ? "bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30" : ""}
+                      className={t.isActive !== false ? "bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30" : ""}
                     >
                       {t.isActive !== false ? "Activo" : "Inactivo"}
                     </Badge>
@@ -1451,7 +1451,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
                     className={
                       "w-8 h-8 rounded-full border-2 transition-all " +
                       (form.watch("color") === c.value
-                        ? "border-foreground scale-110 ring-2 ring-offset-2 ring-offset-background ring-[#E7C9CF]"
+                        ? "border-foreground scale-110 ring-2 ring-offset-2 ring-offset-background ring-[#D5C4B8]"
                         : "border-transparent opacity-70 hover:opacity-100")
                     }
                     style={{ backgroundColor: c.value }}
@@ -1471,7 +1471,7 @@ function TypesTab({ types, toast, qc }: { types: ClassType[]; toast: any; qc: an
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-              <Button type="submit" className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white">
+              <Button type="submit" className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white">
                 {editing ? "Actualizar" : "Crear"}
               </Button>
             </DialogFooter>
@@ -1552,25 +1552,25 @@ function GenerateTab({
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center mb-2">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#E7C9CF]/10 to-[#7C0116]/10 border border-[#E7C9CF]/20 mb-3">
-          <Sparkles size={14} className="text-[#FFE4E8]" />
-          <span className="text-xs font-semibold text-[#E7C9CF]">Generador de clases</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#D5C4B8]/10 to-[#5B4A3E]/10 border border-[#D5C4B8]/20 mb-3">
+          <Sparkles size={14} className="text-[#E8DED4]" />
+          <span className="text-xs font-semibold text-[#D5C4B8]">Generador de clases</span>
         </div>
-        <h2 className="text-2xl font-bold text-[#2B0911]">Generar clases en bloque</h2>
-        <p className="text-sm text-[#2B0911]/40 mt-1">Selecciona tipo, instructor, rango de fechas y días</p>
+        <h2 className="text-2xl font-bold text-[#2A211B]">Generar clases en bloque</h2>
+        <p className="text-sm text-[#2A211B]/40 mt-1">Selecciona tipo, instructor, rango de fechas y días</p>
       </div>
 
       {/* ── Step 1: Class type + Instructor ── */}
-      <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5 space-y-4">
+      <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#E7C9CF]/20 text-[#E7C9CF] text-xs font-bold">1</span>
-          <span className="text-xs font-semibold text-[#E7C9CF]/70 uppercase tracking-wider">Clase e instructor</span>
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#D5C4B8]/20 text-[#D5C4B8] text-xs font-bold">1</span>
+          <span className="text-xs font-semibold text-[#D5C4B8]/70 uppercase tracking-wider">Clase e instructor</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Tipo de clase</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Tipo de clase</Label>
             <Select onValueChange={setClassTypeId}>
-              <SelectTrigger className="bg-[#7C0116]/[0.06] border-[#7C0116]/15 text-[#2B0911]">
+              <SelectTrigger className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B]">
                 <SelectValue placeholder="Seleccionar tipo" />
               </SelectTrigger>
               <SelectContent>
@@ -1586,9 +1586,9 @@ function GenerateTab({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Instructor</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Instructor</Label>
             <Select onValueChange={setInstructorId}>
-              <SelectTrigger className="bg-[#7C0116]/[0.06] border-[#7C0116]/15 text-[#2B0911]">
+              <SelectTrigger className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B]">
                 <SelectValue placeholder="Seleccionar instructor" />
               </SelectTrigger>
               <SelectContent>
@@ -1602,28 +1602,28 @@ function GenerateTab({
       </div>
 
       {/* ── Step 2: Date range ── */}
-      <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5 space-y-4">
+      <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#7C0116]/20 text-[#7C0116] text-xs font-bold">2</span>
-          <span className="text-xs font-semibold text-[#7C0116]/70 uppercase tracking-wider">Rango de fechas</span>
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#5B4A3E]/20 text-[#5B4A3E] text-xs font-bold">2</span>
+          <span className="text-xs font-semibold text-[#5B4A3E]/70 uppercase tracking-wider">Rango de fechas</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Fecha inicio</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Fecha inicio</Label>
             <DatePicker value={startDate} onChange={setStartDate} placeholder="Desde" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Fecha fin</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Fecha fin</Label>
             <DatePicker value={endDate} onChange={setEndDate} placeholder="Hasta" min={startDate} />
           </div>
         </div>
       </div>
 
       {/* ── Step 3: Days of week ── */}
-      <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5 space-y-4">
+      <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#FFE4E8]/20 text-[#FFE4E8] text-xs font-bold">3</span>
-          <span className="text-xs font-semibold text-[#FFE4E8]/70 uppercase tracking-wider">Días de la semana</span>
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#E8DED4]/20 text-[#E8DED4] text-xs font-bold">3</span>
+          <span className="text-xs font-semibold text-[#E8DED4]/70 uppercase tracking-wider">Días de la semana</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {GENERATE_DAYS.map((d) => (
@@ -1634,8 +1634,8 @@ function GenerateTab({
               className={
                 "relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all " +
                 (selectedDays.includes(d.value)
-                  ? "bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] text-white shadow-[0_0_12px_rgba(131,106,93,0.3)]"
-                  : "bg-[#7C0116]/[0.06] border border-[#7C0116]/15 text-[#2B0911]/45 hover:text-[#2B0911]/75 hover:border-[#7C0116]/25")
+                  ? "bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] text-white shadow-[0_0_12px_rgba(131,106,93,0.3)]"
+                  : "bg-[#5B4A3E]/[0.06] border border-[#5B4A3E]/15 text-[#2A211B]/45 hover:text-[#2A211B]/75 hover:border-[#5B4A3E]/25")
               }
             >
               {d.label}
@@ -1646,28 +1646,28 @@ function GenerateTab({
           <button
             type="button"
             onClick={() => setSelectedDays([1, 2, 3, 4, 5])}
-            className="text-[10px] text-[#E7C9CF] font-medium hover:underline"
+            className="text-[10px] text-[#D5C4B8] font-medium hover:underline"
           >
             Lun–Vie
           </button>
           <button
             type="button"
             onClick={() => setSelectedDays([1, 2, 3, 4, 5, 6])}
-            className="text-[10px] text-[#E7C9CF] font-medium hover:underline"
+            className="text-[10px] text-[#D5C4B8] font-medium hover:underline"
           >
             Lun–Sáb
           </button>
           <button
             type="button"
             onClick={() => setSelectedDays([0, 1, 2, 3, 4, 5, 6])}
-            className="text-[10px] text-[#E7C9CF] font-medium hover:underline"
+            className="text-[10px] text-[#D5C4B8] font-medium hover:underline"
           >
             Todos
           </button>
           <button
             type="button"
             onClick={() => setSelectedDays([])}
-            className="text-[10px] text-[#2B0911]/30 font-medium hover:underline"
+            className="text-[10px] text-[#2A211B]/30 font-medium hover:underline"
           >
             Limpiar
           </button>
@@ -1675,27 +1675,27 @@ function GenerateTab({
       </div>
 
       {/* ── Step 4: Time + Capacity ── */}
-      <div className="rounded-2xl border border-[#7C0116]/15 bg-[#7C0116]/[0.04] p-5 space-y-4">
+      <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#7C0116]/20 text-[#7C0116] text-xs font-bold">4</span>
-          <span className="text-xs font-semibold text-[#7C0116]/70 uppercase tracking-wider">Horario y capacidad</span>
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#5B4A3E]/20 text-[#5B4A3E] text-xs font-bold">4</span>
+          <span className="text-xs font-semibold text-[#5B4A3E]/70 uppercase tracking-wider">Horario y capacidad</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Hora inicio</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Hora inicio</Label>
             <TimePicker value={startTime} onChange={setStartTime} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Hora fin</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Hora fin</Label>
             <TimePicker value={endTime} onChange={setEndTime} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#2B0911]/60 text-xs">Capacidad máx.</Label>
+            <Label className="text-[#2A211B]/60 text-xs">Capacidad máx.</Label>
             <Input
               type="number"
               value={maxCapacity}
               onChange={(e) => setMaxCapacity(Number(e.target.value))}
-              className="bg-[#7C0116]/[0.06] border-[#7C0116]/15 text-[#2B0911] text-center"
+              className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B] text-center"
             />
           </div>
         </div>
@@ -1703,20 +1703,20 @@ function GenerateTab({
 
       {/* ── Preview ── */}
       {preview.length > 0 && (
-        <div className="rounded-2xl border border-[#E7C9CF]/20 bg-gradient-to-br from-[#E7C9CF]/5 to-[#7C0116]/5 p-5 space-y-3">
+        <div className="rounded-2xl border border-[#D5C4B8]/20 bg-gradient-to-br from-[#D5C4B8]/5 to-[#5B4A3E]/5 p-5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Calendar size={14} className="text-[#FFE4E8]" />
-              <span className="text-xs font-semibold text-[#2B0911]/60 uppercase tracking-wider">Vista previa</span>
+              <Calendar size={14} className="text-[#E8DED4]" />
+              <span className="text-xs font-semibold text-[#2A211B]/60 uppercase tracking-wider">Vista previa</span>
             </div>
-            <Badge variant="outline" className="border-[#E7C9CF]/30 text-[#E7C9CF] font-bold">
+            <Badge variant="outline" className="border-[#D5C4B8]/30 text-[#D5C4B8] font-bold">
               {preview.length} {preview.length === 1 ? "clase" : "clases"}
             </Badge>
           </div>
 
           <div className="hidden grid-cols-7 gap-1.5 sm:grid">
             {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => (
-              <div key={d} className="text-center text-[10px] font-bold text-[#2B0911]/25 uppercase">{d}</div>
+              <div key={d} className="text-center text-[10px] font-bold text-[#2A211B]/25 uppercase">{d}</div>
             ))}
           </div>
 
@@ -1724,15 +1724,15 @@ function GenerateTab({
             {preview.map((d) => (
               <div
                 key={d.toISOString()}
-                className="flex flex-col items-center gap-0.5 py-2 px-1 rounded-lg bg-[#7C0116]/[0.05] border border-[#7C0116]/12"
+                className="flex flex-col items-center gap-0.5 py-2 px-1 rounded-lg bg-[#5B4A3E]/[0.05] border border-[#5B4A3E]/12"
               >
-                <span className="text-[10px] text-[#2B0911]/40">
+                <span className="text-[10px] text-[#2A211B]/40">
                   {format(d, "MMM", { locale: es })}
                 </span>
-                <span className="text-sm font-bold text-[#2B0911]">
+                <span className="text-sm font-bold text-[#2A211B]">
                   {format(d, "d")}
                 </span>
-                <span className="text-[9px] text-[#FFE4E8]/60 font-medium">
+                <span className="text-[9px] text-[#E8DED4]/60 font-medium">
                   {startTime}
                 </span>
                 {selectedType && (
@@ -1746,10 +1746,10 @@ function GenerateTab({
           </div>
 
           {selectedType && (
-            <div className="flex items-center gap-3 pt-2 border-t border-[#7C0116]/12">
+            <div className="flex items-center gap-3 pt-2 border-t border-[#5B4A3E]/12">
               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: selectedType.color }} />
-              <span className="text-xs text-[#2B0911]/60">
-                <strong className="text-[#2B0911]/80">{selectedType.name}</strong>
+              <span className="text-xs text-[#2A211B]/60">
+                <strong className="text-[#2A211B]/80">{selectedType.name}</strong>
                 {selectedInstructor && <> · {selectedInstructor.displayName}</>}
                 {" · "}{startTime}–{endTime} · {maxCapacity} cupos
               </span>
@@ -1764,10 +1764,10 @@ function GenerateTab({
         disabled={!canGenerate || generateMutation.isPending}
         onClick={() => generateMutation.mutate()}
         className={
-          "w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl font-semibold text-[#2B0911] transition-all " +
+          "w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl font-semibold text-[#2A211B] transition-all " +
           (canGenerate
-            ? "bg-gradient-to-r from-[#7C0116] to-[#E7C9CF] hover:opacity-90 shadow-[0_4px_20px_rgba(131,106,93,0.25)]"
-            : "bg-[#7C0116]/[0.06] text-[#2B0911]/25 cursor-not-allowed")
+            ? "bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 shadow-[0_4px_20px_rgba(131,106,93,0.25)]"
+            : "bg-[#5B4A3E]/[0.06] text-[#2A211B]/25 cursor-not-allowed")
         }
       >
         {generateMutation.isPending ? (
@@ -1887,7 +1887,7 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
         <Button
           size="sm"
           onClick={openCreate}
-          className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white"
+          className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white"
         >
           <Plus size={14} className="mr-1" />Nueva instructora
         </Button>
@@ -1912,37 +1912,37 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
           {isLoading ? (
             Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)
           ) : instructors.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-[#7C0116]/15 p-6 text-center text-xs text-[#2B0911]/45">
+            <div className="rounded-lg border border-dashed border-[#5B4A3E]/15 p-6 text-center text-xs text-[#2A211B]/45">
               Sin instructoras registradas.
             </div>
           ) : (
             instructors.map((ins) => (
-              <div key={ins.id} className="rounded-xl border border-[#7C0116]/15 bg-[#7C0116]/10 p-3">
+              <div key={ins.id} className="rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/10 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       {ins.photoUrl ? (
                         <img
                           src={ins.photoUrl}
-                          className="h-9 w-9 rounded-full object-cover ring-2 ring-[#E7C9CF]/30"
+                          className="h-9 w-9 rounded-full object-cover ring-2 ring-[#D5C4B8]/30"
                           style={{ objectPosition: `${clampFocus(ins.photoFocusX)}% ${clampFocus(ins.photoFocusY)}%` }}
                           alt=""
                         />
                       ) : (
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#E7C9CF] to-[#7C0116] text-xs font-bold text-[#2B0911]">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#D5C4B8] to-[#5B4A3E] text-xs font-bold text-[#2A211B]">
                           {ins.displayName?.[0]?.toUpperCase()}
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-[#2B0911]">{ins.displayName}</p>
-                        <p className="truncate text-xs text-[#2B0911]/55">{ins.email}</p>
+                        <p className="truncate text-sm font-semibold text-[#2A211B]">{ins.displayName}</p>
+                        <p className="truncate text-xs text-[#2A211B]/55">{ins.email}</p>
                       </div>
                     </div>
-                    <p className="mt-2 text-xs text-[#2B0911]/55">{normalizeSpecialties(ins.specialties).join(", ") || "Sin especialidades"}</p>
+                    <p className="mt-2 text-xs text-[#2A211B]/55">{normalizeSpecialties(ins.specialties).join(", ") || "Sin especialidades"}</p>
                     <div className="mt-2">
                       <Badge
                         variant={ins.isActive ? "default" : "secondary"}
-                        className={ins.isActive ? "bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30" : ""}
+                        className={ins.isActive ? "bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30" : ""}
                       >
                         {ins.isActive ? "Activa" : "Inactiva"}
                       </Badge>
@@ -1997,12 +1997,12 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
                       {ins.photoUrl ? (
                         <img
                           src={ins.photoUrl}
-                          className="w-9 h-9 rounded-full object-cover ring-2 ring-[#E7C9CF]/30"
+                          className="w-9 h-9 rounded-full object-cover ring-2 ring-[#D5C4B8]/30"
                           style={{ objectPosition: `${clampFocus(ins.photoFocusX)}% ${clampFocus(ins.photoFocusY)}%` }}
                           alt=""
                         />
                       ) : (
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E7C9CF] to-[#7C0116] flex items-center justify-center text-xs font-bold text-[#2B0911]">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D5C4B8] to-[#5B4A3E] flex items-center justify-center text-xs font-bold text-[#2A211B]">
                           {ins.displayName?.[0]?.toUpperCase()}
                         </div>
                       )}
@@ -2013,7 +2013,7 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
                     <TableCell>
                       <Badge
                         variant={ins.isActive ? "default" : "secondary"}
-                        className={ins.isActive ? "bg-[#E7C9CF]/20 text-[#E7C9CF] border border-[#E7C9CF]/30" : ""}
+                        className={ins.isActive ? "bg-[#D5C4B8]/20 text-[#D5C4B8] border border-[#D5C4B8]/30" : ""}
                       >
                         {ins.isActive ? "Activa" : "Inactiva"}
                       </Badge>
@@ -2122,14 +2122,14 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
               />
             </div>
             {editing && (
-              <div className="space-y-2 rounded-xl border border-dashed border-[#7C0116]/30 bg-[#7C0116]/[0.04] p-3">
+              <div className="space-y-2 rounded-xl border border-dashed border-[#5B4A3E]/30 bg-[#5B4A3E]/[0.04] p-3">
                 <Label>Foto de la instructora</Label>
                 <p className="text-[11px] text-muted-foreground">JPG/PNG/WEBP, máx 20 MB. Se reemplaza la actual al subir.</p>
                 <label className="block">
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    className="block w-full text-xs text-[#670626] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#7C0116] file:text-white file:font-medium hover:file:bg-[#670626] file:cursor-pointer disabled:opacity-50"
+                    className="block w-full text-xs text-[#3A2F26] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#5B4A3E] file:text-white file:font-medium hover:file:bg-[#3A2F26] file:cursor-pointer disabled:opacity-50"
                     disabled={uploadPhotoMutation.isPending}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -2145,7 +2145,7 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
                   />
                 </label>
                 {uploadPhotoMutation.isPending && (
-                  <p className="text-xs text-[#7C0116] flex items-center gap-2">
+                  <p className="text-xs text-[#5B4A3E] flex items-center gap-2">
                     <Loader2 className="h-3 w-3 animate-spin" /> Subiendo foto…
                   </p>
                 )}
@@ -2164,7 +2164,7 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
                     if (event.buttons !== 1 && event.pointerType !== "touch") return;
                     applyPreviewFocus(event);
                   }}
-                  className="group relative mx-auto block h-[360px] w-full max-w-[300px] touch-none overflow-hidden rounded-[28px] border border-[#7C0116]/15 bg-[#7C0116]/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E7C9CF]"
+                  className="group relative mx-auto block h-[360px] w-full max-w-[300px] touch-none overflow-hidden rounded-[28px] border border-[#5B4A3E]/15 bg-[#5B4A3E]/10 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5C4B8]"
                   aria-label="Seleccionar enfoque de la foto"
                 >
                   <img
@@ -2175,12 +2175,12 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                   <div
-                    className="pointer-events-none absolute h-8 w-8 rounded-full border border-[#7C0116]/20 bg-[#7C0116]/10 shadow-[0_0_0_1px_rgba(0,0,0,0.2)] backdrop-blur-sm"
+                    className="pointer-events-none absolute h-8 w-8 rounded-full border border-[#5B4A3E]/20 bg-[#5B4A3E]/10 shadow-[0_0_0_1px_rgba(0,0,0,0.2)] backdrop-blur-sm"
                     style={{ left: `${focusX}%`, top: `${focusY}%`, transform: "translate(-50%, -50%)" }}
                   >
                     <div className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
                   </div>
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-3 text-[11px] font-medium text-[#2B0911]/80">
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-3 text-[11px] font-medium text-[#2A211B]/80">
                     <span>X {focusX}%</span>
                     <span>Y {focusY}%</span>
                   </div>
@@ -2193,7 +2193,7 @@ function InstructorsTab({ toast, qc }: { toast: any; qc: any }) {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-              <Button type="submit" disabled={isSaving} className="bg-gradient-to-r from-[#E7C9CF] to-[#7C0116] text-white">
+              <Button type="submit" disabled={isSaving} className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white">
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isSaving ? "Guardando..." : editing ? "Actualizar" : "Crear"}
               </Button>

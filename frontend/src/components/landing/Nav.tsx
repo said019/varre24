@@ -16,10 +16,10 @@ export function Nav() {
         </a>
         <div className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (
-            <a key={l.label} href={l.href} className="font-alilato text-sm text-[#FFF1F3] mix-blend-difference">{l.label}</a>
+            <a key={l.label} href={l.href} className="font-alilato text-sm text-[#F6F2EB] mix-blend-difference">{l.label}</a>
           ))}
         </div>
-        <Link to="/auth/login" className="press rounded-full bg-[#7C0116] px-5 py-2 text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#FFF1F3]">
+        <Link to="/auth/login" className="press rounded-full bg-[#5B4A3E] px-5 py-2 text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB]">
           Entrar
         </Link>
       </nav>

@@ -1,90 +1,88 @@
 /* ──────────────────────────────────────────────────────────────
-   VARRE24 — Sistema tipográfico (Red Pink Bold)
-   Display / Títulos : Anton (grotesca pesada) — titulares bold del deck
-   Editorial         : Fraunces (serif) — acentos/itálicas suaves
-   Cuerpo / UI       : Inter Tight (grotesca) — texto, controles
+   VARRE24 — Sistema tipográfico (estética real varre24fit.com)
+   Todo en Poppins: light (300) airy para display, 400/500 cuerpo/UI.
    ────────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── alias de compatibilidad: nombres viejos → fuentes VARRE24 ── */
+/* ── alias de compatibilidad: nombres viejos → Poppins ── */
 @font-face {
-  font-family: 'Gulfs';            /* display viejo → Anton */
-  src: local('Anton');
-  font-weight: 400 700;
+  font-family: 'Gulfs';            /* display viejo → Poppins */
+  src: local('Poppins');
+  font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Alilato';          /* cuerpo viejo → Inter Tight */
-  src: local('Inter Tight'), local('InterTight-Regular');
+  font-family: 'Alilato';          /* cuerpo viejo → Poppins */
+  src: local('Poppins');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 
 /* ──────────────────────────────────────────────────────────────
-   PALETA OFICIAL VARRE24 — Red Pink Bold (Cherry Cola · Claret · Pink)
+   PALETA OFICIAL VARRE24 — estética real (espresso · oat · cream)
 
-   #FFF7F8  blush-50     superficies altas (casi blanco rosado)
-   #FFF1F3  blush-100    fondo base
-   #FFE4E8  pink-200     secciones / superficie 2
-   #F3CCD4  pink-300     bordes
-   #E7C9CF  rose-400     muted / deshabilitado
-   #9B5A66  rose-ink     texto secundario
-   #FFBDC5  pink         secundario suave (deck)
-   #E0A4B0  hibiscus     acento empolvado (deck)
-   #7C0116  cherry-cola  primario — CTA, links (deck)
-   #5C0110  cherry-700   primario hover
-   #670626  claret       marca profunda / títulos / superficies oscuras (deck)
-   #2B0911  ink-900      texto principal
+   #FBF8F4  oat-50       superficies altas (casi blanco cálido)
+   #F6F2EB  sunlit-veil  fondo base claro
+   #E8DED4  ivory-silk   secciones / superficie 2
+   #E8DDD5  border       bordes cálidos
+   #D5C4B8  espresso-300 muted / deshabilitado
+   #8A8077  pavement     texto secundario
+   #CBBFAF  luxe-oat     secundario / oat (signature)
+   #B5A593  oat-700      acento taupe
+   #5B4A3E  urban-espresso  primario — CTA, links
+   #4A3D32  espresso-700 primario hover
+   #3A2F26  espresso-800 marca profunda / superficies oscuras / footer
+   #2A211B  espresso-900 texto principal
    ────────────────────────────────────────────────────────────── */
 
 @layer base {
   :root {
-    --background: 351 100% 97%;          /* #FFF1F3 blush base */
-    --surface:    352 100% 98%;          /* #FFF7F8 — superficies altas */
-    --surface-2:  351 100% 95%;          /* #FFE4E8 — secciones */
-    --foreground: 346 65% 10%;           /* #2B0911 ink vino */
+    --background: 40 33% 94%;            /* #F6F2EB sunlit-veil */
+    --surface:    36 40% 97%;            /* #FBF8F4 — superficies altas */
+    --surface-2:  32 30% 87%;            /* #E8DED4 ivory-silk */
+    --foreground: 24 22% 14%;            /* #2A211B espresso-900 */
 
-    --card: 352 100% 98%;
-    --card-foreground: 346 65% 10%;
+    --card: 36 40% 97%;
+    --card-foreground: 24 22% 14%;
 
-    --popover: 352 100% 98%;
-    --popover-foreground: 346 65% 10%;
+    --popover: 36 40% 97%;
+    --popover-foreground: 24 22% 14%;
 
-    /* Primario: Cherry Cola #7C0116 */
-    --primary: 350 98% 25%;
-    --primary-foreground: 352 100% 98%;
+    /* Primario: urban-espresso #5B4A3E */
+    --primary: 25 19% 30%;
+    --primary-foreground: 36 40% 97%;
 
-    /* Secundario: Pink #FFBDC5 */
-    --secondary: 353 100% 87%;
-    --secondary-foreground: 340 89% 21%;
+    /* Secundario: luxe-oat #CBBFAF */
+    --secondary: 34 26% 74%;
+    --secondary-foreground: 24 22% 14%;
 
-    --muted: 350 86% 94%;                /* #FBE3E7 rosa muy claro */
-    --muted-foreground: 349 27% 48%;     /* #9B5A66 rosa-marrón */
+    --muted: 36 30% 92%;                 /* crema cálida muy clara */
+    --muted-foreground: 28 10% 50%;      /* #8A8077 pavement */
 
-    /* Acento: Hibiscus #E0A4B0 */
-    --accent: 348 49% 76%;
-    --accent-foreground: 340 89% 21%;
+    /* Acento: oat-700 #B5A593 */
+    --accent: 33 22% 64%;
+    --accent-foreground: 24 22% 14%;
 
-    --destructive: 0 72% 45%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 348 76% 88%;               /* #F3CCD4 rosa suave */
-    --input: 348 76% 88%;
-    --ring: 350 98% 25%;
+    --border: 28 28% 87%;                /* #E8DDD5 borde cálido */
+    --input: 28 28% 87%;
+    --ring: 25 19% 30%;
 
     --radius: 0.875rem;
 
-    /* Sombras tintadas (claret profundo, no genéricas negras) */
-    --shadow-soft:  0 4px 18px -4px hsl(345 80% 12% / 0.08), 0 2px 6px -2px hsl(345 80% 12% / 0.04);
-    --shadow-warm:  0 12px 40px -8px hsl(345 80% 12% / 0.16), 0 4px 12px -4px hsl(345 80% 12% / 0.07);
-    --shadow-glow:  0 16px 60px -12px hsl(350 98% 25% / 0.32);
+    /* Sombras tintadas (espresso, no genéricas negras) */
+    --shadow-soft:  0 4px 18px -4px hsl(25 22% 12% / 0.08), 0 2px 6px -2px hsl(25 22% 12% / 0.04);
+    --shadow-warm:  0 12px 40px -8px hsl(25 22% 12% / 0.14), 0 4px 12px -4px hsl(25 22% 12% / 0.06);
+    --shadow-glow:  0 16px 60px -12px hsl(25 19% 30% / 0.26);
 
     /* Easings Emil-style — motion calmada, no snappy */
     --ease-out-emil:    cubic-bezier(0.16, 1, 0.3, 1);
@@ -92,10 +90,10 @@
     --ease-drawer:      cubic-bezier(0.32, 0.72, 0, 1);
 
     /* Aliases compat tokens viejos */
-    --punto-cream: 351 100% 97%;
-    --punto-green: 348 49% 76%;
-    --punto-taupe: 350 98% 25%;
-    --pink-glow:   353 100% 87%;
+    --punto-cream: 40 33% 94%;
+    --punto-green: 33 22% 64%;
+    --punto-taupe: 25 19% 30%;
+    --pink-glow:   34 26% 74%;
   }
 
   html {
@@ -108,17 +106,16 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Alilato', 'Inter Tight', 'Inter', sans-serif;
-    font-feature-settings: "ss01", "cv11", "cv02";
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Anton', 'Arial Narrow', 'Inter Tight', sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.005em;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0;
     text-wrap: balance;
   }
 
@@ -142,21 +139,21 @@
 
   .font-gulfs,
   .font-bebas {
-    font-family: 'Anton', 'Arial Narrow', 'Inter Tight', sans-serif;
-    letter-spacing: 0.01em;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.04em;
   }
 
   .font-alilato,
   .font-syne,
   .font-dm {
-    font-family: 'Alilato', 'Inter Tight', sans-serif;
+    font-family: 'Poppins', system-ui, sans-serif;
   }
 
-  /* Editorial italic — para citas y momentos suaves */
+  /* Editorial — citas y momentos suaves (Poppins light italic) */
   .font-editorial {
-    font-family: 'Fraunces', 'Georgia', serif;
-    font-feature-settings: "ss01";
-    font-optical-sizing: auto;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 300;
   }
 }
 
@@ -297,28 +294,28 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   /* Mesh gradient cálido — fondo ambiental para hero / CTAs */
   .bg-mesh-warm {
-    background-color: #FFF1F3;
+    background-color: #F6F2EB;
     background-image:
-      radial-gradient(at 15% 20%, hsl(351 90% 90% / 0.85) 0px, transparent 55%),
-      radial-gradient(at 85% 0%,  hsl(348 45% 72% / 0.55) 0px, transparent 50%),
-      radial-gradient(at 70% 90%, hsl(345 55% 42% / 0.40) 0px, transparent 60%),
-      radial-gradient(at 0% 100%, hsl(352 100% 95% / 0.95) 0px, transparent 50%);
+      radial-gradient(at 15% 20%, hsl(36 35% 90% / 0.85) 0px, transparent 55%),
+      radial-gradient(at 85% 0%,  hsl(32 22% 70% / 0.55) 0px, transparent 50%),
+      radial-gradient(at 70% 90%, hsl(28 18% 40% / 0.40) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, hsl(38 40% 95% / 0.95) 0px, transparent 50%);
   }
 
   .bg-mesh-dark {
-    background-color: #670626;
+    background-color: #3A2F26;
     background-image:
-      radial-gradient(at 15% 20%, hsl(348 40% 45% / 0.92) 0px, transparent 55%),
-      radial-gradient(at 85% 0%, hsl(351 70% 80% / 0.28) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, hsl(345 65% 22% / 0.64) 0px, transparent 60%);
+      radial-gradient(at 15% 20%, hsl(28 16% 42% / 0.92) 0px, transparent 55%),
+      radial-gradient(at 85% 0%, hsl(34 24% 78% / 0.28) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsl(25 22% 20% / 0.64) 0px, transparent 60%);
   }
 
   /* Spotlight border — para tarjetas premium */
   .ring-spotlight {
     box-shadow:
-      inset 0 1px 0 0 hsl(352 100% 97% / 0.6),
-      0 0 0 1px hsl(348 50% 82% / 0.20),
-      0 12px 40px -12px hsl(345 70% 18% / 0.18);
+      inset 0 1px 0 0 hsl(38 40% 97% / 0.6),
+      0 0 0 1px hsl(33 24% 80% / 0.20),
+      0 12px 40px -12px hsl(25 22% 16% / 0.18);
   }
 
   .shadow-warm  { box-shadow: var(--shadow-warm); }
@@ -399,9 +396,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .client-shell {
     isolation: isolate;
     background:
-      radial-gradient(circle at 18% -10%, hsl(351 85% 86% / 0.30), transparent 32rem),
-      radial-gradient(circle at 82% 8%, hsl(348 45% 62% / 0.12), transparent 30rem),
-      linear-gradient(135deg, #FFF7F8 0%, #FFE4E8 50%, #F3CCD4 100%);
+      radial-gradient(circle at 18% -10%, hsl(35 30% 85% / 0.30), transparent 32rem),
+      radial-gradient(circle at 82% 8%, hsl(30 20% 60% / 0.12), transparent 30rem),
+      linear-gradient(135deg, #FBF8F4 0%, #E8DED4 50%, #E8DDD5 100%);
   }
 
   .client-shell main::before {
@@ -411,8 +408,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: min(30rem, 34vw);
     height: 100dvh;
     background:
-      linear-gradient(90deg, transparent, hsl(351 90% 93% / 0.34)),
-      repeating-linear-gradient(90deg, hsl(345 40% 35% / 0.035) 0 1px, transparent 1px 20px);
+      linear-gradient(90deg, transparent, hsl(37 36% 93% / 0.34)),
+      repeating-linear-gradient(90deg, hsl(26 16% 34% / 0.035) 0 1px, transparent 1px 20px);
     pointer-events: none;
     opacity: 0.8;
   }
@@ -432,9 +429,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-shell {
     isolation: isolate;
     background:
-      radial-gradient(circle at 20% -10%, hsl(350 70% 84% / 0.30), transparent 34rem),
-      radial-gradient(circle at 100% 20%, hsl(348 45% 57% / 0.13), transparent 30rem),
-      linear-gradient(135deg, #FFF7F8 0%, #FFE4E8 48%, #F3CCD4 100%);
+      radial-gradient(circle at 20% -10%, hsl(34 26% 82% / 0.30), transparent 34rem),
+      radial-gradient(circle at 100% 20%, hsl(30 20% 56% / 0.13), transparent 30rem),
+      linear-gradient(135deg, #FBF8F4 0%, #E8DED4 48%, #E8DDD5 100%);
   }
 
   .admin-shell main {
@@ -447,8 +444,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     inset: 4rem 0 0 auto;
     width: min(34vw, 28rem);
     background:
-      linear-gradient(90deg, transparent, hsl(351 90% 93% / 0.24)),
-      repeating-linear-gradient(90deg, hsl(345 40% 35% / 0.035) 0 1px, transparent 1px 18px);
+      linear-gradient(90deg, transparent, hsl(37 36% 93% / 0.24)),
+      repeating-linear-gradient(90deg, hsl(26 16% 34% / 0.035) 0 1px, transparent 1px 18px);
     pointer-events: none;
     opacity: 0.8;
   }
@@ -470,7 +467,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0;
-    color: #2B0911;
+    color: #2A211B;
   }
 
   .admin-page > h1 {
@@ -483,18 +480,18 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .admin-page > p,
   .admin-page > div:first-child p {
-    color: hsl(348 18% 42% / 0.78);
+    color: hsl(28 12% 42% / 0.78);
   }
 
   .admin-page .bg-card,
   .admin-page .rounded-xl.border,
   .admin-page .rounded-2xl.border {
-    border-color: hsl(348 30% 62% / 0.18);
+    border-color: hsl(30 16% 62% / 0.18);
     background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.78), hsl(351 90% 96% / 0.72));
+      linear-gradient(180deg, hsl(0 0% 100% / 0.78), hsl(37 36% 96% / 0.72));
     box-shadow:
       inset 0 1px 0 hsl(0 0% 100% / 0.72),
-      0 20px 54px -38px hsl(345 55% 18% / 0.48);
+      0 20px 54px -38px hsl(25 22% 16% / 0.48);
     backdrop-filter: blur(14px);
   }
 
@@ -509,7 +506,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-page .shadow-sm {
     box-shadow:
       inset 0 1px 0 hsl(0 0% 100% / 0.7),
-      0 20px 50px -38px hsl(345 55% 18% / 0.48);
+      0 20px 50px -38px hsl(25 22% 16% / 0.48);
   }
 
   .admin-page button,
@@ -530,47 +527,47 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page button[class*="bg-primary"],
-  .admin-page button[class*="from-[#E7C9CF]"],
-  .admin-page button[class*="from-[#E7C9CF]"],
-  .admin-page button[class*="from-[#E7C9CF]"] {
-    background: #670626 !important;
-    color: #FFF7F8 !important;
-    box-shadow: 0 16px 32px -24px hsl(345 55% 18% / 0.78);
+  .admin-page button[class*="from-[#D5C4B8]"],
+  .admin-page button[class*="from-[#D5C4B8]"],
+  .admin-page button[class*="from-[#D5C4B8]"] {
+    background: #3A2F26 !important;
+    color: #FBF8F4 !important;
+    box-shadow: 0 16px 32px -24px hsl(25 22% 16% / 0.78);
   }
 
   .admin-page button[class*="bg-primary"]:hover,
-  .admin-page button[class*="from-[#E7C9CF]"]:hover,
-  .admin-page button[class*="from-[#E7C9CF]"]:hover,
-  .admin-page button[class*="from-[#E7C9CF]"]:hover {
-    background: #5C0110 !important;
+  .admin-page button[class*="from-[#D5C4B8]"]:hover,
+  .admin-page button[class*="from-[#D5C4B8]"]:hover,
+  .admin-page button[class*="from-[#D5C4B8]"]:hover {
+    background: #4A3D32 !important;
   }
 
   .admin-page button[class*="border"],
   .admin-page a[class*="border"] {
-    border-color: hsl(348 30% 62% / 0.20);
+    border-color: hsl(30 16% 62% / 0.20);
   }
 
   .admin-page input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
   .admin-page textarea,
   .admin-page [role="combobox"] {
     min-height: 2.5rem;
-    border-color: hsl(348 30% 62% / 0.22);
-    background-color: hsl(351 90% 97% / 0.78);
+    border-color: hsl(30 16% 62% / 0.22);
+    background-color: hsl(37 36% 97% / 0.78);
     box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.8);
   }
 
   .admin-page input:focus,
   .admin-page textarea:focus,
   .admin-page [role="combobox"]:focus {
-    border-color: hsl(346 22% 40% / 0.48);
-    box-shadow: 0 0 0 3px hsl(346 22% 40% / 0.10);
+    border-color: hsl(28 14% 40% / 0.48);
+    box-shadow: 0 0 0 3px hsl(28 14% 40% / 0.10);
   }
 
   .admin-page [role="tablist"] {
     height: auto;
     gap: 0.25rem;
-    border: 1px solid hsl(348 30% 62% / 0.16);
-    background: hsl(351 90% 97% / 0.72);
+    border: 1px solid hsl(30 16% 62% / 0.16);
+    background: hsl(37 36% 97% / 0.72);
     padding: 0.25rem;
     border-radius: 1rem;
     box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.72);
@@ -579,13 +576,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-page [role="tab"] {
     min-height: 2.25rem;
     border-radius: 0.75rem;
-    color: hsl(348 18% 42% / 0.72);
+    color: hsl(28 12% 42% / 0.72);
   }
 
   .admin-page [role="tab"][data-state="active"] {
-    background: #670626;
-    color: #FFF7F8;
-    box-shadow: 0 14px 28px -22px hsl(345 55% 18% / 0.9);
+    background: #3A2F26;
+    color: #FBF8F4;
+    box-shadow: 0 14px 28px -22px hsl(25 22% 16% / 0.9);
   }
 
   .admin-page table {
@@ -593,11 +590,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page thead tr {
-    background: hsl(351 80% 95% / 0.65);
+    background: hsl(37 34% 95% / 0.65);
   }
 
   .admin-page th {
-    color: hsl(348 18% 42% / 0.70);
+    color: hsl(28 12% 42% / 0.70);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -605,15 +602,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page td {
-    color: #2B0911;
+    color: #2A211B;
   }
 
   .admin-page tbody tr:hover {
-    background: hsl(350 40% 78% / 0.075);
+    background: hsl(33 22% 76% / 0.075);
   }
 
   .admin-page [class*="text-muted-foreground"] {
-    color: hsl(348 18% 42% / 0.64);
+    color: hsl(28 12% 42% / 0.64);
   }
 
   .admin-page [class*="rounded-full"] {

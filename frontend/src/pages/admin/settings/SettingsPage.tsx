@@ -133,17 +133,17 @@ const CancellationSettings = () => {
 
   return (
     <div className="space-y-5 max-w-md">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#7C0116]/15 bg-white/40 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#5B4A3E]/15 bg-white/40 px-4 py-3">
         <div>
-          <Label className="text-sm font-medium text-[#670626]">Permitir cancelaciones</Label>
-          <p className="text-xs text-[#670626]/55 mt-0.5">Si lo desactivas, nadie podrá cancelar desde la app.</p>
+          <Label className="text-sm font-medium text-[#3A2F26]">Permitir cancelaciones</Label>
+          <p className="text-xs text-[#3A2F26]/55 mt-0.5">Si lo desactivas, nadie podrá cancelar desde la app.</p>
         </div>
         <Switch checked={enabled} onCheckedChange={setEnabled} />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-[#670626]">Horas mínimas antes de la clase</Label>
+          <Label className="text-sm font-medium text-[#3A2F26]">Horas mínimas antes de la clase</Label>
           <Input
             type="number"
             min={0}
@@ -153,10 +153,10 @@ const CancellationSettings = () => {
             onChange={(e) => setMinHours(Math.max(0, Math.min(CANCEL_MAX_HOURS, Number(e.target.value || 0))))}
             disabled={!enabled}
           />
-          <p className="text-xs text-[#670626]/55">Entre 0 y {CANCEL_MAX_HOURS} horas.</p>
+          <p className="text-xs text-[#3A2F26]/55">Entre 0 y {CANCEL_MAX_HOURS} horas.</p>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-[#670626]">Cancelaciones gratis por membresía</Label>
+          <Label className="text-sm font-medium text-[#3A2F26]">Cancelaciones gratis por membresía</Label>
           <Input
             type="number"
             min={0}
@@ -166,20 +166,20 @@ const CancellationSettings = () => {
             onChange={(e) => setFreePerMembership(Math.max(0, Math.min(31, Number(e.target.value || 0))))}
             disabled={!enabled}
           />
-          <p className="text-xs text-[#670626]/55">Las siguientes cancelan, pero la clase se cuenta como tomada.</p>
+          <p className="text-xs text-[#3A2F26]/55">Las siguientes cancelan, pero la clase se cuenta como tomada.</p>
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#7C0116]/15 bg-white/40 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#5B4A3E]/15 bg-white/40 px-4 py-3">
         <div>
-          <Label className="text-sm font-medium text-[#670626]">Devolver crédito al cancelar a tiempo</Label>
-          <p className="text-xs text-[#670626]/55 mt-0.5">Si lo desactivas, la clase nunca regresa al paquete.</p>
+          <Label className="text-sm font-medium text-[#3A2F26]">Devolver crédito al cancelar a tiempo</Label>
+          <p className="text-xs text-[#3A2F26]/55 mt-0.5">Si lo desactivas, la clase nunca regresa al paquete.</p>
         </div>
         <Switch checked={refund} onCheckedChange={setRefund} disabled={!enabled} />
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-[#670626]">Mensaje cuando ya no se puede cancelar</Label>
+        <Label className="text-sm font-medium text-[#3A2F26]">Mensaje cuando ya no se puede cancelar</Label>
         <Textarea
           rows={3}
           maxLength={CANCEL_MAX_MSG}
@@ -187,20 +187,20 @@ const CancellationSettings = () => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Ej: Esta clase ya no se puede cancelar desde la app. Contáctanos si tienes una emergencia."
         />
-        <div className="flex items-center justify-between text-xs text-[#670626]/55">
+        <div className="flex items-center justify-between text-xs text-[#3A2F26]/55">
           <span>Aparece al cliente cuando intenta cancelar fuera de la ventana.</span>
           <span className="tabular-nums">{message.length}/{CANCEL_MAX_MSG}</span>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#7C0116]/25 bg-[#7C0116]/[0.06] px-4 py-3">
-        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#7C0116]/70 mb-1.5">Vista previa</p>
-        <p className="text-sm text-[#670626] leading-snug">{previewLine}</p>
+      <div className="rounded-xl border border-[#5B4A3E]/25 bg-[#5B4A3E]/[0.06] px-4 py-3">
+        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#5B4A3E]/70 mb-1.5">Vista previa</p>
+        <p className="text-sm text-[#3A2F26] leading-snug">{previewLine}</p>
       </div>
 
       {error && <p className="text-xs text-destructive">{error}</p>}
 
-      <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-[#7C0116] hover:bg-[#5C0110] text-[#FFE4E8]">
+      <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-[#5B4A3E] hover:bg-[#4A3D32] text-[#E8DED4]">
         {updateMutation.isPending ? <Loader2 className="animate-spin mr-2" size={14} /> : null}
         Guardar política
       </Button>
@@ -263,16 +263,16 @@ const ReferralSettings = () => {
 
   return (
     <div className="space-y-5 max-w-md">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#7C0116]/15 bg-white/40 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#5B4A3E]/15 bg-white/40 px-4 py-3">
         <div>
-          <Label className="text-sm font-medium text-[#670626]">Activar descuento por referido</Label>
-          <p className="text-xs text-[#670626]/55 mt-0.5">Si lo desactivas, no se aplicará el % a las nuevas referidas.</p>
+          <Label className="text-sm font-medium text-[#3A2F26]">Activar descuento por referido</Label>
+          <p className="text-xs text-[#3A2F26]/55 mt-0.5">Si lo desactivas, no se aplicará el % a las nuevas referidas.</p>
         </div>
         <Switch checked={enabled} onCheckedChange={setEnabled} />
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-[#670626]">% de descuento</Label>
+        <Label className="text-sm font-medium text-[#3A2F26]">% de descuento</Label>
         <Input
           type="number"
           min={0}
@@ -282,12 +282,12 @@ const ReferralSettings = () => {
           onChange={(e) => setPercent(Math.max(0, Math.min(50, Number(e.target.value || 0))))}
           disabled={!enabled}
         />
-        <p className="text-xs text-[#670626]/55">Entre 0 y 50%. Se aplica solo en la primera compra de membresía (no en clase muestra).</p>
+        <p className="text-xs text-[#3A2F26]/55">Entre 0 y 50%. Se aplica solo en la primera compra de membresía (no en clase muestra).</p>
       </div>
 
-      <div className="rounded-xl border border-[#7C0116]/25 bg-[#7C0116]/[0.06] px-4 py-3">
-        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#7C0116]/70 mb-1.5">Vista previa</p>
-        <p className="text-sm text-[#670626] leading-snug">
+      <div className="rounded-xl border border-[#5B4A3E]/25 bg-[#5B4A3E]/[0.06] px-4 py-3">
+        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#5B4A3E]/70 mb-1.5">Vista previa</p>
+        <p className="text-sm text-[#3A2F26] leading-snug">
           {enabled
             ? `Las nuevas alumnas referidas reciben ${percent}% de descuento en su primera compra de membresía.`
             : "El descuento por referido está desactivado."}
@@ -296,7 +296,7 @@ const ReferralSettings = () => {
 
       {error && <p className="text-xs text-destructive">{error}</p>}
 
-      <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-[#7C0116] hover:bg-[#5C0110] text-[#FFE4E8]">
+      <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-[#5B4A3E] hover:bg-[#4A3D32] text-[#E8DED4]">
         {updateMutation.isPending ? <Loader2 className="animate-spin mr-2" size={14} /> : null}
         Guardar
       </Button>
@@ -339,19 +339,19 @@ const PaymentValidationSettings = () => {
   if (isLoading) return <div className="h-10 w-full max-w-md rounded-md bg-muted animate-pulse" />;
 
   return (
-    <div className="space-y-4 max-w-md mb-6 rounded-2xl border border-[#7C0116]/15 bg-white/40 p-4">
+    <div className="space-y-4 max-w-md mb-6 rounded-2xl border border-[#5B4A3E]/15 bg-white/40 p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Label className="text-sm font-medium text-[#670626]">Validar transferencias manualmente</Label>
-          <p className="text-xs text-[#670626]/55 mt-0.5 leading-snug">
+          <Label className="text-sm font-medium text-[#3A2F26]">Validar transferencias manualmente</Label>
+          <p className="text-xs text-[#3A2F26]/55 mt-0.5 leading-snug">
             Cuando está activo, al subir su comprobante la alumna NO activa su membresía sola: queda <strong>pendiente</strong> hasta que tú la apruebas en Pagos. La tarjeta (MercadoPago) no se ve afectada.
           </p>
         </div>
         <Switch checked={manual} onCheckedChange={setManual} />
       </div>
-      <div className="space-y-1 border-t border-[#7C0116]/10 pt-3">
-        <Label className="text-sm font-medium text-[#670626]">Avisarme por WhatsApp</Label>
-        <p className="text-xs text-[#670626]/55 mb-1.5 leading-snug">
+      <div className="space-y-1 border-t border-[#5B4A3E]/10 pt-3">
+        <Label className="text-sm font-medium text-[#3A2F26]">Avisarme por WhatsApp</Label>
+        <p className="text-xs text-[#3A2F26]/55 mb-1.5 leading-snug">
           Número (con WhatsApp) donde quieres recibir el aviso cuando entre una transferencia por validar. Déjalo vacío para avisar solo en el panel.
         </p>
         <Input
@@ -362,7 +362,7 @@ const PaymentValidationSettings = () => {
           onChange={(e) => setNotifyWhatsapp(e.target.value)}
         />
       </div>
-      <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending} size="sm" className="bg-[#7C0116] hover:bg-[#5C0110] text-[#FFE4E8]">
+      <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending} size="sm" className="bg-[#5B4A3E] hover:bg-[#4A3D32] text-[#E8DED4]">
         {updateMutation.isPending ? <Loader2 className="animate-spin mr-2" size={14} /> : null}
         Guardar
       </Button>
@@ -918,7 +918,7 @@ const VenueMediaSettings = () => {
 
       {mediaUrl ? (
         <div className="space-y-2">
-          <div className="rounded-lg border border-border overflow-hidden bg-[#7C0116]/10">
+          <div className="rounded-lg border border-border overflow-hidden bg-[#5B4A3E]/10">
             {mediaType === "video" ? (
               <video src={mediaUrl} controls className="w-full max-h-[360px] object-cover bg-black" />
             ) : (

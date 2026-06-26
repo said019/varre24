@@ -42,13 +42,13 @@ export function AuthLayout({
   return (
     <div className="min-h-screen flex bg-background">
       {/* ── LEFT — brand panel (lg+) ── */}
-      <aside className="hidden lg:flex lg:w-[48%] relative overflow-hidden bg-[#670626] text-[#FFF1F3]">
+      <aside className="hidden lg:flex lg:w-[48%] relative overflow-hidden bg-[#3A2F26] text-[#F6F2EB]">
         <img
           src={heroPhoto}
           alt="Estudio VARRE24"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#670626]/55 via-[#670626]/35 to-[#2B0911]/85" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#2A211B]/82 via-[#2A211B]/35 to-[#2A211B]/45" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
           {/* logo */}
@@ -65,22 +65,22 @@ export function AuthLayout({
           {/* tagline block */}
           <Reveal y={28} delay={0.08}>
             <div>
-              <div className="inline-flex items-center gap-2 border border-[#FFBDC5]/45 px-4 py-[7px] rounded-full text-[0.7rem] tracking-[0.2em] uppercase text-[#FFF1F3]/90 mb-6 font-alilato">
-                <span className="w-[6px] h-[6px] rounded-full bg-[#FFBDC5]" />
+              <div className="inline-flex items-center gap-2 border border-[#CBBFAF]/45 px-4 py-[7px] rounded-full text-[0.7rem] tracking-[0.2em] uppercase text-[#F6F2EB]/90 mb-6 font-alilato">
+                <span className="w-[6px] h-[6px] rounded-full bg-[#CBBFAF]" />
                 Nápoles · Benito Juárez, CDMX
               </div>
 
               <h2 className="font-bebas text-[clamp(3rem,5vw,5.5rem)] leading-[0.9] tracking-tight mb-5">
                 {brandTagline}
                 {brandItalic && (
-                  <span className="block font-editorial italic font-light text-[#F3CCD4] normal-case">
+                  <span className="block font-editorial italic font-light text-[#E8DDD5] normal-case">
                     {brandItalic}
                   </span>
                 )}
               </h2>
 
               {brandBlurb && (
-                <p className="font-alilato text-[0.92rem] leading-[1.7] text-[#FFF1F3]/85 max-w-[360px]">
+                <p className="font-alilato text-[0.92rem] leading-[1.7] text-[#F6F2EB]/85 max-w-[360px]">
                   {brandBlurb}
                 </p>
               )}
@@ -92,7 +92,7 @@ export function AuthLayout({
                       <div className="font-bebas text-[1.85rem] leading-none tracking-wide">
                         {s.n}
                       </div>
-                      <div className="font-alilato text-[0.68rem] text-[#FFBDC5] uppercase tracking-[0.18em] leading-tight mt-1">
+                      <div className="font-alilato text-[0.68rem] text-[#CBBFAF] uppercase tracking-[0.18em] leading-tight mt-1">
                         {s.l}
                       </div>
                     </div>

@@ -16,7 +16,7 @@ const NAV_GROUPS = [
   {
     label: "Principal",
     collapsible: false,
-    accentColor: "#7C0116",
+    accentColor: "#5B4A3E",
     items: [
       { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { path: "/admin/clients", label: "Clientes", icon: Users },
@@ -27,7 +27,7 @@ const NAV_GROUPS = [
   {
     label: "Gestión",
     collapsible: true,
-    accentColor: "#E7C9CF",
+    accentColor: "#D5C4B8",
     items: [
       { path: "/admin/plans", label: "Planes", icon: Package },
       { path: "/admin/memberships", label: "Membresías", icon: CreditCard },
@@ -40,7 +40,7 @@ const NAV_GROUPS = [
   {
     label: "Sistema",
     collapsible: false,
-    accentColor: "#7C0116",
+    accentColor: "#5B4A3E",
     items: [
       { path: "/admin/audit", label: "Auditoría", icon: History },
       { path: "/admin/settings", label: "Configuración", icon: Settings },
@@ -98,11 +98,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const isCompact = collapsed && !mobileOpen;
 
   return (
-    <div className="admin-shell flex min-h-[100dvh] bg-[#FFF1F3] text-[#2B0911]">
+    <div className="admin-shell flex min-h-[100dvh] bg-[#F6F2EB] text-[#2A211B]">
       {mobileOpen && (
         <button
           aria-label="Cerrar menú"
-          className="fixed inset-0 z-40 bg-[#2B0911]/35 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-[#2A211B]/35 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -110,8 +110,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col transition-transform duration-300 shrink-0",
-          "border-r border-[#FFE4E8]/10",
-          "bg-[#2B0911] text-[#FFF1F3] shadow-[18px_0_60px_rgba(47,40,35,0.18)]",
+          "border-r border-[#E8DED4]/10",
+          "bg-[#2A211B] text-[#F6F2EB] shadow-[18px_0_60px_rgba(47,40,35,0.18)]",
           "w-[88vw] max-w-[300px] -translate-x-full lg:translate-x-0 lg:static",
           mobileOpen && "translate-x-0",
           collapsed ? "lg:w-[76px]" : "lg:w-[260px]",
@@ -119,14 +119,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       >
         <div
           className={cn(
-            "flex items-center border-b border-[#FFE4E8]/10 shrink-0",
+            "flex items-center border-b border-[#E8DED4]/10 shrink-0",
             isCompact ? "justify-center px-3 py-5" : "justify-between px-5 py-6",
           )}
         >
           {!isCompact && (
             <div className="min-w-0">
               <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto object-contain drop-shadow-sm" />
-              <p className="mt-1 text-[13px] font-bold uppercase tracking-[0.22em] text-[#FFE4E8]/90">
+              <p className="mt-1 text-[13px] font-bold uppercase tracking-[0.22em] text-[#E8DED4]/90">
                 VARRE24
               </p>
             </div>
@@ -134,7 +134,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
           <button
             onClick={() => setMobileOpen(false)}
-            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-xl text-[#FFE4E8]/70 hover:text-[#FFE4E8] hover:bg-[#FFE4E8]/10 active:scale-[0.98] transition-all"
+            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-xl text-[#E8DED4]/70 hover:text-[#E8DED4] hover:bg-[#E8DED4]/10 active:scale-[0.98] transition-all"
             aria-label="Cerrar menú"
           >
             <X size={16} />
@@ -144,7 +144,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             onClick={() => setCollapsed((v) => !v)}
             className={cn(
               "hidden lg:flex items-center justify-center w-8 h-8 rounded-xl transition-all active:scale-[0.98]",
-              "text-[#FFE4E8]/55 hover:text-[#FFE4E8] hover:bg-[#FFE4E8]/10",
+              "text-[#E8DED4]/55 hover:text-[#E8DED4] hover:bg-[#E8DED4]/10",
             )}
             aria-label="Contraer menú"
           >
@@ -167,20 +167,20 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     >
                       <span
                         className="text-[10px] font-semibold tracking-[0.22em] uppercase transition-colors"
-                        style={{ color: isGroupActive ? "#FFE4E8" : "#FFE4E888" }}
+                        style={{ color: isGroupActive ? "#E8DED4" : "#E8DED488" }}
                       >
                         {group.label}
                       </span>
                       <ChevronDown
                         size={11}
                         className={cn("transition-all duration-200", isOpen ? "rotate-0" : "-rotate-90")}
-                        style={{ color: "#FFE4E888" }}
+                        style={{ color: "#E8DED488" }}
                       />
                     </button>
                   ) : (
                     <p
                       className="px-5 py-1.5 text-[10px] font-semibold tracking-[0.22em] uppercase"
-                      style={{ color: "#FFE4E888" }}
+                      style={{ color: "#E8DED488" }}
                     >
                       {group.label}
                     </p>
@@ -199,8 +199,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                         "flex items-center gap-3 mx-0.5 my-1 rounded-2xl border transition-all duration-200 no-underline group active:scale-[0.98]",
                         isCompact ? "px-0 justify-center py-3" : "px-3.5 py-3",
                         active
-                          ? "border-[#FFE4E8]/18 bg-[#FFE4E8] font-semibold text-[#2B0911] shadow-[0_16px_38px_-24px_rgba(245,236,219,0.9)]"
-                          : "border-transparent text-[#FFE4E8]/58 hover:text-[#FFE4E8] hover:bg-[#FFE4E8]/8",
+                          ? "border-[#E8DED4]/18 bg-[#E8DED4] font-semibold text-[#2A211B] shadow-[0_16px_38px_-24px_rgba(245,236,219,0.9)]"
+                          : "border-transparent text-[#E8DED4]/58 hover:text-[#E8DED4] hover:bg-[#E8DED4]/8",
                       )}
                     >
                       <Icon
@@ -221,19 +221,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   );
                 })}
 
-                {isCompact && <div className="mx-3 my-2 h-px bg-[#FFE4E8]/10" />}
+                {isCompact && <div className="mx-3 my-2 h-px bg-[#E8DED4]/10" />}
               </div>
             );
           })}
         </nav>
 
-        <div className="border-t border-[#FFE4E8]/10 pb-3 pt-2 shrink-0">
+        <div className="border-t border-[#E8DED4]/10 pb-3 pt-2 shrink-0">
           <Link
             to="/"
             title={isCompact ? "Ver sitio" : undefined}
             className={cn(
               "flex items-center gap-3 mx-2 rounded-xl px-3 py-2.5 no-underline transition-all active:scale-[0.98]",
-              "text-[#FFE4E8]/45 hover:text-[#FFE4E8] hover:bg-[#FFE4E8]/8 border border-transparent",
+              "text-[#E8DED4]/45 hover:text-[#E8DED4] hover:bg-[#E8DED4]/8 border border-transparent",
               isCompact && "justify-center px-0",
             )}
           >
@@ -245,7 +245,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             title={isCompact ? "Salir" : undefined}
             className={cn(
               "flex items-center gap-3 mx-2 rounded-xl px-3 py-2.5 w-[calc(100%-16px)] transition-all active:scale-[0.98]",
-              "text-[#FFE4E8]/45 hover:text-[#fecaca] hover:bg-[#7f1d1d]/25 border border-transparent",
+              "text-[#E8DED4]/45 hover:text-[#fecaca] hover:bg-[#7f1d1d]/25 border border-transparent",
               isCompact && "justify-center px-0",
             )}
           >
@@ -256,36 +256,36 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
-        <header className="shrink-0 h-16 flex items-center justify-between px-3 sm:px-5 lg:px-7 border-b border-[#7C0116]/12 bg-[#FFF7F8]/82 backdrop-blur-xl sticky top-0 z-30 shadow-[0_12px_40px_-34px_rgba(84,67,49,0.75)]">
+        <header className="shrink-0 h-16 flex items-center justify-between px-3 sm:px-5 lg:px-7 border-b border-[#5B4A3E]/12 bg-[#FBF8F4]/82 backdrop-blur-xl sticky top-0 z-30 shadow-[0_12px_40px_-34px_rgba(84,67,49,0.75)]">
           <div className="flex items-center gap-2 min-w-0">
             <button
-              className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl text-[#7C0116] hover:text-[#2B0911] hover:bg-[#7C0116]/10 active:scale-[0.98] transition-all"
+              className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl text-[#5B4A3E] hover:text-[#2A211B] hover:bg-[#5B4A3E]/10 active:scale-[0.98] transition-all"
               onClick={() => setMobileOpen(true)}
               aria-label="Abrir menú"
             >
               <Menu size={16} />
             </button>
-            <span className="text-[#7C0116]/50 text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase">Admin</span>
+            <span className="text-[#5B4A3E]/50 text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase">Admin</span>
             {currentItem && (
               <>
-                <ChevronRight size={12} className="text-[#7C0116]/30 shrink-0" />
-                <span className="text-[#2B0911] text-xs sm:text-sm font-semibold truncate">{currentItem.label}</span>
+                <ChevronRight size={12} className="text-[#5B4A3E]/30 shrink-0" />
+                <span className="text-[#2A211B] text-xs sm:text-sm font-semibold truncate">{currentItem.label}</span>
               </>
             )}
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <AdminPendingBell />
-            <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#7C0116]/10 bg-white/45 px-2.5 py-1 text-[11px] text-[#7C0116]/70 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9B5A66] shadow-[0_0_0_4px_rgba(143,117,89,0.12)] animate-pulse" />
+            <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#5B4A3E]/10 bg-white/45 px-2.5 py-1 text-[11px] text-[#5B4A3E]/70 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#8A8077] shadow-[0_0_0_4px_rgba(143,117,89,0.12)] animate-pulse" />
               En línea
             </span>
-            <div className="w-px h-4 bg-[#7C0116]/15 hidden sm:block" />
+            <div className="w-px h-4 bg-[#5B4A3E]/15 hidden sm:block" />
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#2B0911] flex items-center justify-center text-[11px] font-bold text-[#FFE4E8] shadow-sm ring-1 ring-[#7C0116]/10">
+              <div className="w-8 h-8 rounded-xl bg-[#2A211B] flex items-center justify-center text-[11px] font-bold text-[#E8DED4] shadow-sm ring-1 ring-[#5B4A3E]/10">
                 {user?.displayName?.[0]?.toUpperCase() ?? user?.display_name?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? "A"}
               </div>
               {!isCompact && (
-                <span className="text-xs text-[#2B0911]/55 hidden md:block truncate max-w-[180px]">
+                <span className="text-xs text-[#2A211B]/55 hidden md:block truncate max-w-[180px]">
                   {user?.displayName ?? user?.display_name ?? user?.email ?? "Admin"}
                 </span>
               )}
@@ -296,7 +296,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <main className="admin-mobile-main flex-1 overflow-auto pb-[88px] lg:pb-0">{children}</main>
 
         {isMobile && (
-          <nav className="fixed inset-x-2 bottom-2 z-40 rounded-[22px] border border-[#7C0116]/12 bg-[#FFF7F8]/95 p-1 pb-safe backdrop-blur-xl lg:hidden shadow-[0_18px_48px_-22px_rgba(84,67,49,0.42)]">
+          <nav className="fixed inset-x-2 bottom-2 z-40 rounded-[22px] border border-[#5B4A3E]/12 bg-[#FBF8F4]/95 p-1 pb-safe backdrop-blur-xl lg:hidden shadow-[0_18px_48px_-22px_rgba(84,67,49,0.42)]">
             <ul className="grid grid-cols-5 gap-1">
               {MOBILE_QUICK_NAV.map((item) => {
                 const active = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
@@ -307,8 +307,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       className={cn(
                         "flex h-12 min-h-[44px] flex-col items-center justify-center rounded-xl text-[11px] font-semibold transition-colors",
                         active
-                          ? "bg-[#2B0911] text-[#FFE4E8] shadow-md shadow-[#7C0116]/20"
-                          : "text-[#2B0911]/45 hover:bg-[#7C0116]/8 hover:text-[#2B0911]",
+                          ? "bg-[#2A211B] text-[#E8DED4] shadow-md shadow-[#5B4A3E]/20"
+                          : "text-[#2A211B]/45 hover:bg-[#5B4A3E]/8 hover:text-[#2A211B]",
                       )}
                       aria-current={active ? "page" : undefined}
                     >

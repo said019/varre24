@@ -34,8 +34,8 @@ const ForgotPassword = () => {
 
   const heading = (
     <>
-      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#7C0116] font-semibold mb-3 flex items-center gap-2">
-        <span className="w-5 h-[1px] bg-[#7C0116] inline-block" />
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#5B4A3E] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[1px] bg-[#5B4A3E] inline-block" />
         Recuperación
       </p>
       <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">
@@ -53,11 +53,11 @@ const ForgotPassword = () => {
       brandStats={[]}
     >
       {sent ? (
-        <div className="rounded-2xl border border-[#F3CCD4] bg-[#FFF7F8] p-7 text-center">
-          <CheckCircle className="mx-auto text-[#7C0116]" size={44} />
+        <div className="rounded-2xl border border-[#E8DDD5] bg-[#FBF8F4] p-7 text-center">
+          <CheckCircle className="mx-auto text-[#5B4A3E]" size={44} />
           <h2 className="font-bebas text-[1.85rem] leading-none text-foreground tracking-tight mt-4">
             Revisa tu
-            <span className="font-editorial italic font-light text-[#7C0116] normal-case text-[1.3rem] ml-1.5">
+            <span className="font-editorial italic font-light text-[#5B4A3E] normal-case text-[1.3rem] ml-1.5">
               email.
             </span>
           </h2>
@@ -66,7 +66,7 @@ const ForgotPassword = () => {
           </p>
           <Link
             to="/auth/login"
-            className="press mt-6 inline-flex items-center justify-center gap-2 text-sm font-semibold tracking-[0.12em] uppercase text-[#7C0116] hover:text-[#7C0116]/80 transition-colors no-underline"
+            className="press mt-6 inline-flex items-center justify-center gap-2 text-sm font-semibold tracking-[0.12em] uppercase text-[#5B4A3E] hover:text-[#5B4A3E]/80 transition-colors no-underline"
           >
             <ArrowLeft size={15} />
             Volver al inicio
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
                 autoComplete="email"
                 placeholder="tu@email.com"
                 {...register("email")}
-                className="font-alilato bg-[#FFF7F8] border border-[#F3CCD4] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#7C0116] transition-all"
+                className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
               />
               {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
             </div>
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="press mt-1 bg-[#7C0116] text-[#FFF1F3] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+              className="press mt-1 bg-[#5B4A3E] text-[#F6F2EB] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -115,7 +115,7 @@ const ForgotPassword = () => {
 
           <Link
             to="/auth/login"
-            className="press flex items-center justify-center gap-2 w-full py-4 rounded-full border border-[#F3CCD4] text-[#7C0116] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#7C0116] hover:bg-[#FFF7F8] transition-all no-underline"
+            className="press flex items-center justify-center gap-2 w-full py-4 rounded-full border border-[#E8DDD5] text-[#5B4A3E] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#5B4A3E] hover:bg-[#FBF8F4] transition-all no-underline"
           >
             <ArrowLeft size={15} />
             Volver al inicio

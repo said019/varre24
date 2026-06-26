@@ -175,7 +175,7 @@ export function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenC
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Enviar comunicado</DialogTitle>
-          <DialogDescription>Envía un email o WhatsApp a tus clientas. Usa <code className="text-[#7C0116]">{"{name}"}</code> para personalizar con el nombre.</DialogDescription>
+          <DialogDescription>Envía un email o WhatsApp a tus clientas. Usa <code className="text-[#5B4A3E]">{"{name}"}</code> para personalizar con el nombre.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -269,7 +269,7 @@ export function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenC
           <Button
             onClick={handleSend}
             disabled={isPending || audienceCount === 0 || (tab === "email" ? !subject || !body : !waMessage.trim())}
-            className="bg-[#7C0116] hover:bg-[#5C0110] text-[#FFE4E8]"
+            className="bg-[#5B4A3E] hover:bg-[#4A3D32] text-[#E8DED4]"
           >
             {isPending ? <Loader2 className="animate-spin mr-1.5" size={14} /> : <Send size={14} className="mr-1.5" />}
             {confirmStep ? `Confirmar y enviar a ${audienceCount}` : "Enviar"}
