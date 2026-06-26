@@ -20,23 +20,23 @@ Rebrand + división del sistema de reservas `pilates-room` para el studio **VARR
 | **Brand board** | ✅ Aprobado | `docs/brand/brand-board.html` + `docs/brand/varre24-brand-kit-overview.jpg`. Paleta + tipografías (Fraunces + Inter Tight). |
 | **Scrub de seguridad (parcial)** | ✅ Hecho | Quitados: emails/contraseñas de admin de terceros (ahora admin via env `ADMIN_*`), API key de Evolution ajena, seed con Postgres+password. JWT_SECRET y dominios → defaults VARRE24. |
 | **3 — Identidad visual (frontend)** | ✅ Hecho (color/tokens) | Paleta **Red Pink Bold** del deck (Cherry Cola `#7C0116` · Claret `#670626` · Pink `#FFBDC5` · Hibiscus `#E0A4B0`). Barrido de ~2,260 hex → tokens, `:root` HSL + gradientes ambientales, escala `brand.*`, fuentes (Fraunces+Inter Tight), strings "Pilates Room"→"VARRE24", metadatos/PWA (theme `#7C0116`), badges de categoría `barre`/`pilates`/`especial`, restricción de trial en UI. Build verde, verificado por screenshot. ⚠️ Corrección: la 1ª pasada usó terracota (supuesto erróneo de la spec vieja); rehecho al rojo/rosa real del deck. |
-| **4 — Limpieza + seguridad (resto)** | ⏳ Pendiente | Geo del studio (hoy Zócalo) → Nápoles; quitar branding Xolobitos del pase Apple; seeds/instructores + generar clases; limpiar bloques muertos. |
+| **4 — Limpieza + seguridad (resto)** | ✅ Hecho | Backend rebrandeado (strings "Pilates Room"→VARRE24, dominio→varre24.com, emails a red/pink, EVOLUTION_INSTANCE), branding ajeno **Xolobitos** quitado del pase Apple (colores+coords), SQL legacy consistente. Seguridad ya OK (admin via env, JWT default marcado, sin secretos hardcodeados). |
+| **Landing "Editorial en movimiento"** | ✅ Hecho | Rediseño único (no copia de Pilates Room): 7 secciones editoriales (Hero cinemático, marquee, clases pinned, Experience, Alexandra Murillo, planes, contacto) con paleta Red Pink Bold + Anton. Sistema de movimiento global con **Framer Motion** (primitivas `Reveal`/`MagneticButton`/`Marquee`/`KineticHeading` + `AnimatedRoutes` para transiciones de página en landing/portal/admin). Contenido real de varre24fit.com. 20/20 tests, build verde, review final READY TO MERGE. Spec/plan en `docs/superpowers/`. |
 | **5 — Integraciones** | ⏳ Pendiente | Cablear MercadoPago, WhatsApp, Resend con credenciales reales del studio. |
 | **6 — Deploy Railway** | ⏳ Pendiente | Provisionar Postgres, env vars, deploy, verificación end-to-end. |
 
-## Próximo paso concreto (Paso 4 — contenido + limpieza)
-El **color** ya quedó (Paso 3 ✅). Lo que sigue es **contenido/copy** (no color), aún con
-restos de Pilates Room en el landing:
-1. Hero/landing: "PILATES REFORMER" / "IN MY PILATES ERA" → catálogo VARRE24 (Pilates Mat,
-   Barre, Experience). VARRE24 no usa Reformer.
-2. Ubicación: "Centro Oils&Love · Jardines del Country, GDL" → Arizona 14 P3, Nápoles, CDMX
-   (y coords del studio en `backend/server/index.js`, hoy Zócalo).
-3. "Clases de 50 min en grupos de siete" → 60 min, cupo 7.
-4. Logo/wordmark VARRE24 + fotos nuevas (hoy se usan assets `pilates-room-*`).
-5. (Pendiente confirmar) Fuente de titulares: ¿Fraunces serif actual o display bold tipo
-   Druk/Anton como el deck?
-6. Resto de Paso 4: hardening de seguridad (admin hardcodeado, JWT, branding Xolobitos del
-   pase Apple), limpieza de esquema/seeds.
+## Próximos pasos / follow-ups
+Color, contenido, backend y el nuevo landing ya están. Pendiente:
+1. **Assets reales** (lo que más sube la calidad): logo VARRE24, foto del hero y de la
+   fundadora (las actuales son placeholder `pilates-room-*` con texto "IN MY PILATES ERA"
+   horneado), logo de emails (`pr-logo-email.png`).
+2. **Datos reales** (hoy placeholders): dominio `varre24.com`, email `hola@varre24.com`,
+   IG/FB, y coords exactas del studio (pase Apple + mapa).
+3. **Polish del landing** (no bloqueante): la transición de *salida* de página de
+   `AnimatedRoutes` es un no-op (patrón framer+router) — la de entrada sí anima; menú móvil
+   (hoy solo wordmark + Entrar); links externos en nueva pestaña (`target/rel`).
+4. **Paso 5 — Integraciones:** MercadoPago, WhatsApp (Evolution), Resend con credenciales.
+5. **Paso 6 — Deploy Railway:** Postgres, env vars, deploy end-to-end.
 
 ## Cómo correr (local)
 ```bash
