@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { useRef } from "react";
 import { KineticHeading, MagneticButton } from "@/lib/motion";
 import { waLink, STUDIO } from "./data";
-import heroPhoto from "@/assets/pilates-room-images/index-hero.webp";
+import heroPhoto from "@/assets/varre24/hero-varre24.jpg";
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);

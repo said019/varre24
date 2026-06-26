@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { useRef } from "react";
 import { Reveal } from "@/lib/motion";
 import { FOUNDER } from "./data";
-import founderPhoto from "@/assets/pilates-room-images/studio.webp";
+import founderPhoto from "@/assets/varre24/hero-about.jpg";
 
 export function FounderSpread() {
   const ref = useRef<HTMLElement>(null);
