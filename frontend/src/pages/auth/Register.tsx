@@ -107,9 +107,9 @@ const Register = () => {
   return (
     <AuthLayout
       heading={heading}
-      brandTagline="UN ESPACIO"
-      brandItalic="para volver a ti."
-      brandBlurb="Crea tu cuenta para reservar clases, ver tu paquete y unirte a la comunidad de VARRE24."
+      brandTagline="PRIMERA CLASE"
+      brandItalic="desde $120."
+      brandBlurb="Crea tu cuenta para reservar Barre, Pilates Mat y clases especiales, y llevar tu paquete contigo a cada sesión."
     >
       {/* ref code badge */}
       {refCode && (

@@ -47,9 +47,9 @@ const ForgotPassword = () => {
   return (
     <AuthLayout
       heading={heading}
-      brandTagline="VUELVE A"
-      brandItalic="tu práctica."
-      brandBlurb="Te enviaremos un enlace seguro para que vuelvas a entrar y retomes tu movimiento."
+      brandTagline="RECUPERA"
+      brandItalic="tu acceso."
+      brandBlurb="Te enviamos un enlace para restablecer tu contraseña y volver a reservar tus clases."
       brandStats={[]}
     >
       {sent ? (

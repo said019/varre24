@@ -26,17 +26,17 @@ interface AuthLayoutProps {
 }
 
 const DEFAULT_STATS: BrandStat[] = [
-  { n: "07", l: "Cupo · clase" },
-  { n: "60", l: "Min · sesión" },
-  { n: "29", l: "Clases / semana" },
+  { n: "07", l: "Cupo por clase" },
+  { n: "60", l: "Minutos" },
+  { n: "$120", l: "Clase de prueba" },
 ];
 
 export function AuthLayout({
   heading,
   children,
-  brandTagline = "MOVIMIENTO",
-  brandItalic = "con propósito.",
-  brandBlurb = "Un espacio donde otros roles se quedan afuera. Barre & Pilates Mat en grupos de 7, con un cierre de relajación que cuida tu regreso al día.",
+  brandTagline = "GRUPOS DE 7",
+  brandItalic = "y un cierre en calma.",
+  brandBlurb = "Barre y Pilates Mat en un estudio boutique de Nápoles. Sesiones de 60 minutos con atención de cerca y un cierre de relajación al final.",
   brandStats = DEFAULT_STATS,
 }: AuthLayoutProps) {
   return (
