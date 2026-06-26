@@ -3,10 +3,10 @@ import { MANIFESTO } from "./data";
 
 export function Manifesto() {
   return (
-    <section className="bg-[#5B4A3E] py-6 text-[#F6F2EB]">
+    <section className="border-y border-[#E4DACE] bg-[#F6F2EB] py-5 text-[#8A8077]">
       <Marquee
         items={MANIFESTO}
-        className="font-bebas text-[clamp(2rem,5vw,4rem)] leading-none tracking-tight"
+        className="font-bebas text-[clamp(0.95rem,1.8vw,1.4rem)] font-light leading-none tracking-[0.2em]"
       />
     </section>
   );

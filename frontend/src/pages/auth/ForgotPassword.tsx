@@ -45,13 +45,7 @@ const ForgotPassword = () => {
   );
 
   return (
-    <AuthLayout
-      heading={heading}
-      brandTagline="RECUPERA"
-      brandItalic="tu acceso."
-      brandBlurb="Te enviamos un enlace para restablecer tu contraseña y volver a reservar tus clases."
-      brandStats={[]}
-    >
+    <AuthLayout heading={heading}>
       {sent ? (
         <div className="rounded-2xl border border-[#E8DDD5] bg-[#FBF8F4] p-7 text-center">
           <CheckCircle className="mx-auto text-[#5B4A3E]" size={44} />

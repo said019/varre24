@@ -105,12 +105,7 @@ const Register = () => {
   );
 
   return (
-    <AuthLayout
-      heading={heading}
-      brandTagline="PRIMERA CLASE"
-      brandItalic="desde $120."
-      brandBlurb="Crea tu cuenta para reservar Barre, Pilates Mat y clases especiales, y llevar tu paquete contigo a cada sesión."
-    >
+    <AuthLayout heading={heading}>
       {/* ref code badge */}
       {refCode && (
         <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2.5 rounded-xl mb-6 text-sm text-[#5B4A3E] font-alilato">

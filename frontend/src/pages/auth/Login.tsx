@@ -157,28 +157,16 @@ const Login = () => {
         </button>
       </form>
 
-      {/* divider */}
-      <div className="flex items-center gap-4 my-8">
-        <div className="flex-1 h-[1px] bg-border" />
-        <span className="text-xs text-muted-foreground font-alilato">¿Primera vez?</span>
-        <div className="flex-1 h-[1px] bg-border" />
-      </div>
+      {/* crear cuenta — inline, minimal */}
+      <p className="mt-7 text-center text-sm text-muted-foreground font-alilato">
+        ¿Primera vez?{" "}
+        <Link to="/auth/register" className="text-[#5B4A3E] font-medium underline-offset-4 hover:underline">
+          Crea tu cuenta
+        </Link>
+      </p>
 
-      {/* register CTA */}
-      <Link
-        to="/auth/register"
-        className="press flex items-center justify-center gap-2 w-full py-4 rounded-full border border-[#E8DDD5] text-[#5B4A3E] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#5B4A3E] hover:bg-[#FBF8F4] transition-all no-underline"
-      >
-        Crear cuenta nueva
-      </Link>
-
-      {/* Recuperación: nueva sesión limpia sin cerrar la página ni reinstalar.
-          Para alumnas atoradas (sesión vencida, pantallas que rebotan, o app
-          con versión vieja en caché). */}
-      <div className="mt-8 rounded-xl border border-[#E8DDD5] bg-[#FBF8F4] p-3.5 text-center">
-        <p className="text-[0.72rem] text-muted-foreground leading-snug mb-2 font-alilato">
-          ¿La app se queda cargando, rebota entre pantallas o no te deja entrar?
-        </p>
+      {/* Recuperación — link discreto para sesiones atoradas */}
+      <div className="mt-8 text-center">
         <button
           type="button"
           onClick={async () => {
@@ -187,36 +175,24 @@ const Login = () => {
             catch { setResetting(false); }
           }}
           disabled={resetting}
-          className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-[#5B4A3E] hover:text-[#5B4A3E]/80 transition-colors disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-1.5 text-[0.72rem] text-muted-foreground/70 hover:text-[#5B4A3E] transition-colors disabled:opacity-60 font-alilato"
         >
-          {resetting ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
-          {resetting ? "Reiniciando…" : "Iniciar sesión nueva (reiniciar app)"}
+          {resetting ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+          {resetting ? "Reiniciando…" : "¿Problemas para entrar? Reiniciar la app"}
         </button>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground/50 mt-6 font-alilato">
-        © {new Date().getFullYear()} VARRE24 · Nápoles, CDMX
-      </p>
-
-      {/* PWA Install Card — siempre visible salvo si la app ya corre standalone */}
+      {/* PWA Install — colapsado por defecto para mantener la vista limpia */}
       {!isStandalone && (
-        <div className="mt-7 rounded-2xl border border-[#5B4A3E]/25 bg-[#E8DED4] p-5">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-[#3A2F26] shadow-soft p-2 flex items-center justify-center shrink-0">
-              <img src="/brand/varre24-logo-cream.svg" alt="" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[0.66rem] tracking-[0.22em] uppercase text-[#5B4A3E] font-semibold mb-1">
-                Acceso rápido
-              </p>
-              <h3 className="font-bebas text-[1.35rem] leading-none text-[#2A211B] tracking-tight">
-                Instala VARRE24
-                <span className="font-editorial italic font-light text-[0.85rem] text-[#5B4A3E] normal-case ml-1.5 tracking-normal">
-                  en tu teléfono.
-                </span>
-              </h3>
-            </div>
-          </div>
+        <details className="group mt-10 rounded-2xl border border-[#E8DDD5] bg-[#FBF8F4] px-5 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-alilato text-[#3A2F26]">
+            <span className="inline-flex items-center gap-2">
+              <Smartphone size={14} className="text-[#5B4A3E]" />
+              Instala VARRE24 en tu teléfono
+            </span>
+            <span className="text-muted-foreground/60 transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="mt-4">
 
           {/* Tabs iOS / Android */}
           <div className="inline-flex p-0.5 bg-[#FBF8F4] rounded-full border border-[#5B4A3E]/15 mb-4">
@@ -281,11 +257,8 @@ const Login = () => {
               </>
             )}
           </ol>
-
-          <p className="mt-4 pt-3 border-t border-[#5B4A3E]/15 text-[0.7rem] text-[#3A2F26] leading-[1.5] font-alilato">
-            Una vez instalada, abre la app desde tu pantalla de inicio para entrar más rápido y recibir notificaciones de tus clases.
-          </p>
-        </div>
+          </div>
+        </details>
       )}
     </AuthLayout>
   );
