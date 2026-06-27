@@ -3148,6 +3148,24 @@ app.get("/api/memberships/my", authMiddleware, async (req, res) => {
   }
 });
 
+// ─── Public: horario base semanal (schedule_slots) ──────────────────────────
+// Para la landing ("Horarios"): el horario recurrente que el studio edita en el
+// admin. No requiere auth ni clases generadas; muestra el horario base.
+app.get("/api/public/schedule-slots", async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT day_of_week, time_slot, class_type_name, instructor_name
+         FROM schedule_slots
+        WHERE is_active = true
+        ORDER BY day_of_week`
+    );
+    res.json({ data: rows });
+  } catch (err) {
+    console.error("GET public/schedule-slots error:", err);
+    res.status(500).json({ message: "Error al obtener horarios" });
+  }
+});
+
 // ─── Routes: /api/classes ───────────────────────────────────────────────────
 
 // GET /api/classes?start=YYYY-MM-DD&end=YYYY-MM-DD

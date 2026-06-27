@@ -2,6 +2,7 @@ import { Nav } from "@/components/landing/Nav";
 import { Hero } from "@/components/landing/Hero";
 import { Manifesto } from "@/components/landing/Manifesto";
 import { ClassesGallery } from "@/components/landing/ClassesGallery";
+import { Horarios } from "@/components/landing/Horarios";
 import { ExperienceClass } from "@/components/landing/ExperienceClass";
 import { FounderSpread } from "@/components/landing/FounderSpread";
 import { PlansTeaser } from "@/components/landing/PlansTeaser";
@@ -15,6 +16,7 @@ export default function Index() {
         <Hero />
         <Manifesto />
         <ClassesGallery />
+        <Horarios />
         <ExperienceClass />
         <FounderSpread />
         <PlansTeaser />

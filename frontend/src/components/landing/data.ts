@@ -33,12 +33,22 @@ export const FOUNDER = {
   ],
 };
 
-export const PLANS = [
-  { name: "Clase de prueba", price: "$120", note: "Solo tu primera vez" },
-  { name: "Clase individual", price: "$270", note: "1 crédito" },
-  { name: "Paquete 4 clases", price: "$500", note: "30 días" },
-  { name: "Membresía mensual", price: "$990", note: "Hasta 3 por semana" },
-  { name: "Ilimitado 6 meses", price: "$16,000", note: "180 días" },
+export interface Plan {
+  name: string;
+  price: string;
+  unit?: string;
+  note: string;
+  detail: string;
+  featured?: boolean;
+  tag?: string;
+}
+
+export const PLANS: Plan[] = [
+  { name: "Clase de prueba", price: "$120", unit: "MXN", note: "Solo tu primera vez", detail: "1 clase · vigencia 7 días", tag: "Prueba" },
+  { name: "Clase individual", price: "$270", unit: "MXN", note: "Suelta, cuando quieras", detail: "1 crédito · vigencia 30 días" },
+  { name: "Paquete 4 clases", price: "$500", unit: "MXN", note: "Tu ritmo semanal", detail: "4 clases · vigencia 30 días" },
+  { name: "Membresía mensual", price: "$990", unit: "MXN", note: "Hasta 3 por semana", detail: "12 clases al mes · reserva anticipada", featured: true, tag: "Más elegida" },
+  { name: "Ilimitado 6 meses", price: "$16,000", unit: "MXN", note: "Sin límites", detail: "Clases ilimitadas · vigencia 180 días" },
 ];
 
 export function waLink(clase: string): string {
