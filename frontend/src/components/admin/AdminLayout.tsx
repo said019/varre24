@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import pilatesRoomLogo from "@/assets/pilates-room-logo.png";
 import type { User } from "@/types/auth";
 import {
   LayoutDashboard, Package, CreditCard, Users, CalendarDays,
@@ -16,7 +15,6 @@ const NAV_GROUPS = [
   {
     label: "Principal",
     collapsible: false,
-    accentColor: "#5B4A3E",
     items: [
       { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { path: "/admin/clients", label: "Clientes", icon: Users },
@@ -27,7 +25,6 @@ const NAV_GROUPS = [
   {
     label: "Gestión",
     collapsible: true,
-    accentColor: "#D5C4B8",
     items: [
       { path: "/admin/plans", label: "Planes", icon: Package },
       { path: "/admin/memberships", label: "Membresías", icon: CreditCard },
@@ -40,7 +37,6 @@ const NAV_GROUPS = [
   {
     label: "Sistema",
     collapsible: false,
-    accentColor: "#5B4A3E",
     items: [
       { path: "/admin/audit", label: "Auditoría", icon: History },
       { path: "/admin/settings", label: "Configuración", icon: Settings },
@@ -98,11 +94,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const isCompact = collapsed && !mobileOpen;
 
   return (
-    <div className="admin-shell flex min-h-[100dvh] bg-[#F6F2EB] text-[#2A211B]">
+    <div className="admin-shell flex min-h-[100dvh] bg-background text-foreground font-alilato">
       {mobileOpen && (
         <button
           aria-label="Cerrar menú"
-          className="fixed inset-0 z-40 bg-[#2A211B]/35 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-[#2A211B]/35 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -110,182 +106,187 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col transition-transform duration-300 shrink-0",
-          "border-r border-[#E8DED4]/10",
-          "bg-[#2A211B] text-[#F6F2EB] shadow-[18px_0_60px_rgba(47,40,35,0.18)]",
-          "w-[88vw] max-w-[300px] -translate-x-full lg:translate-x-0 lg:static",
+          "border-r border-[#3A2F26] bg-[#2A211B] text-[#E8DED4]",
+          "w-[86vw] max-w-[290px] -translate-x-full lg:translate-x-0 lg:static",
           mobileOpen && "translate-x-0",
-          collapsed ? "lg:w-[76px]" : "lg:w-[260px]",
+          collapsed ? "lg:w-[78px]" : "lg:w-[252px]",
         )}
       >
+        {/* Brand lockup */}
         <div
           className={cn(
-            "flex items-center border-b border-[#E8DED4]/10 shrink-0",
-            isCompact ? "justify-center px-3 py-5" : "justify-between px-5 py-6",
+            "flex items-center border-b border-[#3A2F26] shrink-0 h-16",
+            isCompact ? "justify-center px-3" : "justify-between px-5",
           )}
         >
-          {!isCompact && (
-            <div className="min-w-0">
-              <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto object-contain drop-shadow-sm" />
-              <p className="mt-1 text-[13px] font-bold uppercase tracking-[0.22em] text-[#E8DED4]/90">
-                VARRE24
-              </p>
-            </div>
+          {isCompact ? (
+            <img src="/brand/varre24-icon.svg" alt="VARRE24" className="h-9 w-9 rounded-lg" />
+          ) : (
+            <Link to="/admin/dashboard" className="flex items-center gap-3 min-w-0 no-underline">
+              <img src="/brand/varre24-logo-cream.svg" alt="VARRE24" className="h-5 w-auto object-contain" />
+              <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-[#CBBFAF] pt-0.5">
+                Admin
+              </span>
+            </Link>
           )}
 
           <button
             onClick={() => setMobileOpen(false)}
-            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-xl text-[#E8DED4]/70 hover:text-[#E8DED4] hover:bg-[#E8DED4]/10 active:scale-[0.98] transition-all"
+            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-lg text-[#CBBFAF] hover:text-[#E8DED4] hover:bg-[#3A2F26] transition-colors"
             aria-label="Cerrar menú"
           >
-            <X size={16} />
+            <X size={16} strokeWidth={1.75} />
           </button>
 
-          <button
-            onClick={() => setCollapsed((v) => !v)}
-            className={cn(
-              "hidden lg:flex items-center justify-center w-8 h-8 rounded-xl transition-all active:scale-[0.98]",
-              "text-[#E8DED4]/55 hover:text-[#E8DED4] hover:bg-[#E8DED4]/10",
-            )}
-            aria-label="Contraer menú"
-          >
-            {collapsed ? <Menu size={15} /> : <ChevronLeft size={15} />}
-          </button>
+          {!isCompact && (
+            <button
+              onClick={() => setCollapsed((v) => !v)}
+              className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-[#8A8077] hover:text-[#E8DED4] hover:bg-[#3A2F26] transition-colors"
+              aria-label="Contraer menú"
+            >
+              <ChevronLeft size={16} strokeWidth={1.75} />
+            </button>
+          )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-2 py-4 scrollbar-thin">
-          {NAV_GROUPS.map((group) => {
+        {isCompact && (
+          <button
+            onClick={() => setCollapsed((v) => !v)}
+            className="hidden lg:flex items-center justify-center mx-auto mt-3 w-8 h-8 rounded-lg text-[#8A8077] hover:text-[#E8DED4] hover:bg-[#3A2F26] transition-colors"
+            aria-label="Expandir menú"
+          >
+            <Menu size={16} strokeWidth={1.75} />
+          </button>
+        )}
+
+        <nav className="flex-1 overflow-y-auto px-3 py-5 scrollbar-thin">
+          {NAV_GROUPS.map((group, gi) => {
             const isGroupActive = activeGroup?.label === group.label;
             const isOpen = group.collapsible ? (openGroups[group.label] ?? isGroupActive) : true;
 
             return (
-              <div key={group.label} className="mb-1">
+              <div key={group.label} className={cn(gi > 0 && "mt-6")}>
                 {!isCompact && (
                   group.collapsible ? (
                     <button
                       onClick={() => toggleGroup(group.label)}
-                      className="w-full flex items-center justify-between px-5 py-1.5 group"
+                      className="w-full flex items-center justify-between px-3 py-1.5 mb-1 group"
                     >
-                      <span
-                        className="text-[10px] font-semibold tracking-[0.22em] uppercase transition-colors"
-                        style={{ color: isGroupActive ? "#E8DED4" : "#E8DED488" }}
-                      >
+                      <span className="text-[10px] font-medium tracking-[0.28em] uppercase text-[#8A8077] transition-colors group-hover:text-[#CBBFAF]">
                         {group.label}
                       </span>
                       <ChevronDown
-                        size={11}
-                        className={cn("transition-all duration-200", isOpen ? "rotate-0" : "-rotate-90")}
-                        style={{ color: "#E8DED488" }}
+                        size={12}
+                        strokeWidth={1.75}
+                        className={cn("text-[#8A8077] transition-transform duration-200", isOpen ? "rotate-0" : "-rotate-90")}
                       />
                     </button>
                   ) : (
-                    <p
-                      className="px-5 py-1.5 text-[10px] font-semibold tracking-[0.22em] uppercase"
-                      style={{ color: "#E8DED488" }}
-                    >
+                    <p className="px-3 py-1.5 mb-1 text-[10px] font-medium tracking-[0.28em] uppercase text-[#8A8077]">
                       {group.label}
                     </p>
                   )
                 )}
 
-                {(isCompact || isOpen) && group.items.map(({ path, label, icon: Icon }) => {
-                  const active = location.pathname === path || location.pathname.startsWith(path + "/");
-                  const accent = group.accentColor;
-                  return (
-                    <Link
-                      key={path}
-                      to={path}
-                      title={isCompact ? label : undefined}
-                      className={cn(
-                        "flex items-center gap-3 mx-0.5 my-1 rounded-2xl border transition-all duration-200 no-underline group active:scale-[0.98]",
-                        isCompact ? "px-0 justify-center py-3" : "px-3.5 py-3",
-                        active
-                          ? "border-[#E8DED4]/18 bg-[#E8DED4] font-semibold text-[#2A211B] shadow-[0_16px_38px_-24px_rgba(245,236,219,0.9)]"
-                          : "border-transparent text-[#E8DED4]/58 hover:text-[#E8DED4] hover:bg-[#E8DED4]/8",
-                      )}
-                    >
-                      <Icon
-                        size={15}
-                        className="shrink-0 transition-colors"
-                        style={{ color: active ? accent : undefined }}
-                      />
-                      {!isCompact && (
-                        <span className="text-[13px] leading-none truncate">{label}</span>
-                      )}
-                      {active && !isCompact && (
-                        <span
-                          className="ml-auto h-5 w-1 rounded-full"
-                          style={{ backgroundColor: accent }}
-                        />
-                      )}
-                    </Link>
-                  );
-                })}
-
-                {isCompact && <div className="mx-3 my-2 h-px bg-[#E8DED4]/10" />}
+                {(isCompact || isOpen) && (
+                  <div className="space-y-0.5">
+                    {group.items.map(({ path, label, icon: Icon }) => {
+                      const active = location.pathname === path || location.pathname.startsWith(path + "/");
+                      return (
+                        <Link
+                          key={path}
+                          to={path}
+                          title={isCompact ? label : undefined}
+                          className={cn(
+                            "relative flex items-center gap-3 rounded-lg no-underline transition-colors duration-200",
+                            isCompact ? "justify-center py-3" : "px-3 py-2.5",
+                            active
+                              ? "bg-[#5B4A3E]/18 text-[#F6F2EB]"
+                              : "text-[#CBBFAF] hover:text-[#E8DED4] hover:bg-[#3A2F26]/70",
+                          )}
+                        >
+                          {active && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-[#CBBFAF]" />
+                          )}
+                          <Icon
+                            size={17}
+                            strokeWidth={1.75}
+                            className={cn("shrink-0 transition-colors", active ? "text-[#E8DED4]" : "text-[#8A8077]")}
+                          />
+                          {!isCompact && (
+                            <span className={cn("text-[13.5px] leading-none truncate", active ? "font-medium" : "font-normal")}>
+                              {label}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}
         </nav>
 
-        <div className="border-t border-[#E8DED4]/10 pb-3 pt-2 shrink-0">
+        <div className="border-t border-[#3A2F26] px-3 py-3 shrink-0 space-y-0.5">
           <Link
             to="/"
             title={isCompact ? "Ver sitio" : undefined}
             className={cn(
-              "flex items-center gap-3 mx-2 rounded-xl px-3 py-2.5 no-underline transition-all active:scale-[0.98]",
-              "text-[#E8DED4]/45 hover:text-[#E8DED4] hover:bg-[#E8DED4]/8 border border-transparent",
-              isCompact && "justify-center px-0",
+              "flex items-center gap-3 rounded-lg py-2.5 no-underline transition-colors",
+              "text-[#8A8077] hover:text-[#E8DED4] hover:bg-[#3A2F26]/70",
+              isCompact ? "justify-center" : "px-3",
             )}
           >
-            <Globe size={14} className="shrink-0" />
-            {!isCompact && <span className="text-xs">Ver sitio</span>}
+            <Globe size={16} strokeWidth={1.75} className="shrink-0" />
+            {!isCompact && <span className="text-[13px]">Ver sitio</span>}
           </Link>
           <button
             onClick={handleLogout}
             title={isCompact ? "Salir" : undefined}
             className={cn(
-              "flex items-center gap-3 mx-2 rounded-xl px-3 py-2.5 w-[calc(100%-16px)] transition-all active:scale-[0.98]",
-              "text-[#E8DED4]/45 hover:text-[#fecaca] hover:bg-[#7f1d1d]/25 border border-transparent",
-              isCompact && "justify-center px-0",
+              "flex items-center gap-3 rounded-lg py-2.5 w-full transition-colors",
+              "text-[#8A8077] hover:text-[#E8DED4] hover:bg-[#3A2F26]/70",
+              isCompact ? "justify-center" : "px-3",
             )}
           >
-            <LogOut size={14} className="shrink-0" />
-            {!isCompact && <span className="text-xs">Cerrar sesión</span>}
+            <LogOut size={16} strokeWidth={1.75} className="shrink-0" />
+            {!isCompact && <span className="text-[13px]">Cerrar sesión</span>}
           </button>
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
-        <header className="shrink-0 h-16 flex items-center justify-between px-3 sm:px-5 lg:px-7 border-b border-[#5B4A3E]/12 bg-[#FBF8F4]/82 backdrop-blur-xl sticky top-0 z-30 shadow-[0_12px_40px_-34px_rgba(84,67,49,0.75)]">
+        <header className="shrink-0 h-16 flex items-center justify-between px-3 sm:px-5 lg:px-7 border-b border-[#E8DDD5] bg-background sticky top-0 z-30">
           <div className="flex items-center gap-2 min-w-0">
             <button
-              className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-xl text-[#5B4A3E] hover:text-[#2A211B] hover:bg-[#5B4A3E]/10 active:scale-[0.98] transition-all"
+              className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#5B4A3E] hover:text-[#2A211B] hover:bg-[#E8DDD5]/60 transition-colors"
               onClick={() => setMobileOpen(true)}
               aria-label="Abrir menú"
             >
-              <Menu size={16} />
+              <Menu size={18} strokeWidth={1.75} />
             </button>
-            <span className="text-[#5B4A3E]/50 text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase">Admin</span>
+            <span className="text-[#8A8077] text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase">Admin</span>
             {currentItem && (
               <>
-                <ChevronRight size={12} className="text-[#5B4A3E]/30 shrink-0" />
-                <span className="text-[#2A211B] text-xs sm:text-sm font-semibold truncate">{currentItem.label}</span>
+                <ChevronRight size={13} strokeWidth={1.75} className="text-[#CBBFAF] shrink-0" />
+                <span className="text-foreground text-xs sm:text-sm font-medium truncate">{currentItem.label}</span>
               </>
             )}
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <AdminPendingBell />
-            <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#5B4A3E]/10 bg-white/45 px-2.5 py-1 text-[11px] text-[#5B4A3E]/70 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8A8077] shadow-[0_0_0_4px_rgba(143,117,89,0.12)] animate-pulse" />
+            <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#E8DDD5] px-2.5 py-1 text-[11px] text-[#8A8077] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#8A8077]" />
               En línea
             </span>
-            <div className="w-px h-4 bg-[#5B4A3E]/15 hidden sm:block" />
+            <div className="w-px h-4 bg-[#E8DDD5] hidden sm:block" />
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#2A211B] flex items-center justify-center text-[11px] font-bold text-[#E8DED4] shadow-sm ring-1 ring-[#5B4A3E]/10">
+              <div className="w-8 h-8 rounded-lg bg-[#2A211B] flex items-center justify-center text-[11px] font-medium text-[#E8DED4]">
                 {user?.displayName?.[0]?.toUpperCase() ?? user?.display_name?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? "A"}
               </div>
               {!isCompact && (
-                <span className="text-xs text-[#2A211B]/55 hidden md:block truncate max-w-[180px]">
+                <span className="text-xs text-[#8A8077] hidden md:block truncate max-w-[180px]">
                   {user?.displayName ?? user?.display_name ?? user?.email ?? "Admin"}
                 </span>
               )}
@@ -296,7 +297,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <main className="admin-mobile-main flex-1 overflow-auto pb-[88px] lg:pb-0">{children}</main>
 
         {isMobile && (
-          <nav className="fixed inset-x-2 bottom-2 z-40 rounded-[22px] border border-[#5B4A3E]/12 bg-[#FBF8F4]/95 p-1 pb-safe backdrop-blur-xl lg:hidden shadow-[0_18px_48px_-22px_rgba(84,67,49,0.42)]">
+          <nav className="fixed inset-x-3 bottom-3 z-40 rounded-2xl border border-[#E8DDD5] bg-[#FBF8F4] p-1 pb-safe lg:hidden">
             <ul className="grid grid-cols-5 gap-1">
               {MOBILE_QUICK_NAV.map((item) => {
                 const active = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
@@ -305,14 +306,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     <Link
                       to={item.path}
                       className={cn(
-                        "flex h-12 min-h-[44px] flex-col items-center justify-center rounded-xl text-[11px] font-semibold transition-colors",
+                        "flex h-12 min-h-[44px] flex-col items-center justify-center rounded-xl text-[11px] font-medium transition-colors",
                         active
-                          ? "bg-[#2A211B] text-[#E8DED4] shadow-md shadow-[#5B4A3E]/20"
-                          : "text-[#2A211B]/45 hover:bg-[#5B4A3E]/8 hover:text-[#2A211B]",
+                          ? "bg-[#2A211B] text-[#E8DED4]"
+                          : "text-[#8A8077] hover:bg-[#E8DDD5]/60 hover:text-[#2A211B]",
                       )}
                       aria-current={active ? "page" : undefined}
                     >
-                      <item.icon size={14} />
+                      <item.icon size={16} strokeWidth={1.75} />
                       <span className="mt-0.5 leading-none">{item.label}</span>
                     </Link>
                   </li>
