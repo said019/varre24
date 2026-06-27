@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Bell, CheckCircle, AlertCircle, Clock, AlertTriangle, Info } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-const API = import.meta.env.VITE_API_URL;
+// Mismo criterio que lib/api: sin VITE_API_URL → mismo origen (Express sirve
+// dist + API juntos en producción). Evita fetch("undefined/api/...").
+const API = String(import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
 interface Notification {
   id: string;
