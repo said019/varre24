@@ -8,11 +8,10 @@ import { useAuthStore } from "@/stores/authStore";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
 import { safeParse } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MembershipCard } from "@/components/MembershipCard";
-import { Calendar, ClipboardList, Stethoscope, Clock, CalendarCheck, ShoppingBag, ArrowRight, Sparkles, Upload, CreditCard } from "lucide-react";
+import { Calendar, ClipboardList, Stethoscope, Clock, CalendarCheck, ShoppingBag, ArrowRight, Upload, CreditCard } from "lucide-react";
 import type { ClientMembership } from "@/types/membership";
 import type { BookingClient } from "@/types/booking";
 
@@ -43,9 +42,7 @@ const Dashboard = () => {
     staleTime: 30_000,
   });
 
-  // Prefetch de las clases de la semana en curso: cuando la alumna entra al
-  // dashboard, en background se traen las clases para que al tocar "Reservar"
-  // el calendario aparezca instantáneo en vez de esperar ~1-3s.
+  // Prefetch de las clases de la semana en curso para que "Reservar" abra al instante.
   useEffect(() => {
     const today = new Date();
     const start = format(startOfWeek(today, { weekStartsOn: 0 }), "yyyy-MM-dd");
@@ -82,7 +79,7 @@ const Dashboard = () => {
 
   const upcomingBookings = bookings
     .filter((b) => b.status === "confirmed" || b.status === "waitlist")
-    .slice(0, 2);
+    .slice(0, 3);
 
   const classesRemaining = membership?.classesRemaining ?? membership?.classes_remaining ?? null;
   const isLowCredits = membership && classesRemaining !== null && classesRemaining <= 2;
@@ -95,281 +92,258 @@ const Dashboard = () => {
       ? "Ilimitadas"
       : `${classesRemaining ?? 0} clases`
     : "Sin plan activo";
+  const todayLabel = format(new Date(), "EEEE d 'de' MMMM", { locale: es });
+
+  const QUICK = [
+    { to: "/app/classes", icon: Calendar, label: "Reservar clase" },
+    { to: "/app/bookings", icon: ClipboardList, label: "Mis reservas" },
+    { to: "/app/checkout", icon: ShoppingBag, label: "Comprar plan" },
+  ];
+
+  const SUMMARY = [
+    { label: "Membresía", value: membershipName, loading: loadingMembership },
+    { label: "Créditos", value: creditsLabel, loading: loadingMembership },
+    { label: "Próximas", value: `${upcomingBookings.length}`, loading: loadingBookings },
+  ];
 
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="mx-auto w-full max-w-7xl space-y-6">
+        <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-12">
 
-          {/* ── Greeting ── */}
-          <section className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(340px,0.45fr)]">
-            <div className="relative overflow-hidden rounded-[1.75rem] bg-[#5B4A3E] p-6 text-[#FBF8F4] shadow-[0_30px_90px_-58px_rgba(47,40,35,0.95)] sm:p-8">
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[linear-gradient(90deg,transparent,rgba(200,183,158,0.16))]" />
-              <p className="relative text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#D5C4B8]">Bienvenida</p>
-              <div className="relative mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <h1 className="font-alilato text-4xl font-bold leading-[0.95] tracking-[0] text-[#FBF8F4] sm:text-5xl">
-                    Hola, {firstName || "Cristopher"}
-                  </h1>
-                  <p className="mt-4 max-w-[58ch] text-sm leading-6 text-[#F6F2EB]/68">
-                    Tu resumen de clases, membresía y pendientes del estudio para hoy.
-                  </p>
-                </div>
-                <div className="grid grid-cols-3 gap-2 sm:min-w-[24rem]">
-                  {[
-                    { to: "/app/classes", icon: Calendar, label: "Reservar" },
-                    { to: "/app/bookings", icon: ClipboardList, label: "Reservas" },
-                    { to: "/app/checkout", icon: ShoppingBag, label: "Planes" },
-                  ].map(({ to, icon: Icon, label }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      className="group flex min-h-[6.8rem] flex-col justify-between rounded-2xl border border-[#F6F2EB]/12 bg-[#F6F2EB]/8 p-3 no-underline transition-all hover:-translate-y-0.5 hover:bg-[#F6F2EB]/12"
-                    >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F6F2EB]/12 text-[#FBF8F4]">
-                        <Icon size={18} />
-                      </span>
-                      <span className="flex items-center justify-between text-xs font-semibold text-[#F6F2EB]/78">
-                        {label}
-                        <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <aside className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-              {[
-                { label: "Membresía", value: membershipName, loading: loadingMembership },
-                { label: "Créditos", value: creditsLabel, loading: loadingMembership },
-                { label: "Próximas", value: `${upcomingBookings.length}`, loading: loadingBookings },
-              ].map((stat) => (
-                <div key={stat.label} className="rounded-[1.35rem] border border-[#5B4A3E]/12 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_18px_50px_-38px_rgba(84,67,49,0.58)] backdrop-blur">
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/48">{stat.label}</p>
-                  {/* Gate en loading: evita el parpadeo de "Sin membresía" / "Sin
-                      plan activo" antes de que /memberships/my responda en el
-                      primer render (cache fría / recarga). */}
-                  {stat.loading ? (
-                    <Skeleton className="mt-3 h-7 w-24" />
-                  ) : (
-                    <p className="mt-3 truncate text-xl font-bold text-[#2A211B]">{stat.value}</p>
-                  )}
-                </div>
-              ))}
-            </aside>
+          {/* ── Saludo editorial ── */}
+          <section>
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077] first-letter:uppercase">
+              {todayLabel}
+            </p>
+            <h1 className="font-bebas mt-3 text-[clamp(2.2rem,5vw,3.2rem)] font-light leading-[1.05] tracking-[0.01em] text-[#2A211B]">
+              Hola{firstName ? `, ${firstName}` : ""}
+            </h1>
+            <p className="font-alilato mt-3 text-sm text-[#5B4A3E]/75">
+              Tu resumen de clases y membresía en VARRE24.
+            </p>
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
-            <div className="space-y-6">
-              {/* ── Membresía ── */}
-              <div>
-                <div className="mb-3 flex items-end justify-between gap-3">
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">Mi membresía</p>
-                  <Link to="/app/checkout" className="text-xs font-semibold text-[#5B4A3E] no-underline hover:text-[#2A211B]">
-                    Ver planes
-                  </Link>
-                </div>
-                {loadingMembership ? (
-                  <Skeleton className="h-44 w-full rounded-[1.35rem]" />
-                ) : membership ? (
-                  <MembershipCard membership={membership} />
-                ) : (
-                  <div className="rounded-[1.35rem] border border-[#5B4A3E]/14 bg-white/54 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_22px_60px_-42px_rgba(84,67,49,0.58)]">
-                    <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                      <div>
-                        <p className="text-lg font-bold text-[#2A211B]">No tienes membresía activa</p>
-                        <p className="mt-1 max-w-[48ch] text-sm text-[#4A3D32]/62">
-                          Elige un plan para reservar clases y ver tus créditos disponibles.
-                        </p>
-                      </div>
-                      <Button asChild className="bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
-                        <Link to="/app/checkout">Adquirir membresía</Link>
-                      </Button>
-                    </div>
-                  </div>
-                )}
+          {/* ── Resumen — fila con hairlines ── */}
+          <section className="grid grid-cols-3 border-y border-[#E4DACE]">
+            {SUMMARY.map((s, i) => (
+              <div key={s.label} className={`py-5 pr-4 ${i > 0 ? "border-l border-[#E4DACE] pl-4 sm:pl-6" : ""}`}>
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#8A8077]">{s.label}</p>
+                {s.loading
+                  ? <Skeleton className="mt-2.5 h-5 w-16" />
+                  : <p className="font-alilato mt-2.5 truncate text-[0.95rem] font-medium text-[#2A211B]">{s.value}</p>}
               </div>
+            ))}
+          </section>
 
-              {/* ── Próximas clases ── */}
-              <div>
-                <div className="mb-3 flex items-end justify-between gap-3">
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">Próximas clases</p>
-                  <Link to="/app/classes" className="text-xs font-semibold text-[#5B4A3E] no-underline hover:text-[#2A211B]">
-                    Reservar
-                  </Link>
-                </div>
-                {loadingBookings ? (
-                  <Skeleton className="h-32 w-full rounded-[1.35rem]" />
-                ) : upcomingBookings.length === 0 ? (
-                  <div className="rounded-[1.35rem] border border-dashed border-[#5B4A3E]/18 bg-[#5B4A3E]/[0.035] p-8 text-center">
-                    <p className="text-base font-semibold text-[#2A211B]">No tienes clases próximas</p>
-                    <p className="mt-1 text-sm text-[#4A3D32]/58">Reserva desde el calendario semanal del estudio.</p>
-                    <Button asChild className="mt-5 bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
-                      <Link to="/app/classes">Reservar ahora</Link>
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {upcomingBookings.map((b) => (
-                      <div key={b.id} className="rounded-[1.15rem] border border-[#5B4A3E]/12 bg-white/58 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
-                        <div className="flex items-center gap-4">
-                          <div className="shrink-0 rounded-2xl bg-[#5B4A3E] px-3 py-2 text-center text-[#FBF8F4]">
-                            <p className="tabular text-lg font-bold leading-none">
-                              {b.start_time ? format(safeParse(b.start_time), "HH:mm") : "—"}
-                            </p>
-                            <p className="mt-1 text-[10px] capitalize text-[#F6F2EB]/65">
-                              {b.start_time ? format(safeParse(b.start_time), "EEE d", { locale: es }) : ""}
-                            </p>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-bold text-[#2A211B]">{b.class_type_name}</p>
-                            <p className="mt-0.5 truncate text-xs text-[#4A3D32]/58">{b.instructor_name ?? b.class_type_name}</p>
-                          </div>
-                          <Badge
-                            className={b.status === "waitlist"
-                              ? "border border-[#D5C4B8]/40 bg-[#D5C4B8]/20 text-[#5B4A3E]"
-                              : "bg-[#5B4A3E] text-[#F6F2EB]"}
-                          >
-                            {b.status === "waitlist" ? "Espera" : "Confirmada"}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+          {/* ── Acciones rápidas ── */}
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {QUICK.map(({ to, icon: Icon, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className="group flex items-center justify-between rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] px-5 py-4 no-underline transition-colors hover:border-[#5B4A3E]/45"
+              >
+                <span className="flex items-center gap-3">
+                  <Icon size={17} className="text-[#5B4A3E]" strokeWidth={1.75} />
+                  <span className="font-alilato text-sm text-[#2A211B]">{label}</span>
+                </span>
+                <ArrowRight size={14} className="text-[#8A8077] transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            ))}
+          </section>
+
+          {/* ── Mi membresía ── */}
+          <section>
+            <div className="mb-4 flex items-end justify-between gap-3">
+              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">Mi membresía</p>
+              <Link to="/app/checkout" className="font-alilato text-xs text-[#5B4A3E] no-underline hover:underline underline-offset-4">Ver planes</Link>
             </div>
-
-            <aside className="space-y-6">
-              {/* ── CTA Adquirir / Renovar ── */}
-              {(noMembership || isLowCredits) && (
-                <Link to="/app/checkout" className="block no-underline">
-                  <div className="relative overflow-hidden rounded-[1.35rem] border border-[#5B4A3E]/14 bg-white/58 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_22px_60px_-42px_rgba(84,67,49,0.64)] transition-all hover:-translate-y-0.5">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5B4A3E]/10 text-[#5B4A3E]">
-                          <Sparkles size={18} />
-                        </div>
-                        <div>
-                          <p className="font-bold text-[#2A211B]">
-                            {noMembership ? "Adquiere tu membresía" : "Renueva tu plan"}
-                          </p>
-                          <p className="mt-0.5 text-xs text-[#4A3D32]/58">
-                            {noMembership
-                              ? "Elige el plan ideal para ti"
-                              : `${classesRemaining} clase${classesRemaining === 1 ? "" : "s"} restantes`}
-                          </p>
-                        </div>
-                      </div>
-                      <ArrowRight size={16} className="shrink-0 text-[#5B4A3E]" />
-                    </div>
-                  </div>
+            {loadingMembership ? (
+              <Skeleton className="h-44 w-full rounded-2xl" />
+            ) : membership ? (
+              <MembershipCard membership={membership} />
+            ) : (
+              <div className="flex flex-col gap-5 rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-6 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="font-alilato text-base font-medium text-[#2A211B]">No tienes membresía activa</p>
+                  <p className="font-alilato mt-1 max-w-[48ch] text-sm text-[#5B4A3E]/70">
+                    Elige un plan para reservar clases y ver tus créditos.
+                  </p>
+                </div>
+                <Link
+                  to="/app/checkout"
+                  className="press inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-[#5B4A3E] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                >
+                  Adquirir membresía
                 </Link>
-              )}
-
-              {/* ── Órdenes pendientes ── */}
-              {pendingOrders.length > 0 && (
-                <div>
-                  <p className="mb-3 flex items-center gap-1.5 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#5B4A3E]/52">
-                    <CreditCard size={12} />
-                    {pendingOrders.length === 1 ? "Orden pendiente" : "Órdenes pendientes"}
-                  </p>
-                  <div className="space-y-3">
-                    {pendingOrders.map((o: any) => (
-                      <div key={o.id} className="rounded-[1.15rem] border border-[#5B4A3E]/12 bg-white/60 p-4 shadow-[0_18px_48px_-38px_rgba(84,67,49,0.5)]">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-0.5">
-                            <p className="font-bold text-sm text-[#2A211B]">{o.plan_name}</p>
-                            <p className="text-xs text-[#4A3D32]/58">
-                              ${Number(o.total_amount).toLocaleString("es-MX")} MXN · {o.payment_method === "card" ? "Tarjeta en línea" : o.payment_method === "cash" ? "Tarjeta (estudio)" : "Transferencia"}
-                            </p>
-                            {o.order_number && (
-                              <p className="font-mono text-[10px] text-[#5B4A3E]/50">Orden: {o.order_number}</p>
-                            )}
-                          </div>
-                          <Badge
-                            variant="outline"
-                            className={o.status === "pending_payment"
-                              ? "border-amber-400/50 bg-amber-50 text-[10px] text-amber-700"
-                              : "border-blue-400/50 bg-blue-50 text-[10px] text-blue-700"}
-                          >
-                            {o.status === "pending_payment" ? (
-                              <><Upload size={10} className="mr-1" />{o.payment_method === "card" ? "Pagar" : "Subir"}</>
-                            ) : (
-                              <><Clock size={10} className="mr-1" />Revisión</>
-                            )}
-                          </Badge>
-                        </div>
-                        {o.status === "pending_payment" && (
-                          <Button asChild size="sm" className="mt-3 w-full bg-[#5B4A3E] text-[#F6F2EB] hover:bg-[#3A2F26]">
-                            {o.payment_method === "card" ? (
-                              <Link to="/app/orders">
-                                <CreditCard size={13} className="mr-1.5" />Completar pago
-                              </Link>
-                            ) : (
-                              <Link to={`/app/checkout?orderId=${o.id}`}>
-                                <Upload size={13} className="mr-1.5" />Subir comprobante
-                              </Link>
-                            )}
-                          </Button>
-                        )}
-                        {o.status === "pending_verification" && (
-                          <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
-                            {o.payment_method === "cash"
-                              ? "Acércate a recepción para completar tu pago."
-                              : "Tu comprobante está siendo revisado."}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Consultas pendientes ── */}
-              {consultations.length > 0 && (
-                <div>
-                  <p className="mb-3 flex items-center gap-1.5 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-amber-700/60">
-                    <Stethoscope size={12} />
-                    Consulta pendiente
-                  </p>
-                  <div className="space-y-3">
-                    {consultations.map((c) => (
-                      <div key={c.id} className="rounded-[1.15rem] border border-amber-300/35 bg-amber-50/55 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-0.5">
-                            <p className="font-bold text-sm text-[#2A211B]">{c.complement_name}</p>
-                            <p className="text-xs text-[#4A3D32]/58">Especialista: {c.specialist}</p>
-                            {c.status === "scheduled" && c.scheduled_date && (
-                              <p className="mt-1 flex items-center gap-1 text-xs font-medium text-green-700">
-                                <CalendarCheck size={11} />
-                                {format(new Date(c.scheduled_date), "EEEE d 'de' MMMM · HH:mm", { locale: es })}
-                              </p>
-                            )}
-                          </div>
-                          <Badge variant="outline"
-                                 className={c.status === "scheduled"
-                                   ? "border-green-400/50 bg-green-50 text-[10px] text-green-700"
-                                   : "border-amber-400/50 bg-amber-50 text-[10px] text-amber-700"}>
-                            {c.status === "scheduled" ? "Agendada" : "Pendiente"}
-                          </Badge>
-                        </div>
-                        {c.status === "pending" && (
-                          <p className="mt-3 rounded-xl bg-amber-100/60 px-3 py-2 text-xs text-amber-700">
-                            Te contactaremos para agendar.
-                          </p>
-                        )}
-                        {c.notes && (
-                          <p className="mt-2 text-xs italic text-[#4A3D32]/45">Nota: {c.notes}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </aside>
+              </div>
+            )}
           </section>
+
+          {/* ── Próximas clases ── */}
+          <section>
+            <div className="mb-4 flex items-end justify-between gap-3">
+              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">Próximas clases</p>
+              <Link to="/app/classes" className="font-alilato text-xs text-[#5B4A3E] no-underline hover:underline underline-offset-4">Reservar</Link>
+            </div>
+            {loadingBookings ? (
+              <Skeleton className="h-24 w-full rounded-2xl" />
+            ) : upcomingBookings.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-[#E4DACE] bg-[#FBF8F4] p-8 text-center">
+                <p className="font-alilato text-sm font-medium text-[#2A211B]">No tienes clases próximas</p>
+                <p className="font-alilato mt-1 text-sm text-[#5B4A3E]/60">Reserva desde el calendario semanal del estudio.</p>
+                <Link
+                  to="/app/classes"
+                  className="press mt-5 inline-flex items-center justify-center rounded-full bg-[#5B4A3E] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                >
+                  Reservar ahora
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+                {upcomingBookings.map((b) => (
+                  <div key={b.id} className="flex items-center gap-4 py-4">
+                    <div className="w-12 shrink-0 text-center">
+                      <p className="font-bebas text-xl font-light leading-none tracking-tight text-[#2A211B] tabular">
+                        {b.start_time ? format(safeParse(b.start_time), "HH:mm") : "—"}
+                      </p>
+                      <p className="font-alilato mt-1 text-[10px] uppercase tracking-wide text-[#8A8077]">
+                        {b.start_time ? format(safeParse(b.start_time), "EEE d", { locale: es }) : ""}
+                      </p>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-alilato truncate text-sm font-medium text-[#2A211B]">{b.class_type_name}</p>
+                      <p className="font-alilato mt-0.5 truncate text-xs text-[#5B4A3E]/60">{b.instructor_name ?? b.class_type_name}</p>
+                    </div>
+                    <span
+                      className={`font-alilato shrink-0 rounded-full px-3 py-1 text-[0.64rem] uppercase tracking-[0.1em] ${
+                        b.status === "waitlist"
+                          ? "border border-[#E4DACE] text-[#8A8077]"
+                          : "bg-[#5B4A3E] text-[#F6F2EB]"
+                      }`}
+                    >
+                      {b.status === "waitlist" ? "Espera" : "Confirmada"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ── CTA renovar (créditos bajos) ── */}
+          {isLowCredits && membership && (
+            <Link
+              to="/app/checkout"
+              className="flex items-center justify-between gap-4 rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] px-5 py-4 no-underline transition-colors hover:border-[#5B4A3E]/45"
+            >
+              <div>
+                <p className="font-alilato text-sm font-medium text-[#2A211B]">Renueva tu plan</p>
+                <p className="font-alilato mt-0.5 text-xs text-[#5B4A3E]/60">
+                  {classesRemaining} clase{classesRemaining === 1 ? "" : "s"} restantes
+                </p>
+              </div>
+              <ArrowRight size={15} className="shrink-0 text-[#5B4A3E]" />
+            </Link>
+          )}
+
+          {/* ── Órdenes pendientes ── */}
+          {pendingOrders.length > 0 && (
+            <section>
+              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+                <CreditCard size={12} strokeWidth={1.75} />
+                {pendingOrders.length === 1 ? "Orden pendiente" : "Órdenes pendientes"}
+              </p>
+              <div className="space-y-3">
+                {pendingOrders.map((o: any) => (
+                  <div key={o.id} className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-0.5">
+                        <p className="font-alilato text-sm font-medium text-[#2A211B]">{o.plan_name}</p>
+                        <p className="font-alilato text-xs text-[#5B4A3E]/60">
+                          ${Number(o.total_amount).toLocaleString("es-MX")} MXN · {o.payment_method === "card" ? "Tarjeta en línea" : o.payment_method === "cash" ? "Tarjeta (estudio)" : "Transferencia"}
+                        </p>
+                        {o.order_number && (
+                          <p className="font-mono text-[10px] text-[#8A8077]">Orden: {o.order_number}</p>
+                        )}
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={o.status === "pending_payment"
+                          ? "border-amber-400/50 bg-amber-50 text-[10px] text-amber-700"
+                          : "border-blue-400/50 bg-blue-50 text-[10px] text-blue-700"}
+                      >
+                        {o.status === "pending_payment" ? (
+                          <><Upload size={10} className="mr-1" />{o.payment_method === "card" ? "Pagar" : "Subir"}</>
+                        ) : (
+                          <><Clock size={10} className="mr-1" />Revisión</>
+                        )}
+                      </Badge>
+                    </div>
+                    {o.status === "pending_payment" && (
+                      <Link
+                        to={o.payment_method === "card" ? "/app/orders" : `/app/checkout?orderId=${o.id}`}
+                        className="press mt-3 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#5B4A3E] py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                      >
+                        {o.payment_method === "card"
+                          ? <><CreditCard size={13} /> Completar pago</>
+                          : <><Upload size={13} /> Subir comprobante</>}
+                      </Link>
+                    )}
+                    {o.status === "pending_verification" && (
+                      <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
+                        {o.payment_method === "cash"
+                          ? "Acércate a recepción para completar tu pago."
+                          : "Tu comprobante está siendo revisado."}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ── Consultas pendientes ── */}
+          {consultations.length > 0 && (
+            <section>
+              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+                <Stethoscope size={12} strokeWidth={1.75} />
+                Consulta pendiente
+              </p>
+              <div className="space-y-3">
+                {consultations.map((c) => (
+                  <div key={c.id} className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-0.5">
+                        <p className="font-alilato text-sm font-medium text-[#2A211B]">{c.complement_name}</p>
+                        <p className="font-alilato text-xs text-[#5B4A3E]/60">Especialista: {c.specialist}</p>
+                        {c.status === "scheduled" && c.scheduled_date && (
+                          <p className="mt-1 flex items-center gap-1 text-xs font-medium text-green-700">
+                            <CalendarCheck size={11} />
+                            {format(new Date(c.scheduled_date), "EEEE d 'de' MMMM · HH:mm", { locale: es })}
+                          </p>
+                        )}
+                      </div>
+                      <Badge variant="outline"
+                             className={c.status === "scheduled"
+                               ? "border-green-400/50 bg-green-50 text-[10px] text-green-700"
+                               : "border-amber-400/50 bg-amber-50 text-[10px] text-amber-700"}>
+                        {c.status === "scheduled" ? "Agendada" : "Pendiente"}
+                      </Badge>
+                    </div>
+                    {c.status === "pending" && (
+                      <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                        Te contactaremos para agendar.
+                      </p>
+                    )}
+                    {c.notes && (
+                      <p className="mt-2 font-alilato text-xs italic text-[#5B4A3E]/50">Nota: {c.notes}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
         </div>
       </ClientLayout>
