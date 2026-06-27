@@ -18,6 +18,14 @@ const DAY_SHORT: Record<number, string> = {
 };
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0, 7];
 
+// Código de color por tipo de clase (rítmo visual + significado).
+function classStyle(name: string) {
+  const isPilates = /pilates/i.test(name);
+  return isPilates
+    ? { accent: "#C9A5A8", label: "text-[#8A5A5E]" }   // Pilates → dusty rose
+    : { accent: "#3B0E1A", label: "text-[#3B0E1A]" };  // Barre → burgundy
+}
+
 // '7:00 am' / '7:30 pm' → minutos desde medianoche (para ordenar)
 function toMinutes(t: string): number {
   const m = t.trim().toLowerCase().match(/(\d{1,2}):(\d{2})\s*(a|p)m/);
@@ -29,6 +37,12 @@ function toMinutes(t: string): number {
   return h * 60 + min;
 }
 
+// '7:00 am' → { hm: '7:00', ap: 'AM' }
+function splitTime(t: string) {
+  const m = t.trim().match(/(\d{1,2}:\d{2})\s*(am|pm)/i);
+  return m ? { hm: m[1], ap: m[2].toUpperCase() } : { hm: t, ap: "" };
+}
+
 export function Horarios() {
   const { data, isLoading } = useQuery({
     queryKey: ["public-schedule-slots"],
@@ -38,7 +52,6 @@ export function Horarios() {
 
   const slots: Slot[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
 
-  // Agrupar por día (normalizando 7→0) y ordenar por hora.
   const byDay = new Map<number, Slot[]>();
   for (const s of slots) {
     const d = s.day_of_week === 7 ? 0 : s.day_of_week;
@@ -47,7 +60,7 @@ export function Horarios() {
   }
   for (const list of byDay.values()) list.sort((a, b) => toMinutes(a.time_slot) - toMinutes(b.time_slot));
 
-  const days = DAY_ORDER.filter((d) => byDay.has(d) && (byDay.get(d)!.length > 0))
+  const days = DAY_ORDER.filter((d) => byDay.has(d) && byDay.get(d)!.length > 0)
     .filter((d, i, arr) => arr.indexOf(d) === i);
 
   return (
@@ -64,9 +77,9 @@ export function Horarios() {
         </Reveal>
 
         {isLoading ? (
-          <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[#E8D7D6] bg-[#E8D7D6] sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-56 bg-[#FCF8F7]" />
+              <div key={i} className="h-72 animate-pulse rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7]" />
             ))}
           </div>
         ) : days.length === 0 ? (
@@ -77,30 +90,50 @@ export function Horarios() {
           </div>
         ) : (
           <Reveal className="mt-14">
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[#E8D7D6] bg-[#E8D7D6] sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {days.map((d) => (
-                <div key={d} className="flex flex-col bg-[#FCF8F7] p-5">
-                  <p className="font-alilato text-[0.64rem] uppercase tracking-[0.22em] text-[#9C8A8B]">
-                    <span className="lg:hidden">{DAY_LABEL[d]}</span>
-                    <span className="hidden lg:inline">{DAY_SHORT[d]}</span>
-                  </p>
-                  <div className="mt-4 flex-1 space-y-3">
-                    {byDay.get(d)!.map((s, i) => (
-                      <div key={i} className="border-b border-[#E8D7D6]/70 pb-3 last:border-0 last:pb-0">
-                        <p className="font-bebas text-lg font-light leading-none tracking-[0.01em] text-[#1A060B]">
-                          {s.time_slot.replace(/\s?(am|pm)/i, (x) => x.toLowerCase())}
-                        </p>
-                        <p className="mt-1.5 inline-flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#C9A5A8]" />
-                          <span className="font-alilato text-xs text-[#3B0E1A]/75">{s.class_type_name}</span>
-                        </p>
-                        {s.instructor_name && (
-                          <p className="mt-0.5 pl-3 font-alilato text-[0.66rem] uppercase tracking-[0.12em] text-[#9C8A8B]">
-                            {s.instructor_name}
+                <div
+                  key={d}
+                  className="flex flex-col overflow-hidden rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A5A8]/60 hover:shadow-[0_24px_50px_-32px_rgba(59,14,26,0.4)]"
+                >
+                  {/* Banda de día */}
+                  <div className="border-b border-[#E8D7D6] bg-gradient-to-b from-[#F4E6EA] to-[#F4E6EA]/40 px-4 py-3.5 text-center">
+                    <p className="font-alilato text-[0.7rem] uppercase tracking-[0.22em] text-[#3B0E1A]">
+                      <span className="lg:hidden">{DAY_LABEL[d]}</span>
+                      <span className="hidden lg:inline">{DAY_SHORT[d]}</span>
+                    </p>
+                  </div>
+
+                  {/* Clases */}
+                  <div className="flex flex-1 flex-col divide-y divide-[#E8D7D6]/70 px-4">
+                    {byDay.get(d)!.map((s, i) => {
+                      const st = classStyle(s.class_type_name);
+                      const { hm, ap } = splitTime(s.time_slot);
+                      return (
+                        <div key={i} className="relative py-4 pl-3.5">
+                          <span
+                            className="absolute bottom-4 left-0 top-4 w-[2px] rounded-full"
+                            style={{ backgroundColor: st.accent }}
+                          />
+                          <p className="flex items-baseline gap-1">
+                            <span className="font-bebas text-xl font-light leading-none tracking-[0.01em] text-[#1A060B]">
+                              {hm}
+                            </span>
+                            <span className="font-alilato text-[0.58rem] font-medium tracking-[0.06em] text-[#9C8A8B]">
+                              {ap}
+                            </span>
                           </p>
-                        )}
-                      </div>
-                    ))}
+                          <p className={`mt-2 font-alilato text-[0.74rem] font-medium uppercase tracking-[0.08em] ${st.label}`}>
+                            {s.class_type_name}
+                          </p>
+                          {s.instructor_name && (
+                            <p className="mt-0.5 font-alilato text-[0.62rem] uppercase tracking-[0.14em] text-[#9C8A8B]">
+                              {s.instructor_name}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -108,10 +141,18 @@ export function Horarios() {
           </Reveal>
         )}
 
-        <div className="mt-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <p className="font-alilato text-[0.7rem] uppercase tracking-[0.22em] text-[#9C8A8B]">
-            Sábados y domingos · clases privadas y eventos
-          </p>
+        {/* Leyenda + nota */}
+        <div className="mt-10 flex flex-col gap-5 border-t border-[#E8D7D6] pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#3B0E1A]" />
+              <span className="font-alilato text-[0.7rem] uppercase tracking-[0.16em] text-[#3B0E1A]">Barre</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#C9A5A8]" />
+              <span className="font-alilato text-[0.7rem] uppercase tracking-[0.16em] text-[#8A5A5E]">Pilates</span>
+            </span>
+          </div>
           <a
             href={waLink("una clase")}
             target="_blank"
@@ -122,6 +163,10 @@ export function Horarios() {
             <span aria-hidden>&rarr;</span>
           </a>
         </div>
+
+        <p className="mt-4 font-alilato text-[0.68rem] uppercase tracking-[0.22em] text-[#9C8A8B]">
+          Sábados y domingos · clases privadas y eventos
+        </p>
       </div>
     </section>
   );
