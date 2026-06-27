@@ -7,8 +7,9 @@ export function ContactFooter() {
       <Reveal className="mx-auto max-w-6xl">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
-            <h2 className="font-bebas text-[clamp(2.4rem,6vw,5rem)] leading-none tracking-tight">VEN A VARRE24</h2>
-            <p className="font-alilato mt-4 max-w-sm text-[#E8DED4]">{STUDIO.address}</p>
+            <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#CBBFAF]">Contacto</p>
+            <h2 className="font-bebas mt-3 text-[clamp(2rem,4.5vw,3.2rem)] font-light leading-tight tracking-[0.02em]">Ven a VARRE24</h2>
+            <p className="font-alilato mt-4 max-w-sm text-sm leading-relaxed text-[#E8DED4]/85">{STUDIO.address}</p>
             <a href={STUDIO.instagramUrl} className="font-alilato mt-2 inline-block text-[#CBBFAF]">{STUDIO.instagram}</a>
             <div className="mt-6">
               <MagneticButton href={waLink("una clase")} className="press inline-flex items-center rounded-full bg-[#5B4A3E] px-7 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[#F6F2EB]">
