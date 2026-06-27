@@ -1,5 +1,5 @@
-const CACHE_NAME = "varre24-v1";
-const PRECACHE_URLS = ["/", "/icon-192.png", "/icon-512.png", "/pilates-room-logo.png"];
+const CACHE_NAME = "varre24-v2";
+const PRECACHE_URLS = ["/", "/icon-192.png", "/icon-512.png", "/brand/varre24-icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
