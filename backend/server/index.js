@@ -768,25 +768,28 @@ async function ensureSchema() {
     {
       const ver = await pool.query("SELECT value FROM settings WHERE key='schedule_slots_version'").catch(()=>({rows:[]}));
       const current = ver.rows[0]?.value;
-      const target = "varre24-v1";
+      const target = "varre24-v2";
       if (current !== target && current?.version !== target) {
         await pool.query(`DELETE FROM schedule_slots`).catch(()=>{});
+        // Horario real VARRE24 (instructoras: Grisel, Kar, Ara, Ivanna).
         await pool.query(`
-          INSERT INTO schedule_slots (time_slot, day_of_week, class_type_name) VALUES
-            -- Lunes (1)
-            ('7:00 am', 1, 'Pilates Mat'), ('9:00 am', 1, 'Barre'),
-            ('6:00 pm', 1, 'Pilates Mat'), ('7:30 pm', 1, 'Barre'),
-            -- Martes (2)
-            ('7:00 am', 2, 'Barre'), ('9:00 am', 2, 'Pilates Mat'),
-            ('6:00 pm', 2, 'Barre'), ('7:30 pm', 2, 'Pilates Mat'),
-            -- Miércoles (3)
-            ('7:00 am', 3, 'Pilates Mat'), ('9:00 am', 3, 'Barre'),
-            ('6:00 pm', 3, 'Pilates Mat'), ('7:30 pm', 3, 'Barre'),
-            -- Jueves (4)
-            ('7:00 am', 4, 'Barre'), ('9:00 am', 4, 'Pilates Mat'),
-            ('6:00 pm', 4, 'Barre'), ('7:30 pm', 4, 'Pilates Mat'),
-            -- Viernes (5)
-            ('7:00 am', 5, 'Pilates Mat'), ('9:00 am', 5, 'Barre')
+          INSERT INTO schedule_slots (time_slot, day_of_week, class_type_name, instructor_name) VALUES
+            -- 7:00 am
+            ('7:00 am', 1, 'Barre', 'Grisel'), ('7:00 am', 2, 'Barre', 'Kar'),
+            ('7:00 am', 3, 'Barre', 'Grisel'), ('7:00 am', 4, 'Barre', 'Ara'),
+            ('7:00 am', 5, 'Barre', 'Grisel'),
+            -- 8:00 am
+            ('8:00 am', 1, 'Barre', 'Kar'), ('8:00 am', 2, 'Pilates', 'Kar'),
+            ('8:00 am', 3, 'Barre', 'Grisel'), ('8:00 am', 4, 'Pilates', 'Ara'),
+            ('8:00 am', 5, 'Barre', 'Grisel'),
+            -- 6:00 pm
+            ('6:00 pm', 1, 'Pilates', 'Ivanna'), ('6:00 pm', 2, 'Pilates', 'Ara'),
+            ('6:00 pm', 3, 'Pilates', 'Ivanna'), ('6:00 pm', 4, 'Pilates', 'Ivanna'),
+            ('6:00 pm', 5, 'Pilates', 'Ara'),
+            -- 7:00 pm
+            ('7:00 pm', 1, 'Pilates', 'Ivanna'), ('7:00 pm', 2, 'Barre', 'Ara'),
+            ('7:00 pm', 3, 'Pilates', 'Ivanna'), ('7:00 pm', 4, 'Pilates', 'Ivanna'),
+            ('7:00 pm', 5, 'Barre', 'Ara')
           ON CONFLICT DO NOTHING;
         `).catch((e) => console.error("[schema] schedule_slots VARRE24 seed:", e.message));
         await pool.query(

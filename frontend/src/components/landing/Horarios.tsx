@@ -94,6 +94,11 @@ export function Horarios() {
                           <span className="h-1.5 w-1.5 rounded-full bg-[#C9A5A8]" />
                           <span className="font-alilato text-xs text-[#3B0E1A]/75">{s.class_type_name}</span>
                         </p>
+                        {s.instructor_name && (
+                          <p className="mt-0.5 pl-3 font-alilato text-[0.66rem] uppercase tracking-[0.12em] text-[#9C8A8B]">
+                            {s.instructor_name}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
