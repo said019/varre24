@@ -103,11 +103,17 @@ const BookClassConfirm = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-lg space-y-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/app/classes")}>
-            <ArrowLeft size={16} className="mr-2" />Volver al calendario
-          </Button>
-          <h1 className="text-xl font-bold">Confirmar reserva</h1>
+        <div className="mx-auto w-full max-w-lg px-1 py-4 sm:py-8 space-y-6">
+          <div>
+            <button
+              type="button"
+              onClick={() => navigate("/app/classes")}
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+            >
+              <ArrowLeft size={14} strokeWidth={1.75} /> Volver al calendario
+            </button>
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Confirmar reserva</h1>
+          </div>
           {isLoading ? (
             <Skeleton className="h-48 w-full rounded-xl" />
           ) : cls ? (
