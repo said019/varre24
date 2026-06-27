@@ -94,25 +94,25 @@ export function ProfilePhotoUpload({
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
-        <Avatar className={`${sizeClass} ring-2 ring-[#D5C4B8]/30 ring-offset-2 ring-offset-[#E8DED4]`}>
-          <AvatarImage src={photoSrc} alt="Foto de perfil" />
-          <AvatarFallback className="bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] text-[#E8DED4] font-semibold">
+        <Avatar className={`${sizeClass} rounded-2xl border border-[#E4DACE]`}>
+          <AvatarImage src={photoSrc} alt="Foto de perfil" className="rounded-2xl" />
+          <AvatarFallback className="rounded-2xl bg-[#5B4A3E] font-bebas text-2xl font-light tracking-wide text-[#F6F2EB]">
             {initials}
           </AvatarFallback>
         </Avatar>
         {mutation.isPending && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-[#3A2F26]/55 backdrop-blur-sm">
-            <Loader2 className="h-6 w-6 animate-spin text-[#E8DED4]" />
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#3A2F26]/55">
+            <Loader2 className="h-6 w-6 animate-spin text-[#F6F2EB]" />
           </div>
         )}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={mutation.isPending}
-          className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#5B4A3E] text-[#E8DED4] shadow-md transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 items-center justify-center rounded-xl bg-[#5B4A3E] text-[#F6F2EB] transition-colors hover:bg-[#4A3D32] active:scale-95 disabled:opacity-50"
           aria-label="Cambiar foto"
         >
-          <Camera size={14} />
+          <Camera size={14} strokeWidth={1.75} />
         </button>
       </div>
       <input
@@ -128,9 +128,9 @@ export function ProfilePhotoUpload({
         size="sm"
         disabled={mutation.isPending}
         onClick={() => fileInputRef.current?.click()}
-        className="text-xs text-[#3A2F26] hover:text-[#5B4A3E] hover:bg-[#5B4A3E]/8"
+        className="font-alilato text-[0.7rem] uppercase tracking-[0.16em] text-[#8A8077] hover:bg-transparent hover:text-[#5B4A3E]"
       >
-        {mutation.isPending ? "Subiendo..." : "Cambiar foto"}
+        {mutation.isPending ? "Subiendo…" : "Cambiar foto"}
       </Button>
     </div>
   );

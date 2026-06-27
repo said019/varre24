@@ -41,7 +41,7 @@ const typeColor: Record<string, string> = {
   error: "text-red-500",
   warning: "text-amber-500",
   info: "text-blue-500",
-  reminder: "text-[#D5C4B8]",
+  reminder: "text-[#5B4A3E]",
 };
 
 const Notifications = () => {
@@ -64,9 +64,12 @@ const Notifications = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-lg space-y-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold">Notificaciones</h1>
+        <div className="mx-auto w-full max-w-lg px-1 py-4 sm:py-8 space-y-6">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Al día</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Notificaciones</h1>
+            </div>
             {unreadCount > 0 && (
               <Badge variant="secondary">{unreadCount} nueva{unreadCount !== 1 ? "s" : ""}</Badge>
             )}
@@ -91,19 +94,19 @@ const Notifications = () => {
                 return (
                   <div
                     key={n.id}
-                    className={`flex gap-3 rounded-xl border p-4 transition-colors ${n.unread ? "bg-primary/5 border-primary/20" : ""}`}
+                    className={`flex gap-3 rounded-2xl border p-4 transition-colors ${n.unread ? "border-[#D8C9BC] bg-[#F1EAE0]" : "border-[#E4DACE] bg-[#FBF8F4]"}`}
                   >
                     <div className="mt-0.5 flex-shrink-0">
-                      <Icon size={16} className={n.unread ? color : "text-muted-foreground"} />
+                      <Icon size={16} strokeWidth={1.75} className={n.unread ? color : "text-[#8A8077]"} />
                     </div>
                     <div className="flex-1 min-w-0 space-y-0.5">
-                      <p className={`text-sm font-medium ${n.unread ? "text-foreground" : "text-muted-foreground"}`}>
+                      <p className={`font-alilato text-sm font-medium ${n.unread ? "text-[#2A211B]" : "text-[#5B4A3E]/70"}`}>
                         {n.title}
                       </p>
-                      <p className="text-xs text-muted-foreground">{n.body}</p>
-                      <p className="text-xs text-muted-foreground/60">{timeAgo(n.time)}</p>
+                      <p className="font-alilato text-xs text-muted-foreground">{n.body}</p>
+                      <p className="font-alilato text-xs text-muted-foreground/60">{timeAgo(n.time)}</p>
                     </div>
-                    {n.unread && <div className="mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0" />}
+                    {n.unread && <div className="mt-1.5 h-2 w-2 rounded-full bg-[#5B4A3E] flex-shrink-0" />}
                   </div>
                 );
               })}

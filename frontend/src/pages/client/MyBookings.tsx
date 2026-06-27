@@ -81,10 +81,10 @@ const BookingCard = ({
   const showLateMessage = policy.enabled && booking.status === "confirmed" && !isPast && !insideWindow && policy.late_cancel_message;
   const hasReview = Boolean(booking.has_review);
   return (
-    <div className="flex items-center justify-between rounded-2xl bg-white/60 border border-[#5B4A3E]/10 p-4" style={{ boxShadow: "0 2px 8px rgba(114,93,81,0.05)" }}>
+    <div className="flex items-center justify-between rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
       <div className="space-y-1">
-        <p className="font-medium">{booking.class_type_name}</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="font-alilato font-medium text-[#2A211B]">{booking.class_type_name}</p>
+        <p className="font-alilato text-sm text-muted-foreground">
           {booking.start_time ? format(safeParse(booking.start_time), "EEEE d MMM · HH:mm", { locale: es }) : "—"}
         </p>
         {booking.instructor_name && (
@@ -283,9 +283,12 @@ const MyBookings = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h1 className="text-xl font-bold">Mis reservas</h1>
+        <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-6">
+          <div className="flex items-end justify-between gap-3 flex-wrap">
+            <div>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Tu actividad</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Mis reservas</h1>
+            </div>
             {policy.enabled && policy.free_cancellations_per_membership > 0 && (
               loadingQuota ? (
                 // Gate: evita el flash de "N restantes" con el cupo completo

@@ -74,17 +74,31 @@ const ProfileEdit = () => {
     } as any);
   };
 
+  const inputCls =
+    "rounded-xl border-[#E4DACE] bg-[#FBF8F4] font-alilato text-[#2A211B] placeholder:text-[#8A8077]/60 focus:border-[#5B4A3E] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+  const labelCls = "font-alilato text-[0.66rem] uppercase tracking-[0.18em] text-[#8A8077]";
+
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-md space-y-5">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#D5C4B8]">
-            <ArrowLeft size={16} className="mr-2" />Perfil
-          </Button>
-          <h1 className="text-xl font-bold">Editar perfil</h1>
+        <div className="mx-auto w-full max-w-lg px-1 py-4 sm:py-8 space-y-10">
+
+          {/* ── Encabezado editorial ── */}
+          <section>
+            <button
+              type="button"
+              onClick={() => navigate("/app/profile")}
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+            >
+              <ArrowLeft size={14} strokeWidth={1.75} /> Perfil
+            </button>
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+              Editar perfil
+            </h1>
+          </section>
 
           {user?.id && (
-            <div className="flex justify-center py-2">
+            <div className="flex justify-center">
               <ProfilePhotoUpload
                 userId={user.id}
                 currentPhotoUrl={(user as any).photoUrl ?? (user as any).photo_url ?? null}
@@ -94,7 +108,7 @@ const ProfileEdit = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {[
               { name: "displayName" as const, label: "Nombre completo" },
               { name: "phone" as const, label: "Teléfono", placeholder: "+521234567890" },
@@ -102,24 +116,24 @@ const ProfileEdit = () => {
               { name: "emergencyContactName" as const, label: "Contacto de emergencia" },
               { name: "emergencyContactPhone" as const, label: "Teléfono de emergencia" },
             ].map(({ name, label, type, placeholder }) => (
-              <div key={name} className="space-y-1.5">
-                <Label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">{label}</Label>
+              <div key={name} className="space-y-2">
+                <Label className={labelCls}>{label}</Label>
                 <Input
                   type={type ?? "text"}
                   placeholder={placeholder}
                   {...register(name)}
-                  className="bg-secondary border-border focus:border-[#D5C4B8] transition-colors"
+                  className={inputCls}
                 />
-                {errors[name] && <p className="text-xs text-destructive">{errors[name]?.message}</p>}
+                {errors[name] && <p className="font-alilato text-xs text-[#9B5B53]">{errors[name]?.message}</p>}
               </div>
             ))}
 
             {/* Gender select */}
-            <div className="space-y-1.5">
-              <Label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Sexo</Label>
+            <div className="space-y-2">
+              <Label className={labelCls}>Sexo</Label>
               <select
                 {...register("gender")}
-                className="w-full rounded-md bg-secondary border border-border px-3 py-2.5 text-sm text-foreground focus:border-[#D5C4B8] focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-[#E4DACE] bg-[#FBF8F4] px-3 py-2.5 font-alilato text-sm text-[#2A211B] transition-colors focus:border-[#5B4A3E] focus:outline-none"
               >
                 <option value="">Selecciona…</option>
                 <option value="female">Femenino</option>
@@ -128,20 +142,20 @@ const ProfileEdit = () => {
               </select>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Notas de salud</Label>
+            <div className="space-y-2">
+              <Label className={labelCls}>Notas de salud</Label>
               <Textarea
-                placeholder="Alergias, condiciones médicas relevantes..."
+                placeholder="Alergias, condiciones médicas relevantes…"
                 {...register("healthNotes")}
-                className="bg-secondary border-border focus:border-[#D5C4B8] transition-colors"
+                className={inputCls}
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:from-[#5B4A3E]/90 hover:to-[#D5C4B8]/90 text-white font-medium"
+              className="press w-full rounded-full bg-[#5B4A3E] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] hover:bg-[#4A3D32]"
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
+              {mutation.isPending ? <Loader2 className="mr-2 animate-spin" size={16} /> : null}
               Guardar cambios
             </Button>
           </form>

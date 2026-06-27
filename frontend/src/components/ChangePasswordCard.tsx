@@ -55,11 +55,11 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={`rounded-2xl border border-[#5B4A3E]/15 bg-white/50 p-5 space-y-3 ${className}`}
+      className={`rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-5 space-y-3 ${className}`}
     >
       <div className="flex items-center gap-2">
-        <KeyRound size={16} className="text-[#5B4A3E]" />
-        <h2 className="text-base font-bold text-[#2A211B]">Cambiar contraseña</h2>
+        <KeyRound size={15} strokeWidth={1.75} className="text-[#5B4A3E]" />
+        <h2 className="font-alilato text-base font-medium text-[#2A211B]">Cambiar contraseña</h2>
       </div>
       <p className="text-xs text-[#4A3D32]">
         Para tu seguridad necesitas escribir tu contraseña actual antes de definir una nueva.
@@ -129,7 +129,7 @@ export function ChangePasswordCard({ className = "" }: { className?: string }) {
       <Button
         type="submit"
         disabled={!allOK || mutation.isPending}
-        className="w-full bg-[#5B4A3E] hover:bg-[#3A2F26] text-white disabled:opacity-50"
+        className="press w-full rounded-full bg-[#5B4A3E] py-5 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] hover:bg-[#4A3D32] disabled:opacity-50"
       >
         {mutation.isPending && <Loader2 size={14} className="mr-2 animate-spin" />}
         {mutation.isPending ? "Actualizando…" : "Actualizar contraseña"}

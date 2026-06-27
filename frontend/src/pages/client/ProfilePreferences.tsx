@@ -45,35 +45,52 @@ const ProfilePreferences = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-md space-y-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/app/profile")} className="text-muted-foreground hover:text-[#D5C4B8]">
-            <ArrowLeft size={16} className="mr-2" />Perfil
-          </Button>
-          <h1 className="text-xl font-bold">Preferencias de notificación</h1>
-          <div className="space-y-4">
-            {items.map(({ key, label, desc }) => (
-              <div key={key} className="flex items-center justify-between rounded-xl border border-[#5B4A3E]/15 p-4 hover:border-[#D5C4B8]/30 transition-colors">
-                <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">{label}</Label>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
+        <div className="mx-auto w-full max-w-lg px-1 py-4 sm:py-8 space-y-10">
+
+          {/* ── Encabezado editorial ── */}
+          <section>
+            <button
+              type="button"
+              onClick={() => navigate("/app/profile")}
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+            >
+              <ArrowLeft size={14} strokeWidth={1.75} /> Perfil
+            </button>
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+              Preferencias
+            </h1>
+          </section>
+
+          {/* ── Notificaciones ── */}
+          <section>
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+              Notificaciones
+            </p>
+            <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+              {items.map(({ key, label, desc }) => (
+                <div key={key} className="flex items-center justify-between gap-4 py-4">
+                  <div className="space-y-0.5">
+                    <Label className="font-alilato text-sm font-medium text-[#2A211B]">{label}</Label>
+                    <p className="font-alilato text-xs text-[#5B4A3E]/60">{desc}</p>
+                  </div>
+                  <Switch
+                    checked={prefs[key]}
+                    onCheckedChange={(v) => setPrefs((p) => ({ ...p, [key]: v }))}
+                  />
                 </div>
-                <Switch
-                  checked={prefs[key]}
-                  onCheckedChange={(v) => setPrefs((p) => ({ ...p, [key]: v }))}
-                />
-              </div>
-            ))}
-          </div>
-          <Button
-            className="w-full bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:from-[#5B4A3E]/90 hover:to-[#D5C4B8]/90 text-white font-medium"
-            onClick={() => mutation.mutate()}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? "Guardando..." : "Guardar preferencias"}
-          </Button>
+              ))}
+            </div>
+            <Button
+              className="press mt-6 w-full rounded-full bg-[#5B4A3E] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] hover:bg-[#4A3D32]"
+              onClick={() => mutation.mutate()}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? "Guardando…" : "Guardar preferencias"}
+            </Button>
+          </section>
 
           {/* ── Cambiar contraseña ── */}
-          <ChangePasswordCard className="mt-6" />
+          <ChangePasswordCard />
         </div>
       </ClientLayout>
     </ClientAuthGuard>

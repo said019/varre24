@@ -86,10 +86,13 @@ const MyOrders = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-[#2A211B]">Mis órdenes</h1>
-            <Button asChild size="sm" variant="outline">
+        <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-6">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Tus compras</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Mis órdenes</h1>
+            </div>
+            <Button asChild size="sm" variant="outline" className="rounded-full border-[#E4DACE] font-alilato text-xs">
               <Link to="/app/checkout"><ShoppingBag size={14} className="mr-2" />Nueva orden</Link>
             </Button>
           </div>
@@ -134,11 +137,11 @@ const MyOrders = () => {
                 return (
                   <div
                     key={o.id}
-                    className="rounded-xl border border-[#E8DED4] bg-white p-4 hover:shadow-sm transition-shadow"
+                    className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4 transition-colors hover:border-[#5B4A3E]/30"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0">
-                        <p className="font-semibold text-sm text-[#2A211B]">{o.plan_name}</p>
+                        <p className="font-alilato font-medium text-sm text-[#2A211B]">{o.plan_name}</p>
                         <p className="text-xs text-[#4A3D32]">
                           ${Number(o.total_amount).toLocaleString("es-MX")} MXN
                           {" · "}
