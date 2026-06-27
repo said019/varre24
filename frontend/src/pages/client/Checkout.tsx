@@ -85,13 +85,12 @@ const PlanCard = ({
       className={cn(
         "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
         selected
-          ? "border-[#5B4A3E]/60 bg-gradient-to-br from-[#5B4A3E]/10 to-[#D5C4B8]/5 shadow-[0_0_20px_rgba(131,106,93,0.15)]"
-          : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25 hover:bg-[#5B4A3E]/[0.06]"
+          ? "border-[#5B4A3E]/60 bg-[#F1EAE0]"
+          : "border-[#E4DACE] bg-[#FBF8F4] hover:border-[#5B4A3E]/30"
       )}
     >
-      <div className="pointer-events-none absolute -top-12 -right-10 h-28 w-28 rounded-full opacity-30 blur-2xl bg-[#D5C4B8]" />
       {selected && (
-        <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] flex items-center justify-center">
+        <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
           <Check size={11} className="text-white" />
         </span>
       )}
@@ -409,8 +408,11 @@ const Checkout = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-xl mx-auto space-y-6">
-          <h1 className="text-xl font-bold text-[#2A211B]">Comprar membresía</h1>
+        <div className="mx-auto w-full max-w-xl px-1 py-4 sm:py-8 space-y-6">
+          <div>
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Membresías</p>
+            <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Comprar membresía</h1>
+          </div>
 
           <StepBar current={step} />
 
@@ -469,12 +471,12 @@ const Checkout = () => {
                           className={cn(
                             "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
                             selectedPlan?.id === trialPlan.id
-                              ? "border-[#D5C4B8]/60 bg-gradient-to-br from-[#D5C4B8]/10 to-[#5B4A3E]/5 shadow-[0_0_20px_rgba(181,191,156,0.15)]"
+                              ? "border-[#5B4A3E]/60 bg-[#F1EAE0]"
                               : "border-[#D5C4B8]/25 bg-[#D5C4B8]/[0.04] hover:border-[#D5C4B8]/40 hover:bg-[#D5C4B8]/[0.06]"
                           )}
                         >
                           {selectedPlan?.id === trialPlan.id && (
-                            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gradient-to-br from-[#D5C4B8] to-[#5B4A3E] flex items-center justify-center">
+                            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
                               <Check size={11} className="text-white" />
                             </span>
                           )}
@@ -579,7 +581,7 @@ const Checkout = () => {
 
                   <button
                     onClick={() => setStep("method")}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors"
                   >
                     Seleccionar método de pago <ChevronRight size={15} />
                   </button>
@@ -626,7 +628,7 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "transfer"
-                      ? "border-[#D5C4B8]/50 bg-[#D5C4B8]/10 shadow-[0_0_16px_rgba(181,191,156,0.15)]"
+                      ? "border-[#5B4A3E]/50 bg-[#F1EAE0]"
                       : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25"
                   )}
                 >
@@ -638,7 +640,7 @@ const Checkout = () => {
                     <p className="text-[10px] text-[#2A211B]/30 mt-0.5">SPEI / banco</p>
                   </div>
                   {paymentMethod === "transfer" && (
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#D5C4B8] to-[#5B4A3E] flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
                       <Check size={10} className="text-white" />
                     </span>
                   )}
@@ -650,7 +652,7 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "card"
-                      ? "border-[#5B4A3E]/50 bg-[#5B4A3E]/10 shadow-[0_0_16px_rgba(131,106,93,0.15)]"
+                      ? "border-[#5B4A3E]/50 bg-[#F1EAE0]"
                       : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25"
                   )}
                 >
@@ -662,7 +664,7 @@ const Checkout = () => {
                     <p className="text-[10px] text-[#2A211B]/30 mt-0.5">Pago en línea seguro · sin comisión</p>
                   </div>
                   {paymentMethod === "card" && (
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
                       <Check size={10} className="text-white" />
                     </span>
                   )}
@@ -672,7 +674,7 @@ const Checkout = () => {
               <button
                 onClick={() => createOrderMutation.mutate()}
                 disabled={createOrderMutation.isPending}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors disabled:opacity-50"
               >
                 {createOrderMutation.isPending ? <Loader2 className="animate-spin" size={16} /> : <CreditCard size={16} />}
                 {createOrderMutation.isPending
@@ -685,7 +687,7 @@ const Checkout = () => {
           {/* ── Step 3a: Bank details (transfer) ── */}
           {step === "bank" && bankDetails && (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-[#5B4A3E]/25 bg-white p-5 space-y-1">
+              <div className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-5 space-y-1">
                 <p className="text-base font-bold text-[#2A211B] mb-1">Datos de transferencia SPEI</p>
                 <p className="text-sm text-[#4A3D32] mb-4">Realiza la transferencia y luego sube tu comprobante.</p>
                 {[
@@ -710,7 +712,7 @@ const Checkout = () => {
                 ))}
               </div>
               <p className="text-xs text-[#4A3D32] text-center">Toca cualquier dato para copiarlo al portapapeles</p>
-              <button onClick={() => setStep("upload")} className="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity text-sm tracking-wide uppercase">
+              <button onClick={() => setStep("upload")} className="w-full py-3.5 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors text-sm tracking-wide uppercase">
                 Ya realicé la transferencia →
               </button>
             </div>
@@ -733,7 +735,7 @@ const Checkout = () => {
                 )}
                 <p className="text-xs text-[#2A211B]/30">Tu paquete se activará una vez que el equipo confirme el pago.</p>
               </div>
-              <button onClick={() => window.location.replace("/app")} className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity">
+              <button onClick={() => window.location.replace("/app")} className="w-full py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors">
                 Ir a mi panel
               </button>
             </div>
@@ -741,7 +743,7 @@ const Checkout = () => {
 
           {/* ── Step 4: Upload proof ── */}
           {step === "upload" && (
-            <div className="rounded-2xl border border-[#5B4A3E]/20 bg-white p-5 space-y-4">
+            <div className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-5 space-y-4">
               <div>
                 <p className="font-semibold text-[#2A211B]">Sube tu comprobante</p>
                 <p className="text-xs text-[#4A3D32] mt-1">
@@ -778,7 +780,7 @@ const Checkout = () => {
               <button
                 disabled={files.length === 0 || uploadProofMutation.isPending}
                 onClick={() => uploadProofMutation.mutate()}
-                className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors disabled:opacity-50"
               >
                 {uploadProofMutation.isPending
                   ? "Subiendo…"
@@ -801,7 +803,7 @@ const Checkout = () => {
           {/* ── Step 5: Done ── */}
           {step === "done" && (
             <div className="rounded-2xl border border-[#4ade80]/20 bg-[#4ade80]/5 p-8 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4ade80]/20 to-[#4ade80]/5 border border-[#4ade80]/30 flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-[#4ade80]/12 border border-[#4ade80]/30 flex items-center justify-center mx-auto">
                 <CheckCircle size={30} className="text-[#4ade80]" />
               </div>
               <p className="text-base font-semibold text-[#2A211B]">¡Tu membresía está activa!</p>
