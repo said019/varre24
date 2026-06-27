@@ -1,54 +1,55 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
-import { ChevronRight, User, CreditCard, Bell, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { ChevronRight, User, Bell, LogOut } from "lucide-react";
 
-const ProfileLink = ({
-  to, icon: Icon, label, description, danger, accent,
-}: {
-  to: string; icon: any; label: string; description?: string; danger?: boolean; accent?: string;
-}) => (
-  <Link
-    to={to}
-    className={cn(
-      "flex items-center justify-between rounded-2xl border p-4 transition-all duration-200",
-      danger
-        ? "border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40"
-        : "border-[#5B4A3E]/15 hover:border-[#5B4A3E]/30 hover:bg-[#5B4A3E]/[0.05]"
-    )}
-  >
-    <div className="flex items-center gap-3.5">
-      <div
-        className="flex h-9 w-9 items-center justify-center rounded-xl"
-        style={
-          danger
-            ? { background: "rgba(239,68,68,0.1)", color: "#f87171" }
-            : { background: `${accent ?? "#5B4A3E"}15`, color: accent ?? "#5B4A3E" }
-        }
-      >
-        <Icon size={17} />
-      </div>
-      <div>
-        <p className={cn("text-[0.88rem] font-semibold leading-tight", danger ? "text-red-400" : "text-foreground")}>
-          {label}
-        </p>
-        {description && (
-          <p className="text-[0.74rem] text-muted-foreground mt-0.5">{description}</p>
-        )}
-      </div>
-    </div>
-    <ChevronRight size={15} className="text-muted-foreground/40" />
-  </Link>
-);
+type RowProps = {
+  icon: any;
+  label: string;
+  description?: string;
+  to?: string;
+  onClick?: () => void;
+  danger?: boolean;
+};
+
+const ProfileRow = ({ icon: Icon, label, description, to, onClick, danger }: RowProps) => {
+  const inner = (
+    <>
+      <span className="flex items-center gap-4">
+        <Icon
+          size={18}
+          strokeWidth={1.6}
+          className={danger ? "text-[#9B5B53]" : "text-[#5B4A3E]"}
+        />
+        <span className="block">
+          <span className={`block font-alilato text-sm font-medium ${danger ? "text-[#9B5B53]" : "text-[#2A211B]"}`}>
+            {label}
+          </span>
+          {description && (
+            <span className="mt-0.5 block font-alilato text-xs text-[#5B4A3E]/60">{description}</span>
+          )}
+        </span>
+      </span>
+      <ChevronRight size={15} className="shrink-0 text-[#8A8077]/45 transition-transform group-hover:translate-x-0.5" />
+    </>
+  );
+
+  const cls = "group flex w-full items-center justify-between py-4 text-left no-underline";
+
+  return to ? (
+    <Link to={to} className={cls}>{inner}</Link>
+  ) : (
+    <button type="button" onClick={onClick} className={cls}>{inner}</button>
+  );
+};
 
 const Profile = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
   const name = user?.displayName ?? user?.display_name ?? user?.email?.split("@")[0] ?? "Usuario";
+  const photo = user?.photoUrl ?? user?.photo_url;
   const initials = name
     .split(" ")
     .filter(Boolean)
@@ -56,6 +57,15 @@ const Profile = () => {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  const roleLabel =
+    user?.role === "client"
+      ? user?.gender === "male"
+        ? "Alumno"
+        : user?.gender === "other"
+        ? "Alumno/a"
+        : "Alumna"
+      : user?.role ?? "Cliente";
 
   const handleLogout = () => {
     logout();
@@ -65,94 +75,72 @@ const Profile = () => {
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="max-w-lg mx-auto space-y-6">
+        <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-12">
 
-          {/* ── Header card ── */}
-          <div className="relative overflow-hidden rounded-3xl border border-[#5B4A3E]/15 bg-gradient-to-br from-[#E8DDD5] via-[#E8DED4] to-[#E8DED4] p-6">
-            {/* Ambient glow */}
-            <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#5B4A3E]/15 blur-[40px]" />
-            <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-[#D5C4B8]/10 blur-[30px]" />
-
-            <div className="relative flex items-center gap-4">
-              {/* Avatar */}
-              <div className="relative flex-shrink-0">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5B4A3E] to-[#D5C4B8] text-2xl font-bold text-white shadow-xl shadow-[#5B4A3E]/25">
-                  {(user?.photoUrl ?? user?.photo_url)
-                    ? <img src={(user?.photoUrl ?? user?.photo_url)!} className="h-20 w-20 rounded-2xl object-cover" alt={name} />
-                    : initials}
-                </div>
-                <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-[#E8DED4]" />
-              </div>
-
-              {/* Info */}
-              <div className="min-w-0 flex-1">
-                <p className="text-xl font-bold text-foreground truncate leading-tight">{name}</p>
-                <p className="text-sm text-muted-foreground truncate mt-0.5">{user?.email}</p>
-                {user?.phone && (
-                  <p className="text-sm text-muted-foreground mt-0.5">{user.phone}</p>
-                )}
-                {/* Role badge */}
-                <div className="inline-flex items-center gap-1.5 mt-2.5 px-2.5 py-1 rounded-full bg-[#5B4A3E]/15 border border-[#5B4A3E]/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#5B4A3E]" />
-                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-[#5B4A3E]">
-                    {user?.role === "client"
-                      ? (user?.gender === "male" ? "Alumno" : user?.gender === "other" ? "Alumno/a" : "Alumna")
-                      : user?.role ?? "Cliente"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Mi cuenta ── */}
-          <div className="space-y-2">
-            <p className="px-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">
+          {/* ── Identidad ── */}
+          <section>
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">
               Mi cuenta
             </p>
-            <ProfileLink
-              to="/app/profile/edit"
-              icon={User}
-              label="Editar perfil"
-              description="Nombre, teléfono, foto y más"
-              accent="#D5C4B8"
-            />
-            <ProfileLink
-              to="/app/profile/membership"
-              icon={CreditCard}
-              label="Mi membresía"
-              description="Clases disponibles y vigencia"
-              accent="#5B4A3E"
-            />
-            <ProfileLink
-              to="/app/profile/preferences"
-              icon={Bell}
-              label="Preferencias"
-              description="Notificaciones y comunicaciones"
-              accent="#E8DED4"
-            />
-          </div>
+            <div className="mt-5 flex items-center gap-5">
+              {/* Avatar flat */}
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#5B4A3E] font-bebas text-xl font-light tracking-wide text-[#F6F2EB]">
+                {photo ? <img src={photo} alt={name} className="h-full w-full object-cover" /> : initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="truncate font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+                  {name}
+                </h1>
+                <p className="mt-1 truncate font-alilato text-sm text-[#5B4A3E]/70">{user?.email}</p>
+                {user?.phone && (
+                  <p className="truncate font-alilato text-sm text-[#5B4A3E]/70">{user.phone}</p>
+                )}
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#E4DACE] px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#5B4A3E]" />
+                  <span className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#8A8077]">
+                    {roleLabel}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Ajustes ── */}
+          <section>
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+              Ajustes
+            </p>
+            <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+              <ProfileRow
+                to="/app/profile/edit"
+                icon={User}
+                label="Editar perfil"
+                description="Nombre, teléfono, foto y más"
+              />
+              <ProfileRow
+                to="/app/profile/preferences"
+                icon={Bell}
+                label="Preferencias"
+                description="Notificaciones y comunicaciones"
+              />
+            </div>
+          </section>
 
           {/* ── Sesión ── */}
-          <div className="space-y-2">
-            <p className="px-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">
+          <section>
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
               Sesión
             </p>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-between rounded-2xl border border-red-500/20 p-4 transition-all duration-200 hover:bg-red-500/10 hover:border-red-500/40"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/10 text-red-400">
-                  <LogOut size={17} />
-                </div>
-                <div className="text-left">
-                  <p className="text-[0.88rem] font-semibold text-red-400 leading-tight">Cerrar sesión</p>
-                  <p className="text-[0.74rem] text-muted-foreground mt-0.5">Salir de tu cuenta</p>
-                </div>
-              </div>
-              <ChevronRight size={15} className="text-muted-foreground/40" />
-            </button>
-          </div>
+            <div className="border-y border-[#E4DACE]">
+              <ProfileRow
+                onClick={handleLogout}
+                icon={LogOut}
+                label="Cerrar sesión"
+                description="Salir de tu cuenta"
+                danger
+              />
+            </div>
+          </section>
 
         </div>
       </ClientLayout>
@@ -161,4 +149,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
