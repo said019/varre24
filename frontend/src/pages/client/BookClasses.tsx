@@ -82,7 +82,7 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
   const endDate = membership.endDate ?? membership.end_date;
 
   return (
-    <div className="rounded-[1.5rem] border border-[#5B4A3E]/14 bg-white/58 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_18px_50px_-40px_rgba(74,51,41,0.42)] backdrop-blur">
+    <div className="rounded-[1.5rem] border border-[#E4DACE] bg-[#FBF8F4] p-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl border", colors.bg, colors.border)}>
@@ -204,21 +204,20 @@ const BookClasses = () => {
       <ClientLayout>
         <div className="mx-auto w-full max-w-7xl space-y-6">
           {/* Header */}
-          <section className="relative overflow-hidden rounded-[2rem] border border-[#5B4A3E]/12 bg-[#F6F2EB]/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.74),0_24px_70px_-52px_rgba(74,51,41,0.6)] backdrop-blur sm:p-6">
-            <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#D5C4B8]/20 blur-3xl" />
+          <section className="relative overflow-hidden rounded-[2rem] border border-[#E4DACE] bg-[#FBF8F4] p-5 sm:p-6">
             <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#5B4A3E]/58">
+                <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">
                   Reserva semanal
                 </p>
-                <h1 className="mt-2 font-alilato text-3xl font-bold leading-none tracking-[0] text-[#2A211B] sm:text-4xl">
+                <h1 className="mt-2 font-bebas text-[clamp(1.9rem,4.5vw,2.8rem)] font-light leading-[1.05] tracking-[0.01em] text-[#2A211B]">
                   Elige tu clase
                 </h1>
                 <p className="mt-3 max-w-[56ch] text-sm leading-6 text-[#4A3D32]/72">
                   Revisa cupos por día y confirma el horario que mejor acompañe tu semana.
                 </p>
               </div>
-              <div className="flex items-center gap-2 self-start rounded-2xl border border-[#5B4A3E]/12 bg-white/62 p-1.5 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.55)] lg:self-auto">
+              <div className="flex items-center gap-2 self-start rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-1.5 lg:self-auto">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -257,7 +256,7 @@ const BookClasses = () => {
             ) : hasActive ? (
               <MembershipBanner membership={membership} />
             ) : (
-              <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-50/75 p-4 text-sm shadow-[0_18px_50px_-40px_rgba(146,64,14,0.42)]">
+              <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-50/75 p-4 text-sm">
                 <div className="flex items-center gap-3">
                   <AlertCircle size={18} className="shrink-0 text-amber-700" />
                   <span className="text-amber-900">
@@ -267,7 +266,7 @@ const BookClasses = () => {
                 </div>
               </div>
             )}
-            <div className="rounded-[1.5rem] border border-[#5B4A3E]/12 bg-white/55 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
+            <div className="rounded-[1.5rem] border border-[#E4DACE] bg-[#FBF8F4] p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-[#5B4A3E]/55">Disponibles</p>
@@ -281,7 +280,7 @@ const BookClasses = () => {
                 <CalendarDays size={22} className="text-[#5B4A3E]/55" />
               </div>
             </div>
-            <div className="rounded-[1.5rem] border border-emerald-500/18 bg-emerald-50/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
+            <div className="rounded-[1.5rem] border border-emerald-500/18 bg-emerald-50/60 p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-emerald-700/60">Reservadas</p>
@@ -323,12 +322,12 @@ const BookClasses = () => {
           )}
 
           {/* Week grid */}
-          <section className="overflow-hidden rounded-[2rem] border border-[#5B4A3E]/12 bg-white/48 shadow-[inset_0_1px_0_rgba(255,255,255,0.76),0_26px_78px_-56px_rgba(74,51,41,0.58)] backdrop-blur">
+          <section className="overflow-hidden rounded-[2rem] border border-[#E4DACE] bg-[#FBF8F4]">
             <div className="overflow-x-auto">
               <div className="grid min-w-[980px] grid-cols-7 divide-x divide-[#5B4A3E]/10">
               {days.map((day, i) => (
                 <div key={i} className="min-h-[36rem] bg-[#F6F2EB]/20">
-                  <div className="sticky top-0 z-[1] border-b border-[#5B4A3E]/10 bg-[#FBF8F4]/92 px-4 py-4 text-center backdrop-blur">
+                  <div className="sticky top-0 z-[1] border-b border-[#E4DACE] bg-[#FBF8F4] px-4 py-4 text-center">
                     <div className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#4A3D32]/58">{DAYS[i]}</div>
                     <div className="mt-1 text-2xl font-bold leading-none text-[#2A211B]">{format(day, "d")}</div>
                     <div className="mt-2 text-[0.68rem] font-semibold text-[#5B4A3E]/58">
@@ -360,10 +359,10 @@ const BookClasses = () => {
                             onClick={() => navigate(`/app/classes/${cls.id}`)}
                             className={cn(
                               "group relative w-full overflow-hidden rounded-2xl border p-4 text-left text-xs transition-all duration-200 active:scale-[0.99]",
-                              isBooked  && "border-emerald-500/30 bg-emerald-50/80 shadow-[0_14px_34px_-28px_rgba(4,120,87,0.65)]",
-                              !isBooked && !disabled && cn(c.border, "cursor-pointer bg-white/72 shadow-[0_16px_42px_-34px_rgba(74,51,41,0.48)] hover:-translate-y-0.5 hover:border-[#5B4A3E]/35 hover:bg-[#FBF8F4]"),
-                              !isBooked && isPast  && "cursor-not-allowed border-[#5B4A3E]/10 bg-white/20 opacity-42",
-                              !isBooked && locked  && "cursor-not-allowed border-[#5B4A3E]/10 bg-white/24 opacity-45",
+                              isBooked  && "border-emerald-500/30 bg-emerald-50/80",
+                              !isBooked && !disabled && cn(c.border, "cursor-pointer bg-[#FBF8F4] hover:-translate-y-0.5 hover:border-[#5B4A3E]/35 hover:bg-[#F1EAE0]"),
+                              !isBooked && isPast  && "cursor-not-allowed border-[#E4DACE] bg-[#F6F2EB]/40 opacity-50",
+                              !isBooked && locked  && "cursor-not-allowed border-[#E4DACE] bg-[#F6F2EB]/40 opacity-50",
                             )}
                           >
                             <div className="flex items-start justify-between gap-3">
