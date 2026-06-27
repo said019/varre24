@@ -25,7 +25,6 @@ import ProfileEdit from "./pages/client/ProfileEdit";
 import ProfilePreferences from "./pages/client/ProfilePreferences";
 import Notifications from "./pages/client/Notifications";
 import MyOrders from "./pages/client/MyOrders";
-import Referrals from "./pages/client/Referrals";
 
 import AdminDashboard from "./pages/admin/Dashboard";
 import PlansList from "./pages/admin/plans/PlansList";
@@ -40,7 +39,6 @@ import Waitlist from "./pages/admin/bookings/Waitlist";
 import PaymentsPage from "./pages/admin/payments/PaymentsPage";
 import SettingsPage from "./pages/admin/settings/SettingsPage";
 import ReportsPage from "./pages/admin/reports/ReportsPage";
-import ReferralsList from "./pages/admin/referrals/ReferralsList";
 import AuditLogPage from "./pages/admin/audit/AuditLogPage";
 import DiscountCodesPage from "./pages/admin/discount-codes/DiscountCodesPage";
 // Legal pages
@@ -103,7 +101,6 @@ const AppRoutes = () => {
         <Route path="/app/profile/edit" element={<ProfileEdit />} />
         <Route path="/app/profile/preferences" element={<ProfilePreferences />} />
         <Route path="/app/orders" element={<MyOrders />} />
-        <Route path="/app/referrals" element={<Referrals />} />
         <Route path="/app/notifications" element={<Notifications />} />
 
         {/* Admin panel */}
@@ -122,7 +119,6 @@ const AppRoutes = () => {
         <Route path="/admin/payments" element={<PaymentsPage />} />
         <Route path="/admin/orders" element={<Navigate to="/admin/payments" replace />} />
         <Route path="/admin/reports" element={<ReportsPage />} />
-        <Route path="/admin/referrals" element={<ReferralsList />} />
         <Route path="/admin/settings" element={<SettingsPage />} />
         <Route path="/admin/audit" element={<AuditLogPage />} />
         <Route path="/admin/discount-codes" element={<DiscountCodesPage />} />

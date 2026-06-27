@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/authStore";
 import {
   LayoutDashboard, Calendar, ClipboardList, CreditCard,
   User, Bell, LogOut, Menu, X, Settings, ChevronRight,
-  Sparkles, Gift,
+  Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,6 @@ const NAV_GROUPS = [
       { to: "/app/classes", label: "Reservar clase", icon: Calendar },
       { to: "/app/bookings", label: "Mis reservas", icon: ClipboardList },
       { to: "/app/orders", label: "Mis órdenes", icon: CreditCard },
-      { to: "/app/referrals", label: "Invita y gana 10%", icon: Gift },
     ],
   },
 ];

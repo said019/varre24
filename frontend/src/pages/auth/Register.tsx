@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff, Check, ArrowRight } from "lucide-react";
@@ -54,9 +54,7 @@ type FormValues = {
 const Register = () => {
   const { register: registerUser, isLoading, error, clearError } = useAuthStore();
   const navigate = useNavigate();
-  const [params] = useSearchParams();
   const { toast } = useToast();
-  const refCode = params.get("ref");
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [dialCode, setDialCode] = useState("52");
@@ -84,7 +82,6 @@ const Register = () => {
         dateOfBirth: data.dateOfBirth,
         acceptsTerms: data.acceptsTerms,
         acceptsCommunications: data.acceptsCommunications,
-        ...(refCode ? { referralCode: refCode } : {}),
       } as any);
       navigate("/app");
     } catch {
@@ -106,14 +103,6 @@ const Register = () => {
 
   return (
     <AuthLayout heading={heading}>
-      {/* ref code badge */}
-      {refCode && (
-        <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2.5 rounded-xl mb-6 text-sm text-[#5B4A3E] font-alilato">
-          <Check size={14} />
-          Código de referido: <strong>{refCode}</strong>
-        </div>
-      )}
-
       {/* global error */}
       {error && (
         <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 rounded-xl mb-5 font-alilato">

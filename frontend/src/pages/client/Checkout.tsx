@@ -268,13 +268,6 @@ const Checkout = () => {
     refetchOnWindowFocus: true,
   });
 
-  const { data: referralData } = useQuery({
-    queryKey: ["my-referral-discount"],
-    queryFn: async () => (await api.get("/users/me/referral-discount")).data,
-    staleTime: 1000 * 60 * 5,
-  });
-  const referralDiscount = referralData?.data ?? referralData ?? {};
-
   // ── Trial restriction: "Clase prueba / muestra" is only for first-time users.
   // We detect a returning customer by checking whether the user has any approved
   // order in their history. The /orders endpoint is already prefetched by the
@@ -327,28 +320,12 @@ const Checkout = () => {
 
   const validateCodeMutation = useMutation({
     mutationFn: async () => {
-      // Intenta primero como código de descuento manual
-      try {
-        const r = await api.post("/discount-codes/validate", { code: discountCode, planId: selectedPlan?.id });
-        return { kind: "discount" as const, data: r.data?.data ?? r.data };
-      } catch (e) {
-        // Si falla, intenta canjearlo como código de referida
-        const r = await api.post("/users/me/claim-referral-code", { code: discountCode });
-        return { kind: "referral" as const, data: r.data?.data ?? r.data };
-      }
+      const r = await api.post("/discount-codes/validate", { code: discountCode, planId: selectedPlan?.id });
+      return r.data?.data ?? r.data;
     },
-    onSuccess: (result) => {
-      if (result.kind === "discount") {
-        setDiscountResult(result.data);
-        toast({ title: "Código de descuento aplicado" });
-      } else {
-        qc.invalidateQueries({ queryKey: ["my-referral-discount"] });
-        setDiscountCode("");
-        toast({
-          title: "Código de referida vinculado",
-          description: "Tu referidora recibirá su 10% cuando aprobemos tu primera compra.",
-        });
-      }
+    onSuccess: (data) => {
+      setDiscountResult(data);
+      toast({ title: "Código de descuento aplicado" });
     },
     onError: (err: any) => {
       const msg = err?.response?.data?.message ?? "Código inválido";
@@ -434,25 +411,6 @@ const Checkout = () => {
       <ClientLayout>
         <div className="max-w-xl mx-auto space-y-6">
           <h1 className="text-xl font-bold text-[#2A211B]">Comprar membresía</h1>
-
-          {referralDiscount.eligible && step === "select" && (
-            <div className="rounded-2xl border border-[#5B4A3E]/25 bg-gradient-to-r from-[#D5C4B8]/15 via-[#D5C4B8]/8 to-transparent p-4">
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5B4A3E] text-[#E8DED4]">
-                  <span className="font-bebas text-sm leading-none tabular-nums">-{referralDiscount.percent}%</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#3A2F26]">
-                    Tienes {referralDiscount.percent}% de descuento por referir
-                    {referralDiscount.referred_name ? ` a ${referralDiscount.referred_name.split(" ")[0]}` : ""}
-                  </p>
-                  <p className="text-xs text-[#3A2F26]/65 mt-0.5">
-                    Se aplica automáticamente en este pedido.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
 
           <StepBar current={step} />
 
@@ -576,10 +534,10 @@ const Checkout = () => {
                     <p><strong className="text-[#2A211B]/80">{selectedPlan.name}</strong></p>
                   </div>
 
-                  {/* Discount code / Referral code — un mismo input, el sistema detecta cuál es */}
+                  {/* Discount code */}
                   <div className="space-y-1.5">
                     <p className="text-[11px] text-[#4A3D32] leading-snug">
-                      ¿Tienes un <strong>código de descuento</strong> o de <strong>referida</strong>? Puedes usar ambos (uno te da descuento, el otro vincula a tu referidora).
+                      ¿Tienes un <strong>código de descuento</strong>? Aplícalo aquí.
                     </p>
                     <div className="flex gap-2">
                       <div className="relative flex-1">

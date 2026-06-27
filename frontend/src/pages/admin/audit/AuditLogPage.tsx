@@ -175,7 +175,6 @@ function humanizeAction(
     const map: Record<string, string> = {
       general_settings: "Configuración general",
       cancellation_window: "Política de cancelación",
-      referral_settings: "Reglas de referidos",
       notification_templates: "Plantillas de notificación",
       notification_settings: "Notificaciones (toggles)",
       policies_settings: "Políticas (Términos / Privacidad)",

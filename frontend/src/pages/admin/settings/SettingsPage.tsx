@@ -208,102 +208,6 @@ const CancellationSettings = () => {
   );
 };
 
-// Referral settings — % de descuento por referido
-const ReferralSettings = () => {
-  const { toast } = useToast();
-  const qc = useQueryClient();
-  const [enabled, setEnabled] = useState(true);
-  const [percent, setPercent] = useState(10);
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["settings", "referral_settings"],
-    queryFn: async () => (await api.get("/settings/referral_settings")).data,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    const raw = data?.data ?? data;
-    if (raw && typeof raw === "object" && !loaded) {
-      setEnabled(raw.enabled !== false);
-      setPercent(Number(raw.discount_percent ?? 10));
-      setLoaded(true);
-    }
-  }, [data, loaded]);
-
-  const updateMutation = useMutation({
-    mutationFn: () => api.put("/settings/referral_settings", {
-      value: { enabled, discount_percent: Number(percent), applies_to: "first_order" },
-    }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["settings", "referral_settings"] });
-      qc.invalidateQueries({ queryKey: ["public-referral-settings"] });
-      setLoaded(false);
-      toast({ title: "Configuración de referidos guardada" });
-    },
-    onError: (err: any) => {
-      toast({ title: "No se pudo guardar", description: err?.response?.data?.message ?? err.message, variant: "destructive" });
-    },
-  });
-
-  const handleSave = () => {
-    const p = Number(percent);
-    if (!Number.isFinite(p) || p < 0 || p > 50) {
-      setError("El descuento debe estar entre 0 y 50%.");
-      return;
-    }
-    setError(null);
-    updateMutation.mutate();
-  };
-
-  if (isLoading) {
-    return <div className="space-y-3 max-w-md"><div className="h-10 w-full rounded-md bg-muted animate-pulse" /><div className="h-10 w-full rounded-md bg-muted animate-pulse" /></div>;
-  }
-
-  return (
-    <div className="space-y-5 max-w-md">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#5B4A3E]/15 bg-white/40 px-4 py-3">
-        <div>
-          <Label className="text-sm font-medium text-[#3A2F26]">Activar descuento por referido</Label>
-          <p className="text-xs text-[#3A2F26]/55 mt-0.5">Si lo desactivas, no se aplicará el % a las nuevas referidas.</p>
-        </div>
-        <Switch checked={enabled} onCheckedChange={setEnabled} />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label className="text-sm font-medium text-[#3A2F26]">% de descuento</Label>
-        <Input
-          type="number"
-          min={0}
-          max={50}
-          step={1}
-          value={percent}
-          onChange={(e) => setPercent(Math.max(0, Math.min(50, Number(e.target.value || 0))))}
-          disabled={!enabled}
-        />
-        <p className="text-xs text-[#3A2F26]/55">Entre 0 y 50%. Se aplica solo en la primera compra de membresía (no en clase muestra).</p>
-      </div>
-
-      <div className="rounded-xl border border-[#5B4A3E]/25 bg-[#5B4A3E]/[0.06] px-4 py-3">
-        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#5B4A3E]/70 mb-1.5">Vista previa</p>
-        <p className="text-sm text-[#3A2F26] leading-snug">
-          {enabled
-            ? `Las nuevas alumnas referidas reciben ${percent}% de descuento en su primera compra de membresía.`
-            : "El descuento por referido está desactivado."}
-        </p>
-      </div>
-
-      {error && <p className="text-xs text-destructive">{error}</p>}
-
-      <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-[#5B4A3E] hover:bg-[#4A3D32] text-[#E8DED4]">
-        {updateMutation.isPending ? <Loader2 className="animate-spin mr-2" size={14} /> : null}
-        Guardar
-      </Button>
-    </div>
-  );
-};
-
 // Validación manual de pagos por transferencia
 const PaymentValidationSettings = () => {
   const { toast } = useToast();
@@ -949,7 +853,6 @@ const SettingsPage = () => (
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="payment">Pagos</TabsTrigger>
             <TabsTrigger value="cancellation">Cancelaciones</TabsTrigger>
-            <TabsTrigger value="referrals">Referidos</TabsTrigger>
             <TabsTrigger value="notifications">Notificaciones</TabsTrigger>
             <TabsTrigger value="policies">Políticas</TabsTrigger>
             <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
@@ -991,10 +894,6 @@ const SettingsPage = () => (
 
           <TabsContent value="cancellation">
             <CancellationSettings />
-          </TabsContent>
-
-          <TabsContent value="referrals">
-            <ReferralSettings />
           </TabsContent>
 
           <TabsContent value="notifications">

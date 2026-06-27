@@ -250,12 +250,6 @@ const DEFAULT_NOTIFICATION_TEMPLATES = {
   },
 };
 
-const DEFAULT_REFERRAL_SETTINGS = Object.freeze({
-  enabled: true,
-  discount_percent: 10,
-  applies_to: "first_order",
-});
-
 const DEFAULT_CANCELLATION_WINDOW = Object.freeze({
   enabled: true,
   min_hours: 4,
@@ -284,7 +278,6 @@ const DEFAULT_SETTINGS_BY_KEY = {
   notification_templates: DEFAULT_NOTIFICATION_TEMPLATES,
   bank_info: DEFAULT_BANK_INFO,
   cancellation_window: DEFAULT_CANCELLATION_WINDOW,
-  referral_settings: DEFAULT_REFERRAL_SETTINGS,
   payment_validation: DEFAULT_PAYMENT_VALIDATION,
 };
 
@@ -2827,7 +2820,7 @@ function mapUser(u) {
 
 // POST /api/auth/register
 app.post("/api/auth/register", async (req, res) => {
-  const { email, password, displayName, phone, gender, dateOfBirth, acceptsTerms, acceptsCommunications, referralCode } = req.body;
+  const { email, password, displayName, phone, gender, dateOfBirth, acceptsTerms, acceptsCommunications } = req.body;
   if (!email || !password || !displayName) {
     return res.status(400).json({ message: "Nombre, email y contraseña son requeridos" });
   }
@@ -2845,35 +2838,6 @@ app.post("/api/auth/register", async (req, res) => {
       [displayName.trim(), email.toLowerCase().trim(), normalizePhoneForStorage(phone), gender || null, dob, passwordHash, acceptsTerms ?? false, acceptsCommunications ?? false]
     );
     const user = result.rows[0];
-    // Auto-create referral code
-    const code = "OPH" + Math.random().toString(36).slice(2, 8).toUpperCase();
-    await pool.query(
-      "INSERT INTO referral_codes (user_id, code) VALUES ($1, $2) ON CONFLICT DO NOTHING",
-      [user.id, code]
-    );
-    // Vincular como referido si vino con un código válido
-    if (referralCode && typeof referralCode === "string") {
-      try {
-        const rc = await pool.query(
-          "SELECT id, user_id FROM referral_codes WHERE UPPER(code) = UPPER($1) LIMIT 1",
-          [referralCode.trim()]
-        );
-        if (rc.rows.length && rc.rows[0].user_id !== user.id) {
-          await pool.query(
-            `INSERT INTO referrals (referral_code_id, referrer_user_id, referred_user_id, rewarded)
-             VALUES ($1, $2, $3, false)
-             ON CONFLICT (referred_user_id) DO NOTHING`,
-            [rc.rows[0].id, rc.rows[0].user_id, user.id]
-          );
-          await pool.query(
-            "UPDATE referral_codes SET uses_count = COALESCE(uses_count, 0) + 1 WHERE id = $1",
-            [rc.rows[0].id]
-          );
-        }
-      } catch (refErr) {
-        console.warn("[register referral]", refErr.message);
-      }
-    }
     // Award welcome bonus loyalty points
     try {
       const cfgRes = await pool.query("SELECT value FROM settings WHERE key='loyalty_config' LIMIT 1");
@@ -4191,57 +4155,6 @@ async function approveOrderFromMP(orderId, mpPaymentId, paymentInfo) {
     order = updRes.rows[0];
     approvedOrder = order;
 
-    // ── Crédito al REFERIDOR si esta es la primera orden de membresía del referido ──
-    await client.query("SAVEPOINT mp_credit_gen");
-    try {
-      const refRes = await client.query(
-        `SELECT id, referrer_user_id FROM referrals
-          WHERE referred_user_id = $1 AND rewarded = false LIMIT 1`,
-        [order.user_id]
-      );
-      if (refRes.rows.length && refRes.rows[0].referrer_user_id && plan) {
-        const referral = refRes.rows[0];
-        const isTrial = ((plan.repeat_key || "").startsWith("trial")) || /muestra/i.test(plan.name || "");
-        if (!isTrial) {
-          const settings = await getSettingValueWithDefaults("referral_settings");
-          if (settings.enabled) {
-            const pct = Math.max(0, Math.min(100, Number(settings.discount_percent ?? 10)));
-            await client.query(
-              `INSERT INTO referral_credits (user_id, source_referral_id, source_order_id, discount_percent, expires_at)
-               VALUES ($1, $2, $3, $4, NOW() + INTERVAL '90 days')
-               ON CONFLICT (source_referral_id) DO NOTHING`,
-              [referral.referrer_user_id, referral.id, order.id, pct]
-            );
-            await client.query(
-              `UPDATE referrals SET rewarded = true, rewarded_at = NOW(), reward_order_id = $2, discount_percent = $3
-                WHERE id = $1 AND rewarded = false`,
-              [referral.id, order.id, pct]
-            );
-          }
-        }
-      }
-      await client.query("RELEASE SAVEPOINT mp_credit_gen");
-    } catch (e) {
-      await client.query("ROLLBACK TO SAVEPOINT mp_credit_gen").catch(() => {});
-      console.warn("[MP webhook] generate referral credit:", e.message);
-    }
-
-    // ── Si esta orden usó un crédito de referido, marcarlo consumido ──
-    if (order.applied_credit_id) {
-      await client.query("SAVEPOINT mp_credit_use");
-      try {
-        await client.query(
-          `UPDATE referral_credits SET used_at = NOW(), used_in_order_id = $2
-            WHERE id = $1 AND used_at IS NULL AND voided_at IS NULL`,
-          [order.applied_credit_id, order.id]
-        );
-        await client.query("RELEASE SAVEPOINT mp_credit_use");
-      } catch (e) {
-        await client.query("ROLLBACK TO SAVEPOINT mp_credit_use").catch(() => {});
-        console.warn("[MP webhook] mark referral credit used:", e.message);
-      }
-    }
-
     // ── Activar membresía ──
     if (order.plan_id && plan && order.user_id) {
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -4721,58 +4634,9 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       appliedDiscountCode = discountResult.code;
     }
 
-    // ── Crédito por referido: aplica el más antiguo no expirado del comprador ──
-    // El referidor (quien recomendó a alguien que ya compró y fue aprobado) tiene
-    // un crédito en referral_credits. Se aplica FIFO en su próxima orden.
-    let referralDiscount = 0;
-    let appliedCreditId = null;
-    try {
-      const referralSettings = await getSettingValueWithDefaults("referral_settings");
-      const isTrialPlan = (plan.repeat_key || "").startsWith("trial") ||
-                          /muestra/i.test(plan.name || "");
-      if (referralSettings.enabled && !isTrialPlan) {
-        // FIFO + skip credits ya tomados por otra orden del usuario que aún
-        // no fue rechazada/expirada (evita doble-aplicar el mismo crédito en
-        // dos órdenes pendientes). FOR UPDATE SKIP LOCKED serializa el caso
-        // de dos checkouts concurrentes.
-        // SAVEPOINT: si la tabla referral_credits no existe (migración fallida),
-        // el ROLLBACK al savepoint evita abortar toda la transacción de creación de orden.
-        await client.query("SAVEPOINT order_ref_credit");
-        try {
-          const credRes = await client.query(
-            `SELECT c.id, c.discount_percent
-               FROM referral_credits c
-              WHERE c.user_id = $1
-                AND c.used_at IS NULL
-                AND c.voided_at IS NULL
-                AND c.rejected_at IS NULL
-                AND c.approved_at IS NOT NULL
-                AND c.expires_at > NOW()
-                AND NOT EXISTS (
-                  SELECT 1 FROM orders o
-                   WHERE o.applied_credit_id = c.id
-                     AND o.status NOT IN ('rejected','cancelled','expired')
-                )
-              ORDER BY c.created_at ASC
-              LIMIT 1
-              FOR UPDATE SKIP LOCKED`,
-            [req.userId]
-          );
-          if (credRes.rows.length) {
-            const cred = credRes.rows[0];
-            const pct = Math.max(0, Math.min(100, Number(cred.discount_percent ?? 10)));
-            referralDiscount = Math.round((subtotal - discount) * (pct / 100) * 100) / 100;
-            appliedCreditId = cred.id;
-          }
-          await client.query("RELEASE SAVEPOINT order_ref_credit");
-        } catch (innerErr) {
-          await client.query("ROLLBACK TO SAVEPOINT order_ref_credit").catch(() => {});
-          console.warn("[order referral credit] skipped:", innerErr.message);
-        }
-      }
-    } catch (refErr) {
-      console.warn("[order referral credit]", refErr.message);
-    }
+    // Referral program removed: no referral credit is ever applied to an order.
+    const referralDiscount = 0;
+    const appliedCreditId = null;
 
     const baseTotal = Math.max(0, subtotal - discount - referralDiscount);
     // Sin recargo por pago con tarjeta. El estudio absorbe la comisión de MercadoPago.
@@ -8049,134 +7913,6 @@ app.put("/api/users/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ─── Routes: /api/referrals ─────────────────────────────────────────────────
-
-// GET /api/referrals/code
-// POST /api/users/me/claim-referral-code { code }
-// Permite vincularse manualmente a un código de referido si la alumna se
-// registró sin URL ?ref=. Crea el row en referrals si todavía es elegible.
-app.post("/api/users/me/claim-referral-code", authMiddleware, async (req, res) => {
-  try {
-    const code = String(req.body?.code || "").trim();
-    if (!code) return res.status(400).json({ message: "Código requerido" });
-
-    const settings = await getSettingValueWithDefaults("referral_settings");
-    if (!settings.enabled) {
-      return res.status(403).json({ code: "DISABLED", message: "Los referidos están desactivados temporalmente." });
-    }
-
-    // ¿El código existe?
-    const rcRes = await pool.query(
-      "SELECT id, user_id FROM referral_codes WHERE UPPER(code) = UPPER($1) LIMIT 1",
-      [code]
-    );
-    if (!rcRes.rows.length) {
-      return res.status(404).json({ code: "NOT_FOUND", message: "Código no válido." });
-    }
-    const rc = rcRes.rows[0];
-
-    // No self-referral
-    if (rc.user_id === req.userId) {
-      return res.status(400).json({ code: "SELF_REFERRAL", message: "No puedes usar tu propio código." });
-    }
-
-    // Ya tiene un referral asociado
-    const existing = await pool.query(
-      "SELECT id, rewarded FROM referrals WHERE referred_user_id = $1 LIMIT 1",
-      [req.userId]
-    );
-    if (existing.rows.length) {
-      if (existing.rows[0].rewarded) {
-        return res.status(409).json({ code: "ALREADY_REWARDED", message: "Ya estás vinculada a una referidora." });
-      }
-      return res.json({
-        data: {
-          linked: true,
-          message: "Ya tienes una referidora vinculada.",
-        },
-      });
-    }
-
-    // No haber comprado ya membresía: si ya compró, el crédito al referidor
-    // no se dispararía (solo aplica en su primera orden de membresía).
-    const priorRes = await pool.query(
-      `SELECT 1 FROM orders o
-         LEFT JOIN plans p ON o.plan_id = p.id
-        WHERE o.user_id = $1
-          AND o.status IN ('approved','pending_verification')
-          AND COALESCE(p.repeat_key, '') NOT LIKE 'trial%'
-          AND COALESCE(p.name, '') NOT ILIKE '%muestra%'
-        LIMIT 1`,
-      [req.userId]
-    );
-    if (priorRes.rows.length) {
-      return res.status(409).json({
-        code: "ALREADY_PURCHASED",
-        message: "Ya tienes una membresía activa, el código solo se vincula antes de tu primera compra.",
-      });
-    }
-
-    // Crear el vínculo
-    await pool.query(
-      `INSERT INTO referrals (referral_code_id, referrer_user_id, referred_user_id, rewarded)
-       VALUES ($1, $2, $3, false)
-       ON CONFLICT (referred_user_id) DO NOTHING`,
-      [rc.id, rc.user_id, req.userId]
-    );
-    await pool.query(
-      "UPDATE referral_codes SET uses_count = COALESCE(uses_count, 0) + 1 WHERE id = $1",
-      [rc.id]
-    );
-
-    return res.json({
-      data: {
-        linked: true,
-        message: "Quedaste vinculada. Tu referidora recibirá su crédito cuando aprobemos tu primera compra.",
-      },
-    });
-  } catch (err) {
-    console.error("claim-referral-code:", err);
-    return res.status(500).json({ message: "Error al canjear el código" });
-  }
-});
-
-// GET /api/users/me/referral-discount — ¿tengo un crédito por referido listo para mi próxima compra?
-// (modelo nuevo: el referidor recibe el crédito cuando el referido completa su pago)
-app.get("/api/users/me/referral-discount", authMiddleware, async (req, res) => {
-  try {
-    const settings = await getSettingValueWithDefaults("referral_settings");
-    if (!settings.enabled) return res.json({ data: { eligible: false, reason: "disabled" } });
-
-    const r = await pool.query(
-      `SELECT c.id, c.discount_percent, c.expires_at,
-              ru.display_name AS referred_name
-         FROM referral_credits c
-         JOIN referrals ref ON c.source_referral_id = ref.id
-         LEFT JOIN users ru ON ref.referred_user_id = ru.id
-        WHERE c.user_id = $1
-          AND c.used_at IS NULL
-          AND c.voided_at IS NULL
-          AND c.expires_at > NOW()
-        ORDER BY c.created_at ASC
-        LIMIT 1`,
-      [req.userId]
-    );
-    if (!r.rows.length) return res.json({ data: { eligible: false, reason: "no_credit" } });
-
-    return res.json({
-      data: {
-        eligible: true,
-        percent: Number(r.rows[0].discount_percent ?? 10),
-        referred_name: r.rows[0].referred_name || null,
-        expires_at: r.rows[0].expires_at,
-      },
-    });
-  } catch (err) {
-    console.error("referral-discount error:", err);
-    return res.status(500).json({ message: "Error" });
-  }
-});
-
 // GET /api/users/me/credits — todos los créditos vigentes del usuario (FIFO)
 app.get("/api/users/me/credits", authMiddleware, async (req, res) => {
   try {
@@ -8197,26 +7933,6 @@ app.get("/api/users/me/credits", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("/me/credits error:", err);
     return res.status(500).json({ message: "Error" });
-  }
-});
-
-app.get("/api/referrals/code", authMiddleware, async (req, res) => {
-  try {
-    let r = await pool.query(
-      "SELECT * FROM referral_codes WHERE user_id = $1 LIMIT 1",
-      [req.userId]
-    );
-    if (r.rows.length === 0) {
-      const code = "OPH" + Math.random().toString(36).slice(2, 8).toUpperCase();
-      r = await pool.query(
-        "INSERT INTO referral_codes (user_id, code) VALUES ($1, $2) RETURNING *",
-        [req.userId, code]
-      );
-    }
-    return res.json({ data: r.rows[0] });
-  } catch (err) {
-    console.error("Referrals/code error:", err);
-    return res.status(500).json({ message: "Error interno" });
   }
 });
 
@@ -9452,217 +9168,11 @@ app.delete("/api/review-tags/:id", adminMiddleware, async (req, res) => {
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }
 });
 
-// ─── Referrals admin ─────────────────────────────────────────────────────────
-
-// GET /api/referrals/codes — all codes (admin)
-app.get("/api/referrals/codes", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(
-      `SELECT rc.*, u.display_name AS user_name, u.email, rc.uses_count
-       FROM referral_codes rc LEFT JOIN users u ON rc.user_id=u.id
-       ORDER BY rc.uses_count DESC`
-    );
-    return res.json({ data: r.rows });
-  } catch (err) { return res.status(500).json({ message: "Error interno" }); }
-});
-
-// GET /api/referrals — referral history
-app.get("/api/referrals", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(
-      `SELECT r.*, rc.code, u.display_name AS referred_name
-       FROM referrals r
-       JOIN referral_codes rc ON r.referral_code_id=rc.id
-       LEFT JOIN users u ON r.referred_user_id=u.id
-       ORDER BY r.created_at DESC LIMIT 100`
-    );
-    return res.json({ data: r.rows });
-  } catch (err) { return res.status(500).json({ message: "Error interno" }); }
-});
-
-// GET /api/referrals/stats
-app.get("/api/referrals/stats", adminMiddleware, async (req, res) => {
-  try {
-    const [total, rewarded] = await Promise.all([
-      pool.query("SELECT COUNT(*) FROM referrals"),
-      pool.query("SELECT COUNT(*) FROM referrals WHERE rewarded=true"),
-    ]);
-    return res.json({ data: { total: parseInt(total.rows[0].count), rewarded: parseInt(rewarded.rows[0].count) } });
-  } catch (err) { return res.status(500).json({ message: "Error interno" }); }
-});
-
-// GET /api/admin/referrals/list — lista enriquecida para el admin
-app.get("/api/admin/referrals/list", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(`
-      SELECT
-        r.id, r.created_at, r.rewarded, r.rewarded_at, r.discount_percent, r.reward_order_id,
-        rc.code,
-        ref.id   AS referrer_id,   ref.display_name AS referrer_name,   ref.email AS referrer_email,
-        u.id     AS referred_id,   u.display_name   AS referred_name,   u.email   AS referred_email,
-        EXISTS(SELECT 1 FROM memberships m WHERE m.user_id = u.id AND m.status = 'active') AS referred_has_active_membership,
-        c.id          AS credit_id,
-        c.expires_at  AS credit_expires_at,
-        c.used_at     AS credit_used_at,
-        c.voided_at   AS credit_voided_at,
-        CASE
-          WHEN c.id IS NULL                                                  THEN NULL
-          WHEN c.voided_at IS NOT NULL                                       THEN 'voided'
-          WHEN c.rejected_at IS NOT NULL                                     THEN 'rejected'
-          WHEN c.used_at IS NOT NULL                                         THEN 'used'
-          WHEN c.approved_at IS NULL                                         THEN 'pending'
-          WHEN c.expires_at <= NOW()                                         THEN 'expired'
-          ELSE 'active'
-        END AS credit_status
-      FROM referrals r
-      LEFT JOIN referral_codes rc ON r.referral_code_id = rc.id
-      LEFT JOIN users ref ON r.referrer_user_id = ref.id
-      LEFT JOIN users u   ON r.referred_user_id = u.id
-      LEFT JOIN referral_credits c ON c.source_referral_id = r.id
-      ORDER BY r.created_at DESC
-      LIMIT 200
-    `);
-    return res.json({ data: camelRows(r.rows) });
-  } catch (err) {
-    console.error("admin referrals list:", err);
-    return res.status(500).json({ message: "Error", detail: err.message, code: err.code });
-  }
-});
-
-// GET /api/admin/referral-credits/pending — créditos de referido por APROBAR.
-// Incluye a cuántas personas refirió la alumna (total y cuántas compraron).
-app.get("/api/admin/referral-credits/pending", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(`
-      SELECT c.id, c.discount_percent, c.created_at, c.expires_at,
-             ref.id AS referrer_id, ref.display_name AS referrer_name, ref.email AS referrer_email,
-             rd.display_name AS referred_name, rd.email AS referred_email,
-             (SELECT COUNT(*) FROM referrals r2 WHERE r2.referrer_user_id = c.user_id)::int AS total_referred,
-             (SELECT COUNT(*) FROM referrals r3 WHERE r3.referrer_user_id = c.user_id AND r3.rewarded)::int AS total_converted
-        FROM referral_credits c
-        JOIN users ref ON ref.id = c.user_id
-        LEFT JOIN referrals sr ON sr.id = c.source_referral_id
-        LEFT JOIN users rd ON rd.id = sr.referred_user_id
-       WHERE c.approved_at IS NULL AND c.rejected_at IS NULL
-         AND c.used_at IS NULL AND c.voided_at IS NULL
-         AND c.expires_at > NOW()
-       ORDER BY c.created_at DESC`);
-    return res.json({ data: camelRows(r.rows) });
-  } catch (err) {
-    console.error("GET /admin/referral-credits/pending error:", err);
-    return res.status(500).json({ message: "Error interno" });
-  }
-});
-
-// POST /api/admin/referral-credits/:id/approve — habilita el crédito para usarse.
-app.post("/api/admin/referral-credits/:id/approve", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(
-      `UPDATE referral_credits
-          SET approved_at = NOW(), approved_by = $2, rejected_at = NULL, rejected_reason = NULL
-        WHERE id = $1 AND used_at IS NULL AND voided_at IS NULL
-        RETURNING id`,
-      [req.params.id, req.userId]
-    );
-    if (!r.rowCount) return res.status(404).json({ message: "Crédito no encontrado o ya usado" });
-    return res.json({ ok: true, message: "Descuento aprobado" });
-  } catch (err) {
-    console.error("approve referral-credit error:", err);
-    return res.status(500).json({ message: "Error interno" });
-  }
-});
-
-// POST /api/admin/referral-credits/:id/reject — rechaza el crédito (no se podrá usar).
-app.post("/api/admin/referral-credits/:id/reject", adminMiddleware, async (req, res) => {
-  try {
-    const reason = typeof req.body?.reason === "string" ? req.body.reason.trim().slice(0, 200) : null;
-    const r = await pool.query(
-      `UPDATE referral_credits
-          SET rejected_at = NOW(), rejected_reason = $2, approved_at = NULL
-        WHERE id = $1 AND used_at IS NULL AND voided_at IS NULL
-        RETURNING id`,
-      [req.params.id, reason]
-    );
-    if (!r.rowCount) return res.status(404).json({ message: "Crédito no encontrado o ya usado" });
-    return res.json({ ok: true, message: "Descuento rechazado" });
-  } catch (err) {
-    console.error("reject referral-credit error:", err);
-    return res.status(500).json({ message: "Error interno" });
-  }
-});
-
-// GET /api/admin/referrals/diag — inspección de schema para depurar 500
-app.get("/api/admin/referrals/diag", adminMiddleware, async (req, res) => {
-  try {
-    const [cols, tables, rows] = await Promise.all([
-      pool.query(`
-        SELECT table_name, column_name, data_type
-          FROM information_schema.columns
-         WHERE table_schema = 'public'
-           AND table_name IN ('referrals', 'referral_codes', 'referral_credits', 'orders', 'memberships')
-         ORDER BY table_name, ordinal_position
-      `),
-      pool.query(`
-        SELECT table_name FROM information_schema.tables
-         WHERE table_schema = 'public'
-           AND table_name IN ('referrals', 'referral_codes', 'referral_credits')
-      `),
-      pool.query(`SELECT COUNT(*)::int AS n FROM referrals`).catch((e) => ({ rows: [{ n: null, err: e.message }] })),
-    ]);
-    const byTable = {};
-    for (const c of cols.rows) {
-      byTable[c.table_name] = byTable[c.table_name] || [];
-      byTable[c.table_name].push(`${c.column_name}:${c.data_type}`);
-    }
-    return res.json({
-      data: {
-        tables: tables.rows.map((t) => t.table_name),
-        columns: byTable,
-        referrals_count: rows.rows[0],
-      },
-    });
-  } catch (err) {
-    return res.status(500).json({ message: "diag error", detail: err.message, code: err.code });
-  }
-});
-
-// GET /api/admin/referrals/summary — stats agregados
-app.get("/api/admin/referrals/summary", adminMiddleware, async (req, res) => {
-  try {
-    const [counts, top] = await Promise.all([
-      pool.query(`
-        SELECT
-          COUNT(*)::int AS total,
-          COUNT(*) FILTER (WHERE rewarded = true)::int AS rewarded,
-          COUNT(*) FILTER (WHERE rewarded = false)::int AS pending
-        FROM referrals
-      `),
-      pool.query(`
-        SELECT u.id, u.display_name AS name, u.email,
-               COUNT(r.id)::int AS total,
-               COUNT(r.id) FILTER (WHERE r.rewarded = true)::int AS rewarded
-          FROM referrals r
-          JOIN users u ON r.referrer_user_id = u.id
-         GROUP BY u.id, u.display_name, u.email
-         ORDER BY total DESC
-         LIMIT 5
-      `),
-    ]);
-    const c = counts.rows[0];
-    const conversion = c.total > 0 ? Math.round((c.rewarded / c.total) * 1000) / 10 : 0;
-    return res.json({ data: { ...c, conversion, top: top.rows } });
-  } catch (err) {
-    console.error("admin referrals summary:", err);
-    return res.status(500).json({ message: "Error", detail: err.message, code: err.code });
-  }
-});
-
 // ─── Settings ────────────────────────────────────────────────────────────────
 
 const PUBLIC_SETTINGS_KEYS = new Set([
   "policies_settings",
   "cancellation_window",
-  "referral_settings",
 ]);
 
 // ─── Settings cache (in-memory, TTL-based, invalidated on write) ────────────
@@ -11099,59 +10609,6 @@ app.post("/api/users", adminMiddleware, async (req, res) => {
     return res.status(201).json({ user: mapUser(r.rows[0]), tempPassword });
   } catch (err) {
     console.error("POST /api/users error:", err);
-    return res.status(500).json({ message: "Error interno" });
-  }
-});
-
-// GET /api/admin/users/:id/referrals — a quién refirió esta alumna (+ crédito
-// ganado y dónde lo usó) y quién la refirió a ella. Para ver en la ficha por
-// qué tiene/usó un descuento de referido.
-app.get("/api/admin/users/:id/referrals", adminMiddleware, async (req, res) => {
-  try {
-    const uid = req.params.id;
-    const referred = await pool.query(
-      `SELECT r.id, r.created_at, r.rewarded, r.discount_percent,
-              u.display_name AS referred_name, u.email AS referred_email,
-              c.discount_percent AS credit_pct, c.used_at, c.expires_at, c.voided_at,
-              ord.order_number AS used_order_number,
-              CASE
-                WHEN c.id IS NULL              THEN NULL
-                WHEN c.voided_at IS NOT NULL   THEN 'voided'
-                WHEN c.rejected_at IS NOT NULL THEN 'rejected'
-                WHEN c.used_at  IS NOT NULL    THEN 'used'
-                WHEN c.approved_at IS NULL     THEN 'pending'
-                WHEN c.expires_at <= NOW()     THEN 'expired'
-                ELSE 'active'
-              END AS credit_status
-         FROM referrals r
-         LEFT JOIN users u ON u.id = r.referred_user_id
-         LEFT JOIN referral_credits c ON c.source_referral_id = r.id
-         LEFT JOIN orders ord ON ord.id = c.used_in_order_id
-        WHERE r.referrer_user_id = $1
-        ORDER BY r.created_at DESC`,
-      [uid]
-    );
-    const referredBy = await pool.query(
-      `SELECT ref.display_name AS referrer_name, ref.email AS referrer_email, r.created_at, r.code_used
-         FROM referrals r
-         JOIN users ref ON ref.id = r.referrer_user_id
-         LEFT JOIN LATERAL (SELECT rc.code AS code_used FROM referral_codes rc WHERE rc.id = r.referral_code_id) x ON true
-        WHERE r.referred_user_id = $1
-        LIMIT 1`,
-      [uid]
-    ).catch(async () => pool.query(
-      `SELECT ref.display_name AS referrer_name, ref.email AS referrer_email, r.created_at
-         FROM referrals r JOIN users ref ON ref.id = r.referrer_user_id
-        WHERE r.referred_user_id = $1 LIMIT 1`, [uid]
-    ));
-    return res.json({
-      data: {
-        referred: camelRows(referred.rows),
-        referredBy: referredBy.rows[0] ? camelRow(referredBy.rows[0]) : null,
-      },
-    });
-  } catch (err) {
-    console.error("GET /admin/users/:id/referrals error:", err);
     return res.status(500).json({ message: "Error interno" });
   }
 });
@@ -13068,71 +12525,6 @@ app.put("/api/admin/orders/:id/verify", adminMiddleware, async (req, res) => {
       order = approvedRes.rows[0];
       justApproved = true;
 
-      // ── Generar crédito al REFERIDOR si esta orden es la primera de membresía
-      // del referido (Pedro). Idempotente vía UNIQUE(source_referral_id).
-      // SAVEPOINT para que un fallo aquí no aborte la tx de approve. ──
-      await client.query("SAVEPOINT credit_gen");
-      try {
-        const refRes = await client.query(
-          `SELECT id, referrer_user_id FROM referrals
-            WHERE referred_user_id = $1 AND rewarded = false LIMIT 1`,
-          [order.user_id]
-        );
-        if (refRes.rows.length && refRes.rows[0].referrer_user_id) {
-          const referral = refRes.rows[0];
-          let plan2 = plan;
-          if (!plan2 && order.plan_id) {
-            const pr = await client.query("SELECT * FROM plans WHERE id = $1", [order.plan_id]);
-            plan2 = pr.rows[0] || null;
-          }
-          const isTrial = plan2 && (
-            ((plan2.repeat_key || "").startsWith("trial")) ||
-            /muestra/i.test(plan2.name || "")
-          );
-          if (plan2 && !isTrial) {
-            const settings = await getSettingValueWithDefaults("referral_settings");
-            if (settings.enabled) {
-              const pct = Math.max(0, Math.min(100, Number(settings.discount_percent ?? 10)));
-              await client.query(
-                `INSERT INTO referral_credits
-                   (user_id, source_referral_id, source_order_id, discount_percent, expires_at)
-                 VALUES ($1, $2, $3, $4, NOW() + INTERVAL '90 days')
-                 ON CONFLICT (source_referral_id) DO NOTHING`,
-                [referral.referrer_user_id, referral.id, order.id, pct]
-              );
-              await client.query(
-                `UPDATE referrals
-                    SET rewarded = true, rewarded_at = NOW(),
-                        reward_order_id = $2, discount_percent = $3
-                  WHERE id = $1 AND rewarded = false`,
-                [referral.id, order.id, pct]
-              );
-            }
-          }
-        }
-        await client.query("RELEASE SAVEPOINT credit_gen");
-      } catch (e) {
-        await client.query("ROLLBACK TO SAVEPOINT credit_gen").catch(() => {});
-        console.warn("[approve generate credit]", e.message);
-      }
-
-      // ── Si esta orden usó un crédito (Said gastó su 10%), marcarlo consumido ──
-      if (order.applied_credit_id) {
-        await client.query("SAVEPOINT credit_use");
-        try {
-          await client.query(
-            `UPDATE referral_credits
-                SET used_at = NOW(), used_in_order_id = $2
-              WHERE id = $1 AND used_at IS NULL AND voided_at IS NULL`,
-            [order.applied_credit_id, order.id]
-          );
-          await client.query("RELEASE SAVEPOINT credit_use");
-        } catch (e) {
-          await client.query("ROLLBACK TO SAVEPOINT credit_use").catch(() => {});
-          console.warn("[approve mark credit used]", e.message);
-        }
-      }
-
       // Activate membership if this order is for a plan
       if (order.plan_id && plan && order.user_id) {
         const todayStr = new Date().toISOString().slice(0, 10);
@@ -13395,54 +12787,6 @@ app.put("/api/admin/orders/:id/reject", adminMiddleware, async (req, res) => {
       `UPDATE memberships SET status='cancelled', updated_at=NOW() WHERE order_id = $1 AND status = 'active'`,
       [req.params.id]
     ).catch(()=>{});
-
-    // Legacy: si la orden traía referral_id (modelo viejo), restaurar elegibilidad
-    if (order.referral_id) {
-      await pool.query(
-        `UPDATE referrals
-            SET rewarded = false, rewarded_at = NULL, reward_order_id = NULL
-          WHERE id = $1 AND reward_order_id = $2`,
-        [order.referral_id, order.id]
-      ).catch(() => { });
-    }
-
-    // ── Si la orden fue la fuente de un crédito al referidor (orden de Pedro
-    // aprobada y luego rechazada): anular crédito + revertir referrals.rewarded ──
-    try {
-      const sourceRefRes = await pool.query(
-        `SELECT id FROM referrals WHERE reward_order_id = $1 LIMIT 1`,
-        [order.id]
-      );
-      if (sourceRefRes.rows.length) {
-        const referralId = sourceRefRes.rows[0].id;
-        await pool.query(
-          `UPDATE referral_credits
-              SET voided_at = NOW()
-            WHERE source_referral_id = $1
-              AND used_at IS NULL
-              AND voided_at IS NULL`,
-          [referralId]
-        );
-        await pool.query(
-          `UPDATE referrals
-              SET rewarded = false, rewarded_at = NULL, reward_order_id = NULL
-            WHERE id = $1`,
-          [referralId]
-        );
-      }
-    } catch (e) { console.warn("[reject void credit]", e.message); }
-
-    // ── Si la orden había consumido un crédito (Said canceló su compra), restaurar ──
-    if (order.applied_credit_id) {
-      try {
-        await pool.query(
-          `UPDATE referral_credits
-              SET used_at = NULL, used_in_order_id = NULL
-            WHERE id = $1 AND used_in_order_id = $2`,
-          [order.applied_credit_id, order.id]
-        );
-      } catch (e) { console.warn("[reject restore credit]", e.message); }
-    }
 
     // Notify the client about rejection via email and WhatsApp
     try {
@@ -14445,24 +13789,6 @@ app.post("/api/admin/classes/generate", adminMiddleware, async (req, res) => {
     return res.json({ created: created.length, data: created });
   } catch (err) {
     console.error("POST /admin/classes/generate error:", err);
-    return res.status(500).json({ message: "Error interno" });
-  }
-});
-
-// GET /api/admin/referrals
-app.get("/api/admin/referrals", adminMiddleware, async (req, res) => {
-  try {
-    const r = await pool.query(
-      `SELECT rc.*, u.display_name AS user_name, u.email,
-              COUNT(r2.id) AS referral_count
-       FROM referral_codes rc
-       LEFT JOIN users u ON rc.user_id = u.id
-       LEFT JOIN referrals r2 ON r2.referral_code_id = rc.id
-       GROUP BY rc.id, u.display_name, u.email
-       ORDER BY referral_count DESC`
-    );
-    return res.json({ data: r.rows });
-  } catch (err) {
     return res.status(500).json({ message: "Error interno" });
   }
 });
@@ -15483,45 +14809,6 @@ async function autoApproveTransferOrder(order) {
       [o.id, expires]
     );
     justApproved = true;
-
-    // ── Crédito al referidor (SAVEPOINT — patrón del admin verify) ──
-    await client.query("SAVEPOINT auto_credit_gen");
-    try {
-      const refRes = await client.query(
-        `SELECT id, referrer_user_id FROM referrals
-          WHERE referred_user_id = $1 AND rewarded = false LIMIT 1`, [o.user_id]
-      );
-      if (refRes.rows.length && refRes.rows[0].referrer_user_id && plan) {
-        const isTrial = ((plan.repeat_key || "").startsWith("trial")) || /muestra/i.test(plan.name || "");
-        if (!isTrial) {
-          const settings = await getSettingValueWithDefaults("referral_settings");
-          if (settings.enabled) {
-            const pct = Math.max(0, Math.min(100, Number(settings.discount_percent ?? 10)));
-            await client.query(
-              `INSERT INTO referral_credits (user_id, source_referral_id, source_order_id, discount_percent, expires_at)
-               VALUES ($1, $2, $3, $4, NOW() + INTERVAL '90 days')
-               ON CONFLICT (source_referral_id) DO NOTHING`,
-              [refRes.rows[0].referrer_user_id, refRes.rows[0].id, o.id, pct]
-            );
-            await client.query(
-              `UPDATE referrals SET rewarded=true, rewarded_at=NOW(), reward_order_id=$2, discount_percent=$3
-                WHERE id=$1 AND rewarded=false`,
-              [refRes.rows[0].id, o.id, pct]
-            );
-          }
-        }
-      }
-      await client.query("RELEASE SAVEPOINT auto_credit_gen");
-    } catch (e) {
-      await client.query("ROLLBACK TO SAVEPOINT auto_credit_gen").catch(()=>{});
-      console.warn("[auto-approve credit gen]", e.message);
-    }
-
-    if (o.applied_credit_id) {
-      await client.query(`UPDATE referral_credits SET used_at=NOW(), used_in_order_id=$2
-                            WHERE id=$1 AND used_at IS NULL AND voided_at IS NULL`,
-        [o.applied_credit_id, o.id]).catch(()=>{});
-    }
 
     // Membresía
     if (o.plan_id && plan && o.user_id) {
