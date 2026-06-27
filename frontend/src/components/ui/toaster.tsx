@@ -16,7 +16,7 @@ export function Toaster() {
               style={{
                 background: isError
                   ? "linear-gradient(180deg, #c9a227 0%, #a07a10 100%)"
-                  : "linear-gradient(180deg, #8A8077 0%, #8A8077 100%)",
+                  : "linear-gradient(180deg, #9C8A8B 0%, #9C8A8B 100%)",
               }}
             />
             {/* Icon */}
@@ -24,7 +24,7 @@ export function Toaster() {
               className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-base ml-2"
               style={{
                 background: isError ? "rgba(201,162,39,0.15)" : "rgba(164,133,80,0.15)",
-                color: isError ? "#c9a227" : "#8A8077",
+                color: isError ? "#c9a227" : "#9C8A8B",
               }}
             >
               {isError ? "⚠" : "✓"}

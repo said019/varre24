@@ -89,10 +89,10 @@ const MyOrders = () => {
         <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-6">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Tus compras</p>
-              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Mis órdenes</h1>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B]">Tus compras</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">Mis órdenes</h1>
             </div>
-            <Button asChild size="sm" variant="outline" className="rounded-full border-[#E4DACE] font-alilato text-xs">
+            <Button asChild size="sm" variant="outline" className="rounded-full border-[#E8D7D6] font-alilato text-xs">
               <Link to="/app/checkout"><ShoppingBag size={14} className="mr-2" />Nueva orden</Link>
             </Button>
           </div>
@@ -122,8 +122,8 @@ const MyOrders = () => {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 space-y-3">
-              <ShoppingBag size={40} className="mx-auto text-[#5B4A3E]/30" />
-              <p className="text-sm text-[#4A3D32]">No tienes órdenes aún</p>
+              <ShoppingBag size={40} className="mx-auto text-[#3B0E1A]/30" />
+              <p className="text-sm text-[#320C16]">No tienes órdenes aún</p>
               <Button asChild size="sm">
                 <Link to="/app/checkout">Adquirir membresía</Link>
               </Button>
@@ -137,17 +137,17 @@ const MyOrders = () => {
                 return (
                   <div
                     key={o.id}
-                    className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4 transition-colors hover:border-[#5B4A3E]/30"
+                    className="rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4 transition-colors hover:border-[#3B0E1A]/30"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0">
-                        <p className="font-alilato font-medium text-sm text-[#2A211B]">{o.plan_name}</p>
-                        <p className="text-xs text-[#4A3D32]">
+                        <p className="font-alilato font-medium text-sm text-[#1A060B]">{o.plan_name}</p>
+                        <p className="text-xs text-[#320C16]">
                           ${Number(o.total_amount).toLocaleString("es-MX")} MXN
                           {" · "}
                           {paymentMethodLabel(o.payment_method)}
                         </p>
-                        <p className="text-[11px] text-[#5B4A3E]">
+                        <p className="text-[11px] text-[#3B0E1A]">
                           {o.order_number && <span className="font-mono">{o.order_number} · </span>}
                           {o.created_at && format(new Date(o.created_at), "d MMM yyyy · HH:mm", { locale: es })}
                         </p>

@@ -115,9 +115,9 @@ const MembershipTable = ({ status, title }: { status?: string; title: string }) 
               ))
               : memberships.map((m) => {
                 const catColors: Record<string, string> = {
-                  pilates: "bg-[#D5C4B8]/15 text-[#D5C4B8] border-[#D5C4B8]/30",
-                  bienestar: "bg-[#5B4A3E]/15 text-[#5B4A3E] border-[#5B4A3E]/30",
-                  all: "bg-[#E8DED4]/15 text-[#E8DED4] border-[#E8DED4]/30",
+                  pilates: "bg-[#C9A5A8]/15 text-[#C9A5A8] border-[#C9A5A8]/30",
+                  bienestar: "bg-[#3B0E1A]/15 text-[#3B0E1A] border-[#3B0E1A]/30",
+                  all: "bg-[#EADCDD]/15 text-[#EADCDD] border-[#EADCDD]/30",
                 };
                 const cat = m.classCategory ?? "";
                 return (
@@ -127,7 +127,7 @@ const MembershipTable = ({ status, title }: { status?: string; title: string }) 
                       <div className="flex items-center gap-2">
                         <span>{m.planName ?? m.planId}</span>
                         {cat && cat !== "all" && (
-                          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full border capitalize ${catColors[cat] ?? "text-[#2A211B]/40 border-[#5B4A3E]/15"}`}>
+                          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full border capitalize ${catColors[cat] ?? "text-[#1A060B]/40 border-[#3B0E1A]/15"}`}>
                             {cat}
                           </span>
                         )}
@@ -278,7 +278,7 @@ const MembershipsList = () => {
               <div className="space-y-1">
                 <Label>Cliente</Label>
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2A211B]/30" />
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A060B]/30" />
                   <Input
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
@@ -316,7 +316,7 @@ const MembershipsList = () => {
                         <button
                           type="button"
                           key={u.id}
-                          className="w-full px-3 py-2 text-left hover:bg-[#5B4A3E]/[0.06] border-b last:border-b-0 border-border"
+                          className="w-full px-3 py-2 text-left hover:bg-[#3B0E1A]/[0.06] border-b last:border-b-0 border-border"
                           onClick={() => {
                             setSelectedUser(u);
                             form.setValue("userId", u.id, { shouldValidate: true });
@@ -350,9 +350,9 @@ const MembershipsList = () => {
                 const cl = (selPlan as any)?.classLimit ?? (selPlan as any)?.class_limit ?? 0;
                 if (!COMBO_ELIGIBLE.includes(cl)) return null;
                 return (
-                  <div className="space-y-1 rounded-lg border border-[#D5C4B8]/15 bg-[#D5C4B8]/[0.03] p-3">
+                  <div className="space-y-1 rounded-lg border border-[#C9A5A8]/15 bg-[#C9A5A8]/[0.03] p-3">
                     <div className="flex items-center gap-1.5">
-                      <Heart size={12} className="text-[#D5C4B8]" />
+                      <Heart size={12} className="text-[#C9A5A8]" />
                       <Label className="text-xs">Agregar complemento (opcional)</Label>
                     </div>
                     <Select value={complementType ?? "none"} onValueChange={(v) => setComplementType(v === "none" ? null : v)}>
@@ -406,24 +406,24 @@ const MembershipsList = () => {
                 }
                 const finalPrice = discountTotal ?? total;
                 return (
-                  <div className="rounded-xl border border-[#5B4A3E]/20 bg-[#F6F2EB]/60 p-3 space-y-1">
+                  <div className="rounded-xl border border-[#3B0E1A]/20 bg-[#F3EFE9]/60 p-3 space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#2A211B]/60">{selPlan?.name}{hasCombo ? " + Complemento" : ""}</span>
+                      <span className="text-[#1A060B]/60">{selPlan?.name}{hasCombo ? " + Complemento" : ""}</span>
                       {discountTotal ? (
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-[#5B4A3E] line-through">${total.toLocaleString("es-MX")}</span>
-                          <span className="font-bold text-[#2A211B]">${discountTotal.toLocaleString("es-MX")}</span>
+                          <span className="text-xs text-[#3B0E1A] line-through">${total.toLocaleString("es-MX")}</span>
+                          <span className="font-bold text-[#1A060B]">${discountTotal.toLocaleString("es-MX")}</span>
                         </div>
                       ) : (
-                        <span className="font-bold text-[#2A211B]">${total.toLocaleString("es-MX")}</span>
+                        <span className="font-bold text-[#1A060B]">${total.toLocaleString("es-MX")}</span>
                       )}
                     </div>
                     {isDiscount && (
-                      <p className="text-[10px] text-[#D5C4B8] font-medium">Precio con descuento (tarjeta/transferencia)</p>
+                      <p className="text-[10px] text-[#C9A5A8] font-medium">Precio con descuento (tarjeta/transferencia)</p>
                     )}
-                    <div className="flex items-center justify-between pt-1 border-t border-[#5B4A3E]/10">
-                      <span className="text-sm font-semibold text-[#2A211B]">Total a cobrar</span>
-                      <span className="text-lg font-bold text-[#2A211B]">${finalPrice.toLocaleString("es-MX")} MXN</span>
+                    <div className="flex items-center justify-between pt-1 border-t border-[#3B0E1A]/10">
+                      <span className="text-sm font-semibold text-[#1A060B]">Total a cobrar</span>
+                      <span className="text-lg font-bold text-[#1A060B]">${finalPrice.toLocaleString("es-MX")} MXN</span>
                     </div>
                   </div>
                 );

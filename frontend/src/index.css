@@ -26,63 +26,63 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
-   PALETA OFICIAL VARRE24 — estética real (espresso · oat · cream)
+   PALETA OFICIAL VARRE24 — MODDO (burgundy · dusty rose · ivory)
 
-   #FBF8F4  oat-50       superficies altas (casi blanco cálido)
-   #F6F2EB  sunlit-veil  fondo base claro
-   #E8DED4  ivory-silk   secciones / superficie 2
-   #E8DDD5  border       bordes cálidos
-   #D5C4B8  espresso-300 muted / deshabilitado
-   #8A8077  pavement     texto secundario
-   #CBBFAF  luxe-oat     secundario / oat (signature)
-   #B5A593  oat-700      acento taupe
-   #5B4A3E  urban-espresso  primario — CTA, links
-   #4A3D32  espresso-700 primario hover
-   #3A2F26  espresso-800 marca profunda / superficies oscuras / footer
-   #2A211B  espresso-900 texto principal
+   #FCF8F7  ivory-50     superficies altas (casi blanco cálido)
+   #F3EFE9  ivory        fondo base claro
+   #EADCDD  rosy-silk    secciones / superficie 2
+   #E9D9D9  border       bordes rosados
+   #F4E6EA  blush        tinte cálido / estados activos
+   #9C8A8B  mauve-taupe  texto secundario
+   #C9A5A8  dusty-rose   secundario (signature femenino)
+   #C2A6A0  mauve-700    acento
+   #3B0E1A  burgundy     primario — CTA, links
+   #320C16  burgundy-700 primario hover
+   #260910  burgundy-800 marca profunda / superficies oscuras / footer
+   #1A060B  ink          texto principal (deep black-burgundy)
    ────────────────────────────────────────────────────────────── */
 
 @layer base {
   :root {
-    --background: 40 33% 94%;            /* #F6F2EB sunlit-veil */
-    --surface:    36 40% 97%;            /* #FBF8F4 — superficies altas */
-    --surface-2:  32 30% 87%;            /* #E8DED4 ivory-silk */
-    --foreground: 24 22% 14%;            /* #2A211B espresso-900 */
+    --background: 36 29% 93%;            /* #F3EFE9 ivory */
+    --surface:    12 45% 98%;            /* #FCF8F7 — superficies altas */
+    --surface-2:  356 25% 89%;           /* #EADCDD rosy-silk */
+    --foreground: 345 63% 6%;            /* #1A060B ink (deep black-burgundy) */
 
-    --card: 36 40% 97%;
-    --card-foreground: 24 22% 14%;
+    --card: 12 45% 98%;
+    --card-foreground: 345 63% 6%;
 
-    --popover: 36 40% 97%;
-    --popover-foreground: 24 22% 14%;
+    --popover: 12 45% 98%;
+    --popover-foreground: 345 63% 6%;
 
-    /* Primario: urban-espresso #5B4A3E */
-    --primary: 25 19% 30%;
-    --primary-foreground: 36 40% 97%;
+    /* Primario: burgundy #3B0E1A */
+    --primary: 344 62% 14%;
+    --primary-foreground: 36 29% 93%;
 
-    /* Secundario: luxe-oat #CBBFAF */
-    --secondary: 34 26% 74%;
-    --secondary-foreground: 24 22% 14%;
+    /* Secundario: dusty rose #C9A5A8 */
+    --secondary: 355 25% 72%;
+    --secondary-foreground: 345 63% 6%;
 
-    --muted: 36 30% 92%;                 /* crema cálida muy clara */
-    --muted-foreground: 28 10% 50%;      /* #8A8077 pavement */
+    --muted: 343 39% 93%;                /* blush muy clara */
+    --muted-foreground: 357 8% 58%;      /* #9C8A8B mauve taupe */
 
-    /* Acento: oat-700 #B5A593 */
-    --accent: 33 22% 64%;
-    --accent-foreground: 24 22% 14%;
+    /* Acento: beige #D4CABC */
+    --accent: 35 22% 78%;
+    --accent-foreground: 345 63% 6%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 28 28% 87%;                /* #E8DDD5 borde cálido */
-    --input: 28 28% 87%;
-    --ring: 25 19% 30%;
+    --border: 0 27% 88%;                 /* #E9D9D9 borde rosado */
+    --input: 0 27% 88%;
+    --ring: 344 62% 14%;
 
     --radius: 0.875rem;
 
-    /* Sombras tintadas (espresso, no genéricas negras) */
-    --shadow-soft:  0 4px 18px -4px hsl(25 22% 12% / 0.08), 0 2px 6px -2px hsl(25 22% 12% / 0.04);
-    --shadow-warm:  0 12px 40px -8px hsl(25 22% 12% / 0.14), 0 4px 12px -4px hsl(25 22% 12% / 0.06);
-    --shadow-glow:  0 16px 60px -12px hsl(25 19% 30% / 0.26);
+    /* Sombras tintadas (burgundy, no genéricas negras) */
+    --shadow-soft:  0 4px 18px -4px hsl(345 40% 12% / 0.08), 0 2px 6px -2px hsl(345 40% 12% / 0.04);
+    --shadow-warm:  0 12px 40px -8px hsl(345 40% 12% / 0.14), 0 4px 12px -4px hsl(345 40% 12% / 0.06);
+    --shadow-glow:  0 16px 60px -12px hsl(344 62% 14% / 0.26);
 
     /* Easings Emil-style — motion calmada, no snappy */
     --ease-out-emil:    cubic-bezier(0.16, 1, 0.3, 1);
@@ -90,10 +90,10 @@
     --ease-drawer:      cubic-bezier(0.32, 0.72, 0, 1);
 
     /* Aliases compat tokens viejos */
-    --punto-cream: 40 33% 94%;
-    --punto-green: 33 22% 64%;
-    --punto-taupe: 25 19% 30%;
-    --pink-glow:   34 26% 74%;
+    --punto-cream: 36 29% 93%;
+    --punto-green: 35 22% 78%;
+    --punto-taupe: 344 62% 14%;
+    --pink-glow:   355 25% 72%;
   }
 
   html {
@@ -294,28 +294,28 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   /* Mesh gradient cálido — fondo ambiental para hero / CTAs */
   .bg-mesh-warm {
-    background-color: #F6F2EB;
+    background-color: #F3EFE9;
     background-image:
-      radial-gradient(at 15% 20%, hsl(36 35% 90% / 0.85) 0px, transparent 55%),
-      radial-gradient(at 85% 0%,  hsl(32 22% 70% / 0.55) 0px, transparent 50%),
-      radial-gradient(at 70% 90%, hsl(28 18% 40% / 0.40) 0px, transparent 60%),
-      radial-gradient(at 0% 100%, hsl(38 40% 95% / 0.95) 0px, transparent 50%);
+      radial-gradient(at 15% 20%, hsl(350 30% 92% / 0.85) 0px, transparent 55%),
+      radial-gradient(at 85% 0%,  hsl(355 25% 75% / 0.55) 0px, transparent 50%),
+      radial-gradient(at 70% 90%, hsl(345 30% 35% / 0.40) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, hsl(36 30% 95% / 0.95) 0px, transparent 50%);
   }
 
   .bg-mesh-dark {
-    background-color: #3A2F26;
+    background-color: #260910;
     background-image:
-      radial-gradient(at 15% 20%, hsl(28 16% 42% / 0.92) 0px, transparent 55%),
-      radial-gradient(at 85% 0%, hsl(34 24% 78% / 0.28) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, hsl(25 22% 20% / 0.64) 0px, transparent 60%);
+      radial-gradient(at 15% 20%, hsl(345 25% 35% / 0.92) 0px, transparent 55%),
+      radial-gradient(at 85% 0%, hsl(355 25% 75% / 0.28) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsl(345 40% 18% / 0.64) 0px, transparent 60%);
   }
 
   /* Spotlight border — para tarjetas premium */
   .ring-spotlight {
     box-shadow:
-      inset 0 1px 0 0 hsl(38 40% 97% / 0.6),
-      0 0 0 1px hsl(33 24% 80% / 0.20),
-      0 12px 40px -12px hsl(25 22% 16% / 0.18);
+      inset 0 1px 0 0 hsl(36 30% 97% / 0.6),
+      0 0 0 1px hsl(355 22% 82% / 0.20),
+      0 12px 40px -12px hsl(345 40% 14% / 0.18);
   }
 
   .shadow-warm  { box-shadow: var(--shadow-warm); }
@@ -395,7 +395,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   /* Client portal shell */
   .client-shell {
     isolation: isolate;
-    background: #F6F2EB;
+    background: #F3EFE9;
   }
 
   .client-shell main::before {
@@ -416,7 +416,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   /* Admin layout helpers */
   .admin-shell {
     isolation: isolate;
-    background: #F6F2EB;
+    background: #F3EFE9;
   }
 
   .admin-shell main {
@@ -444,7 +444,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-weight: 400;
     line-height: 1.1;
     letter-spacing: 0;
-    color: #2A211B;
+    color: #1A060B;
   }
 
   .admin-page > h1 {
@@ -463,8 +463,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-page .bg-card,
   .admin-page .rounded-xl.border,
   .admin-page .rounded-2xl.border {
-    border-color: #E8DDD5;
-    background: #FBF8F4;
+    border-color: #E9D9D9;
+    background: #FCF8F7;
     box-shadow: none;
     backdrop-filter: none;
   }
@@ -499,15 +499,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page button[class*="bg-primary"],
-  .admin-page button[class*="from-[#D5C4B8]"] {
-    background: #5B4A3E !important;
-    color: #FBF8F4 !important;
+  .admin-page button[class*="from-[#C9A5A8]"] {
+    background: #3B0E1A !important;
+    color: #FCF8F7 !important;
     box-shadow: none;
   }
 
   .admin-page button[class*="bg-primary"]:hover,
-  .admin-page button[class*="from-[#D5C4B8]"]:hover {
-    background: #4A3D32 !important;
+  .admin-page button[class*="from-[#C9A5A8]"]:hover {
+    background: #320C16 !important;
   }
 
   .admin-page button[class*="border"],
@@ -519,8 +519,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-page textarea,
   .admin-page [role="combobox"] {
     min-height: 2.5rem;
-    border-color: #E8DDD5;
-    background-color: #FBF8F4;
+    border-color: #E9D9D9;
+    background-color: #FCF8F7;
     box-shadow: none;
   }
 
@@ -534,8 +534,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .admin-page [role="tablist"] {
     height: auto;
     gap: 0.25rem;
-    border: 1px solid #E8DDD5;
-    background: #FBF8F4;
+    border: 1px solid #E9D9D9;
+    background: #FCF8F7;
     padding: 0.25rem;
     border-radius: 0.85rem;
     box-shadow: none;
@@ -548,8 +548,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page [role="tab"][data-state="active"] {
-    background: #5B4A3E;
-    color: #FBF8F4;
+    background: #3B0E1A;
+    color: #FCF8F7;
     box-shadow: none;
   }
 
@@ -570,7 +570,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 
   .admin-page td {
-    color: #2A211B;
+    color: #1A060B;
   }
 
   .admin-page tbody tr:hover {

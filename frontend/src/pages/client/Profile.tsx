@@ -20,18 +20,18 @@ const ProfileRow = ({ icon: Icon, label, description, to, onClick, danger }: Row
         <Icon
           size={18}
           strokeWidth={1.6}
-          className={danger ? "text-[#9B5B53]" : "text-[#5B4A3E]"}
+          className={danger ? "text-[#9B5B53]" : "text-[#3B0E1A]"}
         />
         <span className="block">
-          <span className={`block font-alilato text-sm font-medium ${danger ? "text-[#9B5B53]" : "text-[#2A211B]"}`}>
+          <span className={`block font-alilato text-sm font-medium ${danger ? "text-[#9B5B53]" : "text-[#1A060B]"}`}>
             {label}
           </span>
           {description && (
-            <span className="mt-0.5 block font-alilato text-xs text-[#5B4A3E]/60">{description}</span>
+            <span className="mt-0.5 block font-alilato text-xs text-[#3B0E1A]/60">{description}</span>
           )}
         </span>
       </span>
-      <ChevronRight size={15} className="shrink-0 text-[#8A8077]/45 transition-transform group-hover:translate-x-0.5" />
+      <ChevronRight size={15} className="shrink-0 text-[#9C8A8B]/45 transition-transform group-hover:translate-x-0.5" />
     </>
   );
 
@@ -79,25 +79,25 @@ const Profile = () => {
 
           {/* ── Identidad ── */}
           <section>
-            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B]">
               Mi cuenta
             </p>
             <div className="mt-5 flex items-center gap-5">
               {/* Avatar flat */}
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#5B4A3E] font-bebas text-xl font-light tracking-wide text-[#F6F2EB]">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#3B0E1A] font-bebas text-xl font-light tracking-wide text-[#F3EFE9]">
                 {photo ? <img src={photo} alt={name} className="h-full w-full object-cover" /> : initials}
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="truncate font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+                <h1 className="truncate font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">
                   {name}
                 </h1>
-                <p className="mt-1 truncate font-alilato text-sm text-[#5B4A3E]/70">{user?.email}</p>
+                <p className="mt-1 truncate font-alilato text-sm text-[#3B0E1A]/70">{user?.email}</p>
                 {user?.phone && (
-                  <p className="truncate font-alilato text-sm text-[#5B4A3E]/70">{user.phone}</p>
+                  <p className="truncate font-alilato text-sm text-[#3B0E1A]/70">{user.phone}</p>
                 )}
-                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#E4DACE] px-3 py-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#5B4A3E]" />
-                  <span className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#8A8077]">
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#E8D7D6] px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#3B0E1A]" />
+                  <span className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#9C8A8B]">
                     {roleLabel}
                   </span>
                 </span>
@@ -107,10 +107,10 @@ const Profile = () => {
 
           {/* ── Ajustes ── */}
           <section>
-            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
               Ajustes
             </p>
-            <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+            <div className="divide-y divide-[#E8D7D6] border-y border-[#E8D7D6]">
               <ProfileRow
                 to="/app/profile/edit"
                 icon={User}
@@ -128,10 +128,10 @@ const Profile = () => {
 
           {/* ── Sesión ── */}
           <section>
-            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
               Sesión
             </p>
-            <div className="border-y border-[#E4DACE]">
+            <div className="border-y border-[#E8D7D6]">
               <ProfileRow
                 onClick={handleLogout}
                 icon={LogOut}

@@ -91,8 +91,8 @@ const Register = () => {
 
   const heading = (
     <>
-      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#5B4A3E] font-semibold mb-3 flex items-center gap-2">
-        <span className="w-5 h-[1px] bg-[#5B4A3E] inline-block" />
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#3B0E1A] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[1px] bg-[#3B0E1A] inline-block" />
         Nuevo registro
       </p>
       <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">
@@ -119,7 +119,7 @@ const Register = () => {
             <input
               placeholder="Tu nombre"
               {...register("displayName")}
-              className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             {errors.displayName && <span className="text-xs text-destructive">{errors.displayName.message}</span>}
           </div>
@@ -129,7 +129,7 @@ const Register = () => {
               <select
                 value={dialCode}
                 onChange={(e) => setDialCode(e.target.value)}
-                className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-2 py-3 text-foreground text-sm focus:outline-none focus:border-[#5B4A3E] transition-all w-[95px]"
+                className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-2 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all w-[95px]"
               >
                 {COUNTRIES.map((c) => (
                   <option key={`${c.code}-${c.dial}`} value={c.dial}>{c.flag} +{c.dial}</option>
@@ -139,7 +139,7 @@ const Register = () => {
                 placeholder="4271234567"
                 inputMode="numeric"
                 {...register("phone")}
-                className="font-alilato flex-1 bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+                className="font-alilato flex-1 bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
             </div>
             {errors.phone && <span className="text-xs text-destructive">{errors.phone.message}</span>}
@@ -152,7 +152,7 @@ const Register = () => {
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Sexo</label>
             <select
               {...register("gender")}
-              className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#5B4A3E] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
               defaultValue=""
             >
               <option value="" disabled>Selecciona…</option>
@@ -168,7 +168,7 @@ const Register = () => {
               type="date"
               {...register("dateOfBirth")}
               max={new Date().toISOString().slice(0, 10)}
-              className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#5B4A3E] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             {errors.dateOfBirth && <span className="text-xs text-destructive">{errors.dateOfBirth.message}</span>}
           </div>
@@ -182,7 +182,7 @@ const Register = () => {
             autoComplete="email"
             placeholder="tu@email.com"
             {...register("email")}
-            className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
           />
           {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
         </div>
@@ -196,7 +196,7 @@ const Register = () => {
                 type={showPass ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("password")}
-                className="font-alilato w-full bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
               <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                 {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -211,7 +211,7 @@ const Register = () => {
                 type={showConfirm ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("confirmPassword")}
-                className="font-alilato w-full bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
               <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                 {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -228,14 +228,14 @@ const Register = () => {
             <button
               type="button"
               onClick={() => setValue("acceptsTerms", !acceptsTerms)}
-              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsTerms ? "bg-[#5B4A3E] border-[#5B4A3E]" : "border-[#E8DDD5] group-hover:border-[#5B4A3E]/50"
+              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsTerms ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
                 }`}
             >
-              {acceptsTerms && <Check size={12} className="text-[#F6F2EB]" />}
+              {acceptsTerms && <Check size={12} className="text-[#F3EFE9]" />}
             </button>
             <span className="text-sm text-muted-foreground leading-snug font-alilato">
               Acepto los{" "}
-              <a href="#" className="text-[#5B4A3E] hover:underline">términos y condiciones</a>
+              <a href="#" className="text-[#3B0E1A] hover:underline">términos y condiciones</a>
             </span>
           </label>
           {errors.acceptsTerms && <span className="text-xs text-destructive -mt-1">{errors.acceptsTerms.message}</span>}
@@ -245,10 +245,10 @@ const Register = () => {
             <button
               type="button"
               onClick={() => setValue("acceptsCommunications", !acceptsCommunications)}
-              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsCommunications ? "bg-[#5B4A3E] border-[#5B4A3E]" : "border-[#E8DDD5] group-hover:border-[#5B4A3E]/50"
+              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsCommunications ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
                 }`}
             >
-              {acceptsCommunications && <Check size={12} className="text-[#F6F2EB]" />}
+              {acceptsCommunications && <Check size={12} className="text-[#F3EFE9]" />}
             </button>
             <span className="text-sm text-muted-foreground leading-snug font-alilato">
               Quiero recibir promociones y noticias
@@ -260,7 +260,7 @@ const Register = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="press mt-3 bg-[#5B4A3E] text-[#F6F2EB] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+          className="press mt-3 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
         >
           {isLoading ? (
             <Loader2 size={16} className="animate-spin" />
@@ -282,7 +282,7 @@ const Register = () => {
 
       <Link
         to="/auth/login"
-        className="press flex items-center justify-center gap-2 w-full py-3.5 rounded-full border border-[#E8DDD5] text-[#5B4A3E] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#5B4A3E] hover:bg-[#FBF8F4] transition-all no-underline"
+        className="press flex items-center justify-center gap-2 w-full py-3.5 rounded-full border border-[#E9D9D9] text-[#3B0E1A] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#3B0E1A] hover:bg-[#FCF8F7] transition-all no-underline"
       >
         Iniciar sesión
       </Link>

@@ -581,7 +581,7 @@ async function ensureSchema() {
         level        VARCHAR(50)  DEFAULT 'Todos los niveles',
         duration_min INTEGER      DEFAULT 50,
         capacity     INTEGER      DEFAULT 10,
-        color        VARCHAR(50)  DEFAULT '#c026d3',
+        color        VARCHAR(50)  DEFAULT '#C9A5A8',
         emoji        VARCHAR(10)  DEFAULT '🏃',
         is_active    BOOLEAN      DEFAULT true,
         sort_order   INTEGER      DEFAULT 0,
@@ -596,7 +596,7 @@ async function ensureSchema() {
     await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS duration_min INTEGER DEFAULT 50`).catch(() => { });
     await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS capacity INTEGER DEFAULT 10`).catch(() => { });
     await pool.query(`ALTER TABLE class_types ALTER COLUMN capacity SET DEFAULT 10`).catch(() => { });
-    await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS color VARCHAR(50) DEFAULT '#c026d3'`).catch(() => { });
+    await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS color VARCHAR(50) DEFAULT '#C9A5A8'`).catch(() => { });
     await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS emoji VARCHAR(10) DEFAULT '🏃'`).catch(() => { });
     await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true`).catch(() => { });
     await pool.query(`ALTER TABLE class_types ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`).catch(() => { });
@@ -1539,7 +1539,7 @@ async function ensureSchema() {
       CREATE TABLE IF NOT EXISTS review_tags (
         id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name       VARCHAR(100) NOT NULL,
-        color      VARCHAR(20) DEFAULT '#c026d3',
+        color      VARCHAR(20) DEFAULT '#C9A5A8',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -5171,8 +5171,8 @@ const SITE_URL = process.env.SITE_URL || "https://varre24.com";
 const GW_ISSUER_ID = process.env.GOOGLE_ISSUER_ID || "";
 const GW_ISSUER_NAME = process.env.GOOGLE_ISSUER_NAME || "VARRE24";
 const GW_PROGRAM_NAME = process.env.GOOGLE_PROGRAM_NAME || "VARRE24 Club";
-const GW_HEX_BG = process.env.GOOGLE_HEX_BACKGROUND_COLOR || "#1a0b26";
-const GW_HEX_BG_EVENT = process.env.GOOGLE_HEX_BACKGROUND_COLOR_EVENT || "#1F0047";
+const GW_HEX_BG = process.env.GOOGLE_HEX_BACKGROUND_COLOR || "#260910";
+const GW_HEX_BG_EVENT = process.env.GOOGLE_HEX_BACKGROUND_COLOR_EVENT || "#260910";
 
 /**
  * Parse the Google Service Account private key from various env var formats.
@@ -7114,13 +7114,13 @@ app.get("/api/wallet/apple/pkpass", authMiddleware, async (req, res) => {
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.pass{width:100%;max-width:380px;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#1a0b26 0%,#2d0a40 50%,#1a0b26 100%);box-shadow:0 20px 60px rgba(225,92,184,.2),0 0 0 1px rgba(202,113,225,.15)}
+.pass{width:100%;max-width:380px;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#260910 0%,#3B0E1A 50%,#260910 100%);box-shadow:0 20px 60px rgba(225,92,184,.2),0 0 0 1px rgba(202,113,225,.15)}
 .header{padding:24px 24px 16px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,#E15CB8,#CA71E1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,#3B0E1A,#C9A5A8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .badge{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(202,113,225,.7);border:1px solid rgba(202,113,225,.3);padding:4px 10px;border-radius:20px}
 .points-section{text-align:center;padding:8px 24px 24px}
-.points-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#CA71E1;margin-bottom:4px}
-.points{font-size:72px;font-weight:900;background:linear-gradient(135deg,#E15CB8,#CA71E1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.points-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C9A5A8;margin-bottom:4px}
+.points{font-size:72px;font-weight:900;background:linear-gradient(135deg,#3B0E1A,#C9A5A8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 .points-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
 .qr-section{display:flex;justify-content:center;padding:0 24px 24px}
 .qr-wrap{background:#fff;border-radius:20px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
@@ -7132,7 +7132,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .value{font-size:14px;font-weight:600;color:#fff;text-align:right}
 .footer{text-align:center;padding:0 24px 24px;display:flex;gap:8px;justify-content:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 20px;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-primary{background:linear-gradient(135deg,#E15CB8,#CA71E1);color:#fff;flex:1}
+.btn-primary{background:linear-gradient(135deg,#3B0E1A,#C9A5A8);color:#fff;flex:1}
 .btn-primary:hover{opacity:.9}
 .btn-outline{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.1);flex:1}
 .btn-outline:hover{background:rgba(255,255,255,.1)}
@@ -7227,18 +7227,18 @@ app.get("/api/wallet/events/apple/pkpass", authMiddleware, async (req, res) => {
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.pass{width:100%;max-width:390px;border-radius:24px;overflow:hidden;background:linear-gradient(165deg,#1F0047 0%,#2D0A40 56%,#1F0047 100%);box-shadow:0 22px 60px rgba(225,92,184,.2),0 0 0 1px rgba(202,113,225,.18)}
+.pass{width:100%;max-width:390px;border-radius:24px;overflow:hidden;background:linear-gradient(165deg,#260910 0%,#3B0E1A 56%,#260910 100%);box-shadow:0 22px 60px rgba(225,92,184,.2),0 0 0 1px rgba(202,113,225,.18)}
 .header{padding:20px 22px 10px}
-.badge{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:999px;background:rgba(231,235,110,.13);color:#E7EB6E;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
-.title{margin-top:10px;font-weight:800;font-size:22px;line-height:1.1;color:#F9F7E8}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:999px;background:rgba(231,235,110,.13);color:#C9A5A8;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.title{margin-top:10px;font-weight:800;font-size:22px;line-height:1.1;color:#F3EFE9}
 .meta{padding:0 22px 6px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .meta-item{border:1px solid rgba(249,247,232,.16);border-radius:12px;padding:10px 11px;background:rgba(255,255,255,.02)}
-.meta-label{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#E7EB6E;font-weight:700}
-.meta-value{font-size:13px;line-height:1.3;color:#F9F7E8;margin-top:4px}
+.meta-label{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#C9A5A8;font-weight:700}
+.meta-value{font-size:13px;line-height:1.3;color:#F3EFE9;margin-top:4px}
 .qr{display:flex;justify-content:center;padding:16px 20px 10px}
 .qr img{background:#fff;border-radius:18px;padding:12px}
-.code{padding:0 22px 22px;text-align:center;font-size:13px;color:#F9F7E8}
-.code strong{color:#E7EB6E;letter-spacing:.04em}
+.code{padding:0 22px 22px;text-align:center;font-size:13px;color:#F3EFE9}
+.code strong{color:#C9A5A8;letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -7960,7 +7960,7 @@ app.post("/api/admin/class-types", adminMiddleware, async (req, res) => {
       [name.trim(), subtitle || null, description || null,
       category || "pilates", intensity || "media",
       level || "Todos los niveles", duration_min || 50, capacity || 10,
-      color || "#c026d3", emoji || "🏃", sort_order ?? 0]
+      color || "#C9A5A8", emoji || "🏃", sort_order ?? 0]
     );
     return res.status(201).json({ data: r.rows[0] });
   } catch (err) {
@@ -8394,7 +8394,7 @@ app.post("/api/class-types", adminMiddleware, async (req, res) => {
     const r = await pool.query(
       `INSERT INTO class_types (name, color, category, duration_min, capacity, is_active, sort_order)
        VALUES ($1,$2,$3,$4,$5,$6,0) RETURNING *`,
-      [name.trim(), color || "#c026d3", cat, defaultDuration || 60, maxCapacity || 10, isActive !== false]
+      [name.trim(), color || "#C9A5A8", cat, defaultDuration || 60, maxCapacity || 10, isActive !== false]
     );
     return res.status(201).json({ data: camelRow(r.rows[0]) });
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }
@@ -9144,7 +9144,7 @@ app.post("/api/review-tags", adminMiddleware, async (req, res) => {
     const { name, color } = req.body;
     const r = await pool.query(
       "INSERT INTO review_tags (name, color) VALUES ($1,$2) RETURNING *",
-      [name, color || "#c026d3"]
+      [name, color || "#C9A5A8"]
     ).catch(() => ({ rows: [{ id: "1", name, color }] }));
     return res.status(201).json({ data: r.rows[0] });
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }
@@ -9155,7 +9155,7 @@ app.put("/api/review-tags/:id", adminMiddleware, async (req, res) => {
     const { name, color } = req.body;
     const r = await pool.query(
       "UPDATE review_tags SET name=$1, color=$2 WHERE id=$3 RETURNING *",
-      [name, color || "#c026d3", req.params.id]
+      [name, color || "#C9A5A8", req.params.id]
     ).catch(() => ({ rows: [{ id: req.params.id, name, color }] }));
     return res.json({ data: r.rows[0] });
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }

@@ -39,14 +39,14 @@ const TopNavLink = ({
       className={cn(
         "nav-link group relative flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.86rem] no-underline transition-colors duration-200",
         active
-          ? "text-[#2A211B] font-medium"
-          : "text-[#8A8077] font-normal hover:text-[#2A211B]"
+          ? "text-[#1A060B] font-medium"
+          : "text-[#9C8A8B] font-normal hover:text-[#1A060B]"
       )}
     >
       <Icon
         size={16}
         strokeWidth={1.75}
-        className={cn("flex-shrink-0 transition-colors", active ? "text-[#5B4A3E]" : "text-[#8A8077] group-hover:text-[#5B4A3E]")}
+        className={cn("flex-shrink-0 transition-colors", active ? "text-[#3B0E1A]" : "text-[#9C8A8B] group-hover:text-[#3B0E1A]")}
       />
       <span className="truncate">{label}</span>
     </Link>
@@ -67,14 +67,14 @@ const DrawerLink = ({
       className={cn(
         "group flex items-center gap-3 rounded-xl px-3 py-3 text-[0.9rem] no-underline transition-colors duration-200 active:scale-[0.99]",
         active
-          ? "bg-[#5B4A3E]/[0.07] text-[#2A211B] font-medium"
-          : "text-[#8A8077] font-normal hover:bg-[#5B4A3E]/[0.05] hover:text-[#2A211B]"
+          ? "bg-[#3B0E1A]/[0.07] text-[#1A060B] font-medium"
+          : "text-[#9C8A8B] font-normal hover:bg-[#3B0E1A]/[0.05] hover:text-[#1A060B]"
       )}
     >
       <Icon
         size={18}
         strokeWidth={1.75}
-        className={cn("flex-shrink-0", active ? "text-[#5B4A3E]" : "text-[#8A8077] group-hover:text-[#5B4A3E]")}
+        className={cn("flex-shrink-0", active ? "text-[#3B0E1A]" : "text-[#9C8A8B] group-hover:text-[#3B0E1A]")}
       />
       <span className="flex-1 truncate">{label}</span>
     </Link>
@@ -126,7 +126,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
   const Avatar = ({ size = 36 }: { size?: number }) => (
     <span
-      className="flex items-center justify-center rounded-full bg-[#5B4A3E] text-[0.8rem] font-medium text-[#F6F2EB] overflow-hidden"
+      className="flex items-center justify-center rounded-full bg-[#3B0E1A] text-[0.8rem] font-medium text-[#F3EFE9] overflow-hidden"
       style={{ height: size, width: size }}
     >
       {photoUrl
@@ -139,13 +139,13 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="client-shell flex min-h-[100dvh] flex-col bg-background">
 
       {/* ── DESKTOP TOP NAV ──────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 hidden border-b border-[#E8DDD5] bg-surface lg:block">
+      <header className="sticky top-0 z-40 hidden border-b border-[#E9D9D9] bg-surface lg:block">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6 xl:px-10">
 
           {/* Brand */}
           <Link to="/" className="flex flex-shrink-0 items-center gap-3 no-underline" aria-label="VARRE24 — Inicio">
             <img src="/brand/varre24-logo-black.svg" alt="VARRE24" className="h-5 w-auto" />
-            <span className="hidden border-l border-[#E8DDD5] pl-3 text-[0.58rem] uppercase tracking-[0.32em] text-[#8A8077] xl:inline">
+            <span className="hidden border-l border-[#E9D9D9] pl-3 text-[0.58rem] uppercase tracking-[0.32em] text-[#9C8A8B] xl:inline">
               Barre &amp; Pilates
             </span>
           </Link>
@@ -162,7 +162,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
             {/* Membership CTA */}
             <Link
               to="/app/checkout"
-              className="flex items-center gap-2 rounded-full bg-[#5B4A3E] px-4 py-2 text-[0.82rem] font-medium text-[#F6F2EB] no-underline transition-colors duration-200 hover:bg-[#4A3D32]"
+              className="flex items-center gap-2 rounded-full bg-[#3B0E1A] px-4 py-2 text-[0.82rem] font-medium text-[#F3EFE9] no-underline transition-colors duration-200 hover:bg-[#320C16]"
             >
               <Sparkles size={15} strokeWidth={1.75} />
               <span>Membresía</span>
@@ -172,7 +172,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
             <Link
               to="/app/notifications"
               aria-label="Notificaciones"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-[#8A8077] transition-colors duration-200 hover:bg-[#5B4A3E]/[0.07] hover:text-[#5B4A3E]"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-[#9C8A8B] transition-colors duration-200 hover:bg-[#3B0E1A]/[0.07] hover:text-[#3B0E1A]"
             >
               <Bell size={18} strokeWidth={1.75} />
             </Link>
@@ -186,56 +186,56 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
                 className={cn(
                   "flex items-center gap-2 rounded-full border py-1 pl-1 pr-3 transition-colors duration-200",
                   menuOpen || pathname.startsWith("/app/profile")
-                    ? "border-[#E8DDD5] bg-[#5B4A3E]/[0.05]"
-                    : "border-transparent hover:border-[#E8DDD5] hover:bg-[#5B4A3E]/[0.04]"
+                    ? "border-[#E9D9D9] bg-[#3B0E1A]/[0.05]"
+                    : "border-transparent hover:border-[#E9D9D9] hover:bg-[#3B0E1A]/[0.04]"
                 )}
               >
                 <Avatar size={30} />
-                <span className="max-w-[8rem] truncate text-[0.82rem] font-medium text-[#2A211B]">{firstName}</span>
+                <span className="max-w-[8rem] truncate text-[0.82rem] font-medium text-[#1A060B]">{firstName}</span>
                 <ChevronRight
                   size={14}
                   strokeWidth={2}
-                  className={cn("text-[#8A8077] transition-transform duration-200", menuOpen ? "rotate-90" : "rotate-0")}
+                  className={cn("text-[#9C8A8B] transition-transform duration-200", menuOpen ? "rotate-90" : "rotate-0")}
                 />
               </button>
 
               {menuOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 top-[calc(100%+0.5rem)] w-60 origin-top-right overflow-hidden rounded-2xl border border-[#E8DDD5] bg-surface py-1.5 shadow-soft"
+                  className="absolute right-0 top-[calc(100%+0.5rem)] w-60 origin-top-right overflow-hidden rounded-2xl border border-[#E9D9D9] bg-surface py-1.5 shadow-soft"
                 >
                   {/* Identity */}
                   <div className="flex items-center gap-3 px-3 py-2.5">
                     <Avatar size={36} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[0.84rem] font-medium leading-tight text-[#2A211B]">{firstName}</p>
-                      <p className="truncate text-[0.72rem] leading-tight text-[#8A8077]">{user?.email}</p>
+                      <p className="truncate text-[0.84rem] font-medium leading-tight text-[#1A060B]">{firstName}</p>
+                      <p className="truncate text-[0.72rem] leading-tight text-[#9C8A8B]">{user?.email}</p>
                     </div>
                   </div>
 
-                  <div className="my-1 h-px bg-[#E8DDD5]" />
+                  <div className="my-1 h-px bg-[#E9D9D9]" />
 
-                  <Link to="/app/profile" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#4A3D32] no-underline transition-colors hover:bg-[#5B4A3E]/[0.06] hover:text-[#2A211B]">
-                    <User size={16} strokeWidth={1.75} className="text-[#8A8077]" />
+                  <Link to="/app/profile" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#320C16] no-underline transition-colors hover:bg-[#3B0E1A]/[0.06] hover:text-[#1A060B]">
+                    <User size={16} strokeWidth={1.75} className="text-[#9C8A8B]" />
                     <span>Mi perfil</span>
                   </Link>
-                  <Link to="/app/profile/preferences" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#4A3D32] no-underline transition-colors hover:bg-[#5B4A3E]/[0.06] hover:text-[#2A211B]">
-                    <Settings size={16} strokeWidth={1.75} className="text-[#8A8077]" />
+                  <Link to="/app/profile/preferences" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#320C16] no-underline transition-colors hover:bg-[#3B0E1A]/[0.06] hover:text-[#1A060B]">
+                    <Settings size={16} strokeWidth={1.75} className="text-[#9C8A8B]" />
                     <span>Configuración</span>
                   </Link>
-                  <Link to="/app/notifications" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#4A3D32] no-underline transition-colors hover:bg-[#5B4A3E]/[0.06] hover:text-[#2A211B]">
-                    <Bell size={16} strokeWidth={1.75} className="text-[#8A8077]" />
+                  <Link to="/app/notifications" role="menuitem" className="flex items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#320C16] no-underline transition-colors hover:bg-[#3B0E1A]/[0.06] hover:text-[#1A060B]">
+                    <Bell size={16} strokeWidth={1.75} className="text-[#9C8A8B]" />
                     <span>Notificaciones</span>
                   </Link>
 
-                  <div className="my-1 h-px bg-[#E8DDD5]" />
+                  <div className="my-1 h-px bg-[#E9D9D9]" />
 
                   <button
                     onClick={handleLogout}
                     role="menuitem"
-                    className="flex w-full items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#4A3D32] transition-colors hover:bg-[#5B4A3E]/[0.06] hover:text-[#2A211B]"
+                    className="flex w-full items-center gap-3 px-3 py-2.5 text-[0.84rem] text-[#320C16] transition-colors hover:bg-[#3B0E1A]/[0.06] hover:text-[#1A060B]"
                   >
-                    <LogOut size={16} strokeWidth={1.75} className="text-[#8A8077]" />
+                    <LogOut size={16} strokeWidth={1.75} className="text-[#9C8A8B]" />
                     <span>Cerrar sesión</span>
                   </button>
                 </div>
@@ -246,11 +246,11 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       </header>
 
       {/* ── MOBILE TOPBAR ────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#E8DDD5] bg-surface px-4 lg:hidden">
+      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#E9D9D9] bg-surface px-4 lg:hidden">
         <button
           onClick={() => setOpen(true)}
           aria-label="Abrir menú"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[#5B4A3E] transition-colors hover:bg-[#5B4A3E]/[0.07]"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#3B0E1A] transition-colors hover:bg-[#3B0E1A]/[0.07]"
         >
           <Menu size={20} strokeWidth={1.75} />
         </button>
@@ -262,7 +262,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
         <Link
           to="/app/notifications"
           aria-label="Notificaciones"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[#5B4A3E] transition-colors hover:bg-[#5B4A3E]/[0.07]"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#3B0E1A] transition-colors hover:bg-[#3B0E1A]/[0.07]"
         >
           <Bell size={20} strokeWidth={1.75} />
         </Link>
@@ -271,27 +271,27 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       {/* ── MOBILE DRAWER ────────────────────────────────────────────── */}
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-[#2A211B]/30 lg:hidden"
+          className="fixed inset-0 z-50 bg-[#1A060B]/30 lg:hidden"
           style={{ animation: "fade-up 0.2s ease both" }}
           onClick={() => setOpen(false)}
         />
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[300px] max-w-[85vw] flex-col border-r border-[#E8DDD5] bg-surface transition-transform duration-300 lg:hidden",
+          "fixed inset-y-0 left-0 z-50 flex w-[300px] max-w-[85vw] flex-col border-r border-[#E9D9D9] bg-surface transition-transform duration-300 lg:hidden",
           open ? "translate-x-0" : "-translate-x-full"
         )}
         style={{ transitionTimingFunction: "var(--ease-drawer)" }}
       >
         {/* Drawer header */}
-        <div className="flex h-16 items-center justify-between border-b border-[#E8DDD5] px-5">
+        <div className="flex h-16 items-center justify-between border-b border-[#E9D9D9] px-5">
           <Link to="/" className="no-underline" aria-label="VARRE24 — Inicio">
             <img src="/brand/varre24-logo-black.svg" alt="VARRE24" className="h-5 w-auto" />
           </Link>
           <button
             onClick={() => setOpen(false)}
             aria-label="Cerrar menú"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[#5B4A3E] transition-colors hover:bg-[#5B4A3E]/[0.07]"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[#3B0E1A] transition-colors hover:bg-[#3B0E1A]/[0.07]"
           >
             <X size={18} strokeWidth={1.75} />
           </button>
@@ -302,23 +302,23 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
           to="/app/profile"
           onClick={() => setOpen(false)}
           className={cn(
-            "mx-3 mt-4 flex items-center gap-3 rounded-2xl border border-[#E8DDD5] px-3.5 py-3 no-underline transition-colors duration-200 hover:bg-[#5B4A3E]/[0.04]",
-            pathname.startsWith("/app/profile") && "bg-[#5B4A3E]/[0.05]"
+            "mx-3 mt-4 flex items-center gap-3 rounded-2xl border border-[#E9D9D9] px-3.5 py-3 no-underline transition-colors duration-200 hover:bg-[#3B0E1A]/[0.04]",
+            pathname.startsWith("/app/profile") && "bg-[#3B0E1A]/[0.05]"
           )}
         >
           <Avatar size={44} />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[0.86rem] font-medium leading-tight text-[#2A211B]">{firstName}</p>
-            <p className="truncate text-[0.74rem] leading-tight text-[#8A8077]">{user?.email}</p>
+            <p className="truncate text-[0.86rem] font-medium leading-tight text-[#1A060B]">{firstName}</p>
+            <p className="truncate text-[0.74rem] leading-tight text-[#9C8A8B]">{user?.email}</p>
           </div>
-          <ChevronRight size={15} strokeWidth={2} className="flex-shrink-0 text-[#8A8077]" />
+          <ChevronRight size={15} strokeWidth={2} className="flex-shrink-0 text-[#9C8A8B]" />
         </Link>
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 pt-4">
           {NAV_GROUPS.map((group) => (
             <div key={group.label}>
-              <p className="px-3 pb-1.5 text-[0.64rem] font-medium uppercase tracking-[0.22em] text-[#8A8077]">
+              <p className="px-3 pb-1.5 text-[0.64rem] font-medium uppercase tracking-[0.22em] text-[#9C8A8B]">
                 {group.label}
               </p>
               <div className="space-y-0.5">
@@ -331,11 +331,11 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
         </nav>
 
         {/* Drawer bottom actions */}
-        <div className="space-y-1 border-t border-[#E8DDD5] p-3">
+        <div className="space-y-1 border-t border-[#E9D9D9] p-3">
           <Link
             to="/app/checkout"
             onClick={() => setOpen(false)}
-            className="mb-1 flex items-center gap-3 rounded-xl bg-[#5B4A3E] px-3 py-3 text-[0.86rem] font-medium text-[#F6F2EB] no-underline transition-colors duration-200 hover:bg-[#4A3D32]"
+            className="mb-1 flex items-center gap-3 rounded-xl bg-[#3B0E1A] px-3 py-3 text-[0.86rem] font-medium text-[#F3EFE9] no-underline transition-colors duration-200 hover:bg-[#320C16]"
           >
             <Sparkles size={18} strokeWidth={1.75} />
             <span>Adquirir membresía</span>
@@ -343,7 +343,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
           <Link
             to="/app/notifications"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#8A8077] no-underline transition-colors duration-200 hover:bg-[#5B4A3E]/[0.05] hover:text-[#2A211B]"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#9C8A8B] no-underline transition-colors duration-200 hover:bg-[#3B0E1A]/[0.05] hover:text-[#1A060B]"
           >
             <Bell size={18} strokeWidth={1.75} />
             <span>Notificaciones</span>
@@ -351,14 +351,14 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
           <Link
             to="/app/profile/preferences"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#8A8077] no-underline transition-colors duration-200 hover:bg-[#5B4A3E]/[0.05] hover:text-[#2A211B]"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#9C8A8B] no-underline transition-colors duration-200 hover:bg-[#3B0E1A]/[0.05] hover:text-[#1A060B]"
           >
             <Settings size={18} strokeWidth={1.75} />
             <span>Configuración</span>
           </Link>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#8A8077] transition-colors duration-200 hover:bg-[#5B4A3E]/[0.05] hover:text-[#2A211B]"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[0.86rem] text-[#9C8A8B] transition-colors duration-200 hover:bg-[#3B0E1A]/[0.05] hover:text-[#1A060B]"
           >
             <LogOut size={18} strokeWidth={1.75} />
             <span>Cerrar sesión</span>
@@ -374,7 +374,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
 
       {/* ── MOBILE BOTTOM NAV ────────────────────────────────────────── */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-[#E8DDD5] bg-surface pb-safe lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-[#E9D9D9] bg-surface pb-safe lg:hidden">
         {BOTTOM_NAV.map(({ to, icon: Icon, label }) => {
           const active = pathname === to || (to !== "/app" && pathname.startsWith(to));
           return (
@@ -386,11 +386,11 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
               <Icon
                 size={20}
                 strokeWidth={1.75}
-                className={active ? "text-[#5B4A3E]" : "text-[#8A8077]"}
+                className={active ? "text-[#3B0E1A]" : "text-[#9C8A8B]"}
               />
               <span className={cn(
                 "text-[0.62rem] leading-none",
-                active ? "font-medium text-[#5B4A3E]" : "font-normal text-[#8A8077]"
+                active ? "font-medium text-[#3B0E1A]" : "font-normal text-[#9C8A8B]"
               )}>
                 {label}
               </span>

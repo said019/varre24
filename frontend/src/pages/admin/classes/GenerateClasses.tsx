@@ -75,37 +75,37 @@ const GenerateClasses = () => {
       <AdminLayout>
         <div className="admin-page max-w-2xl">
           <div className="mb-7">
-            <h1 className="text-3xl font-bold text-[#2A211B] mb-1">Generar Clases</h1>
-            <p className="text-sm text-[#2A211B]/35">Crea clases en bloque para un rango de fechas</p>
+            <h1 className="text-3xl font-bold text-[#1A060B] mb-1">Generar Clases</h1>
+            <p className="text-sm text-[#1A060B]/35">Crea clases en bloque para un rango de fechas</p>
           </div>
 
           <form onSubmit={form.handleSubmit((d) => generateMutation.mutate(d))} className="space-y-6">
             {/* Selects */}
-            <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
-              <p className="text-[11px] text-[#D5C4B8]/70 font-semibold uppercase tracking-wider">Clase e instructor</p>
+            <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5 space-y-4">
+              <p className="text-[11px] text-[#C9A5A8]/70 font-semibold uppercase tracking-wider">Clase e instructor</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Tipo de clase</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Tipo de clase</Label>
                   <Select onValueChange={(v) => form.setValue("classTypeId", v)}>
-                    <SelectTrigger className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B]">
+                    <SelectTrigger className="bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B]">
                       <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#E8DDD5] border-[#5B4A3E]/15">
+                    <SelectContent className="bg-[#E9D9D9] border-[#3B0E1A]/15">
                       {(Array.isArray(typesData?.data) ? typesData.data : []).map((t) => (
-                        <SelectItem key={t.id} value={t.id} className="text-[#2A211B]">{t.name}</SelectItem>
+                        <SelectItem key={t.id} value={t.id} className="text-[#1A060B]">{t.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Instructor</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Instructor</Label>
                   <Select onValueChange={(v) => form.setValue("instructorId", v)}>
-                    <SelectTrigger className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B]">
+                    <SelectTrigger className="bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B]">
                       <SelectValue placeholder="Seleccionar instructor" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#E8DDD5] border-[#5B4A3E]/15">
+                    <SelectContent className="bg-[#E9D9D9] border-[#3B0E1A]/15">
                       {(Array.isArray(instructorsData?.data) ? instructorsData.data : []).map((i) => (
-                        <SelectItem key={i.id} value={i.id} className="text-[#2A211B]">{i.displayName}</SelectItem>
+                        <SelectItem key={i.id} value={i.id} className="text-[#1A060B]">{i.displayName}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -114,11 +114,11 @@ const GenerateClasses = () => {
             </div>
 
             {/* Date range */}
-            <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
-              <p className="text-[11px] text-[#5B4A3E]/70 font-semibold uppercase tracking-wider">Rango de fechas</p>
+            <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5 space-y-4">
+              <p className="text-[11px] text-[#3B0E1A]/70 font-semibold uppercase tracking-wider">Rango de fechas</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Fecha inicio</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Fecha inicio</Label>
                   <DatePicker
                     value={form.watch("startDate")}
                     onChange={(v) => form.setValue("startDate", v)}
@@ -126,7 +126,7 @@ const GenerateClasses = () => {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Fecha fin</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Fecha fin</Label>
                   <DatePicker
                     value={form.watch("endDate")}
                     onChange={(v) => form.setValue("endDate", v)}
@@ -138,18 +138,18 @@ const GenerateClasses = () => {
             </div>
 
             {/* Time range */}
-            <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-4">
-              <p className="text-[11px] text-[#E8DED4]/70 font-semibold uppercase tracking-wider">Horario</p>
+            <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5 space-y-4">
+              <p className="text-[11px] text-[#EADCDD]/70 font-semibold uppercase tracking-wider">Horario</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Hora inicio</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Hora inicio</Label>
                   <TimePicker
                     value={form.watch("startTime")}
                     onChange={(v) => form.setValue("startTime", v)}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[#2A211B]/60 text-xs">Hora fin</Label>
+                  <Label className="text-[#1A060B]/60 text-xs">Hora fin</Label>
                   <TimePicker
                     value={form.watch("endTime")}
                     onChange={(v) => form.setValue("endTime", v)}
@@ -157,18 +157,18 @@ const GenerateClasses = () => {
                 </div>
               </div>
               <div className="space-y-1 max-w-[150px]">
-                <Label className="text-[#2A211B]/60 text-xs">Capacidad máxima</Label>
+                <Label className="text-[#1A060B]/60 text-xs">Capacidad máxima</Label>
                 <Input
                   type="number"
-                  className="bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B]"
+                  className="bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B]"
                   {...form.register("maxCapacity")}
                 />
               </div>
             </div>
 
             {/* Days of week */}
-            <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5 space-y-3">
-              <p className="text-[11px] text-[#D5C4B8]/70 font-semibold uppercase tracking-wider">Días de la semana</p>
+            <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5 space-y-3">
+              <p className="text-[11px] text-[#C9A5A8]/70 font-semibold uppercase tracking-wider">Días de la semana</p>
               <div className="flex flex-wrap gap-2">
                 {DAYS.map((d) => (
                   <button
@@ -177,8 +177,8 @@ const GenerateClasses = () => {
                     onClick={() => toggleDay(d.value)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       selectedDays.includes(d.value)
-                        ? "bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] text-white shadow-[0_0_10px_rgba(131,106,93,0.3)]"
-                        : "bg-[#5B4A3E]/[0.06] border border-[#5B4A3E]/15 text-[#2A211B]/45 hover:text-[#2A211B]/75 hover:border-[#5B4A3E]/25"
+                        ? "bg-gradient-to-r from-[#3B0E1A] to-[#C9A5A8] text-white shadow-[0_0_10px_rgba(131,106,93,0.3)]"
+                        : "bg-[#3B0E1A]/[0.06] border border-[#3B0E1A]/15 text-[#1A060B]/45 hover:text-[#1A060B]/75 hover:border-[#3B0E1A]/25"
                     }`}
                   >
                     {d.label}
@@ -190,7 +190,7 @@ const GenerateClasses = () => {
             <button
               type="submit"
               disabled={generateMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B4A3E] to-[#D5C4B8] hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#3B0E1A] to-[#C9A5A8] hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {generateMutation.isPending
                 ? <Loader2 className="animate-spin" size={16} />

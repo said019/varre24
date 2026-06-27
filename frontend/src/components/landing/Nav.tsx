@@ -20,14 +20,14 @@ export function Nav() {
             <a
               key={l.label}
               href={l.href}
-              className="font-alilato text-[0.92rem] text-[#F6F2EB] mix-blend-difference transition-opacity hover:opacity-60"
+              className="font-alilato text-[0.92rem] text-[#F3EFE9] mix-blend-difference transition-opacity hover:opacity-60"
             >
               {l.label}
             </a>
           ))}
           <Link
             to="/auth/login"
-            className="font-alilato text-[0.92rem] text-[#F6F2EB] mix-blend-difference transition-opacity hover:opacity-60"
+            className="font-alilato text-[0.92rem] text-[#F3EFE9] mix-blend-difference transition-opacity hover:opacity-60"
           >
             Entrar
           </Link>
@@ -36,7 +36,7 @@ export function Nav() {
         {/* móvil: solo Entrar */}
         <Link
           to="/auth/login"
-          className="font-alilato text-[0.85rem] text-[#F6F2EB] mix-blend-difference md:hidden"
+          className="font-alilato text-[0.85rem] text-[#F3EFE9] mix-blend-difference md:hidden"
         >
           Entrar
         </Link>

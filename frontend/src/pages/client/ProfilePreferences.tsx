@@ -52,26 +52,26 @@ const ProfilePreferences = () => {
             <button
               type="button"
               onClick={() => navigate("/app/profile")}
-              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#9C8A8B] transition-colors hover:text-[#3B0E1A]"
             >
               <ArrowLeft size={14} strokeWidth={1.75} /> Perfil
             </button>
-            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">
               Preferencias
             </h1>
           </section>
 
           {/* ── Notificaciones ── */}
           <section>
-            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+            <p className="mb-2 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
               Notificaciones
             </p>
-            <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+            <div className="divide-y divide-[#E8D7D6] border-y border-[#E8D7D6]">
               {items.map(({ key, label, desc }) => (
                 <div key={key} className="flex items-center justify-between gap-4 py-4">
                   <div className="space-y-0.5">
-                    <Label className="font-alilato text-sm font-medium text-[#2A211B]">{label}</Label>
-                    <p className="font-alilato text-xs text-[#5B4A3E]/60">{desc}</p>
+                    <Label className="font-alilato text-sm font-medium text-[#1A060B]">{label}</Label>
+                    <p className="font-alilato text-xs text-[#3B0E1A]/60">{desc}</p>
                   </div>
                   <Switch
                     checked={prefs[key]}
@@ -81,7 +81,7 @@ const ProfilePreferences = () => {
               ))}
             </div>
             <Button
-              className="press mt-6 w-full rounded-full bg-[#5B4A3E] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] hover:bg-[#4A3D32]"
+              className="press mt-6 w-full rounded-full bg-[#3B0E1A] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] hover:bg-[#320C16]"
               onClick={() => mutation.mutate()}
               disabled={mutation.isPending}
             >

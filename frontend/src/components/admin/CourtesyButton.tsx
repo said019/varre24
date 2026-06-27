@@ -26,7 +26,7 @@ interface ClientOption {
 export function CourtesyButton({
   size = "sm",
   variant = "outline",
-  className = "border-[#D5C4B8]/50 text-[#5B4A3E] hover:bg-[#D5C4B8]/10",
+  className = "border-[#C9A5A8]/50 text-[#3B0E1A] hover:bg-[#C9A5A8]/10",
   label = "Clases de cortesía",
 }: {
   size?: "sm" | "default" | "lg" | "icon";
@@ -92,7 +92,7 @@ export function CourtesyButton({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Heart size={16} className="text-[#D5C4B8]" /> Clases de cortesía
+              <Heart size={16} className="text-[#C9A5A8]" /> Clases de cortesía
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -115,7 +115,7 @@ export function CourtesyButton({
               ) : (
                 <>
                   <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2A211B]/30" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A060B]/30" />
                     <Input
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
@@ -133,7 +133,7 @@ export function CourtesyButton({
                         <button
                           type="button"
                           key={u.id}
-                          className="w-full px-3 py-2 text-left hover:bg-[#5B4A3E]/[0.06] border-b last:border-b-0 border-border"
+                          className="w-full px-3 py-2 text-left hover:bg-[#3B0E1A]/[0.06] border-b last:border-b-0 border-border"
                           onClick={() => { setUser(u); setSearch(u.displayName ?? ""); }}
                         >
                           <p className="text-sm font-medium">{u.displayName}</p>
@@ -173,7 +173,7 @@ export function CourtesyButton({
               type="button"
               disabled={!user || n < 1 || grant.isPending}
               onClick={() => grant.mutate()}
-              className="bg-[#5B4A3E] hover:bg-[#3A2F26] text-white"
+              className="bg-[#3B0E1A] hover:bg-[#260910] text-white"
             >
               {grant.isPending ? "Otorgando…" : `Regalar ${n} clase${n === 1 ? "" : "s"}`}
             </Button>

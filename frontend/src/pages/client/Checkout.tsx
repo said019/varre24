@@ -85,29 +85,29 @@ const PlanCard = ({
       className={cn(
         "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
         selected
-          ? "border-[#5B4A3E]/60 bg-[#F1EAE0]"
-          : "border-[#E4DACE] bg-[#FBF8F4] hover:border-[#5B4A3E]/30"
+          ? "border-[#3B0E1A]/60 bg-[#F4E6EA]"
+          : "border-[#E8D7D6] bg-[#FCF8F7] hover:border-[#3B0E1A]/30"
       )}
     >
       {selected && (
-        <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
+        <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#3B0E1A] flex items-center justify-center">
           <Check size={11} className="text-white" />
         </span>
       )}
       <div className="flex items-start gap-3 pr-7">
-        <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#D5C4B8]/30 bg-[#D5C4B8]/10">
+        <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#C9A5A8]/30 bg-[#C9A5A8]/10">
           <img src={imgPilates} alt="" className="h-7 w-7 object-contain" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#2A211B]/85 leading-snug">{plan.name}</p>
+          <p className="text-sm font-semibold text-[#1A060B]/85 leading-snug">{plan.name}</p>
           {plan.description && (
-            <p className="text-[11px] text-[#2A211B]/45 mt-0.5 leading-snug">{plan.description}</p>
+            <p className="text-[11px] text-[#1A060B]/45 mt-0.5 leading-snug">{plan.description}</p>
           )}
         </div>
       </div>
       <div className="flex items-baseline gap-1 mt-2">
-        <span className="text-2xl font-bold text-[#2A211B]">${planPrice.toLocaleString("es-MX")}</span>
-        <span className="text-xs text-[#2A211B]/35">{plan.currency ?? "MXN"}</span>
+        <span className="text-2xl font-bold text-[#1A060B]">${planPrice.toLocaleString("es-MX")}</span>
+        <span className="text-xs text-[#1A060B]/35">{plan.currency ?? "MXN"}</span>
       </div>
       {discountPrice && (
         <p className="text-[11px] text-[#1a6b0a] font-bold mt-0.5">
@@ -117,7 +117,7 @@ const PlanCard = ({
       {features.length > 0 && (
         <ul className="mt-2 space-y-0.5">
           {features.map((f, i) => (
-            <li key={i} className="text-[10px] text-[#2A211B]/45 flex items-start gap-1.5">
+            <li key={i} className="text-[10px] text-[#1A060B]/45 flex items-start gap-1.5">
               <span className="mt-0.5 shrink-0">•</span>
               {f}
             </li>
@@ -126,12 +126,12 @@ const PlanCard = ({
       )}
       <div className="flex flex-wrap gap-2 mt-2">
         {durationDays > 0 && (
-          <span className="text-[10px] text-[#4a5638] bg-[#D5C4B8]/15 border border-[#D5C4B8]/25 rounded-full px-2 py-0.5">
+          <span className="text-[10px] text-[#4a5638] bg-[#C9A5A8]/15 border border-[#C9A5A8]/25 rounded-full px-2 py-0.5">
             {durationDays} días
           </span>
         )}
         {Number(classLimit) > 0 && (
-          <span className="text-[10px] text-[#3A2F26] bg-[#5B4A3E]/12 border border-[#5B4A3E]/20 rounded-full px-2 py-0.5">
+          <span className="text-[10px] text-[#260910] bg-[#3B0E1A]/12 border border-[#3B0E1A]/20 rounded-full px-2 py-0.5">
             {classLimit} clases
           </span>
         )}
@@ -166,12 +166,12 @@ const StepBar = ({ current }: { current: Step }) => {
         const active = s.id === current || (current === "bank" && s.id === "method") || (current === "cash" && s.id === "method");
         return (
           <div key={s.id} className="flex items-center gap-1">
-            {i > 0 && <div className={cn("h-px w-6 rounded", done ? "bg-[#5B4A3E]/60" : "bg-[#5B4A3E]/10")} />}
+            {i > 0 && <div className={cn("h-px w-6 rounded", done ? "bg-[#3B0E1A]/60" : "bg-[#3B0E1A]/10")} />}
             <div className={cn(
               "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all",
-              active ? "border-[#5B4A3E]/40 bg-[#5B4A3E]/10 text-[#5B4A3E]"
+              active ? "border-[#3B0E1A]/40 bg-[#3B0E1A]/10 text-[#3B0E1A]"
                 : done ? "border-[#4ade80]/30 bg-[#4ade80]/5 text-[#4ade80]"
-                : "border-[#5B4A3E]/15 text-[#2A211B]/25"
+                : "border-[#3B0E1A]/15 text-[#1A060B]/25"
             )}>
               {done ? <Check size={10} /> : <span>{i + 1}</span>}
               {s.label}
@@ -410,8 +410,8 @@ const Checkout = () => {
       <ClientLayout>
         <div className="mx-auto w-full max-w-xl px-1 py-4 sm:py-8 space-y-6">
           <div>
-            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Membresías</p>
-            <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Comprar membresía</h1>
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B]">Membresías</p>
+            <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">Comprar membresía</h1>
           </div>
 
           <StepBar current={step} />
@@ -422,7 +422,7 @@ const Checkout = () => {
               {loadingPlans ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Array(6).fill(0).map((_, i) => (
-                    <div key={i} className="h-28 rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] animate-pulse" />
+                    <div key={i} className="h-28 rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] animate-pulse" />
                   ))}
                 </div>
               ) : (
@@ -433,29 +433,29 @@ const Checkout = () => {
                       is_non_repeatable + repeat_key; aquí solo es espejo de UI. */}
                   {trialPlan && !loadingOrders && (
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wider mb-2 text-[#D5C4B8]/80">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider mb-2 text-[#C9A5A8]/80">
                         Conoce nuestro estudio
                       </p>
                       {isReturningCustomer ? (
                         /* ── Returning customer: show locked card ── */
-                        <div className="relative w-full text-left rounded-2xl border border-[#D5C4B8]/20 bg-[#D5C4B8]/[0.04] p-4 overflow-hidden opacity-60 cursor-not-allowed select-none">
+                        <div className="relative w-full text-left rounded-2xl border border-[#C9A5A8]/20 bg-[#C9A5A8]/[0.04] p-4 overflow-hidden opacity-60 cursor-not-allowed select-none">
                           <div className="flex items-start gap-3 pr-2">
-                            <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#D5C4B8]/20 bg-[#D5C4B8]/8">
+                            <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#C9A5A8]/20 bg-[#C9A5A8]/8">
                               <img src={imgPilates} alt="" className="h-7 w-7 object-contain opacity-40" />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-semibold text-[#2A211B]/50 leading-snug">{trialPlan.name}</p>
-                              <p className="text-[11px] text-[#2A211B]/30 mt-0.5 leading-snug">{trialPlan.description}</p>
+                              <p className="text-sm font-semibold text-[#1A060B]/50 leading-snug">{trialPlan.name}</p>
+                              <p className="text-[11px] text-[#1A060B]/30 mt-0.5 leading-snug">{trialPlan.description}</p>
                             </div>
                           </div>
                           <div className="flex items-baseline gap-1 mt-2">
-                            <span className="text-2xl font-bold text-[#2A211B]/40">${Number(trialPlan.price ?? 0).toLocaleString("es-MX")}</span>
-                            <span className="text-xs text-[#2A211B]/25">{trialPlan.currency ?? "MXN"}</span>
+                            <span className="text-2xl font-bold text-[#1A060B]/40">${Number(trialPlan.price ?? 0).toLocaleString("es-MX")}</span>
+                            <span className="text-xs text-[#1A060B]/25">{trialPlan.currency ?? "MXN"}</span>
                           </div>
                           {/* Locked notice */}
-                          <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.05] px-3 py-2">
-                            <Sparkles size={12} className="shrink-0 text-[#5B4A3E]/50" />
-                            <p className="text-[11px] text-[#5B4A3E]/70 leading-snug">
+                          <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.05] px-3 py-2">
+                            <Sparkles size={12} className="shrink-0 text-[#3B0E1A]/50" />
+                            <p className="text-[11px] text-[#3B0E1A]/70 leading-snug">
                               Solo para tu primera clase — ya eres parte de VARRE24.
                             </p>
                           </div>
@@ -471,30 +471,30 @@ const Checkout = () => {
                           className={cn(
                             "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
                             selectedPlan?.id === trialPlan.id
-                              ? "border-[#5B4A3E]/60 bg-[#F1EAE0]"
-                              : "border-[#D5C4B8]/25 bg-[#D5C4B8]/[0.04] hover:border-[#D5C4B8]/40 hover:bg-[#D5C4B8]/[0.06]"
+                              ? "border-[#3B0E1A]/60 bg-[#F4E6EA]"
+                              : "border-[#C9A5A8]/25 bg-[#C9A5A8]/[0.04] hover:border-[#C9A5A8]/40 hover:bg-[#C9A5A8]/[0.06]"
                           )}
                         >
                           {selectedPlan?.id === trialPlan.id && (
-                            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
+                            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#3B0E1A] flex items-center justify-center">
                               <Check size={11} className="text-white" />
                             </span>
                           )}
                           <div className="flex items-start gap-3 pr-7">
-                            <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#D5C4B8]/30 bg-[#D5C4B8]/10">
+                            <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#C9A5A8]/30 bg-[#C9A5A8]/10">
                               <img src={imgPilates} alt="" className="h-7 w-7 object-contain" />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-semibold text-[#2A211B]/85 leading-snug">{trialPlan.name}</p>
-                              <p className="text-[11px] text-[#2A211B]/45 mt-0.5 leading-snug">{trialPlan.description}</p>
+                              <p className="text-sm font-semibold text-[#1A060B]/85 leading-snug">{trialPlan.name}</p>
+                              <p className="text-[11px] text-[#1A060B]/45 mt-0.5 leading-snug">{trialPlan.description}</p>
                             </div>
                           </div>
                           <div className="flex items-baseline gap-1 mt-2">
-                            <span className="text-2xl font-bold text-[#2A211B]">${Number(trialPlan.price ?? 0).toLocaleString("es-MX")}</span>
-                            <span className="text-xs text-[#2A211B]/35">{trialPlan.currency ?? "MXN"}</span>
+                            <span className="text-2xl font-bold text-[#1A060B]">${Number(trialPlan.price ?? 0).toLocaleString("es-MX")}</span>
+                            <span className="text-xs text-[#1A060B]/35">{trialPlan.currency ?? "MXN"}</span>
                           </div>
                           <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="text-[10px] text-[#4a5638] bg-[#D5C4B8]/15 border border-[#D5C4B8]/25 rounded-full px-2 py-0.5">1 clase</span>
+                            <span className="text-[10px] text-[#4a5638] bg-[#C9A5A8]/15 border border-[#C9A5A8]/25 rounded-full px-2 py-0.5">1 clase</span>
                             <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">No transferible</span>
                             <span className="text-[10px] text-rose-700 bg-rose-50 border border-rose-200 rounded-full px-2 py-0.5">No reembolsable</span>
                           </div>
@@ -505,7 +505,7 @@ const Checkout = () => {
 
                   {/* Plan cards */}
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider mb-2 text-[#5B4A3E]/70">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider mb-2 text-[#3B0E1A]/70">
                       Paquetes de clases
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -531,21 +531,21 @@ const Checkout = () => {
 
               {/* Summary + continue */}
               {selectedPlan && (
-                <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-4 space-y-4">
-                  <div className="text-xs text-[#2A211B]/60 space-y-1.5">
-                    <p><strong className="text-[#2A211B]/80">{selectedPlan.name}</strong></p>
+                <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-4 space-y-4">
+                  <div className="text-xs text-[#1A060B]/60 space-y-1.5">
+                    <p><strong className="text-[#1A060B]/80">{selectedPlan.name}</strong></p>
                   </div>
 
                   {/* Discount code */}
                   <div className="space-y-1.5">
-                    <p className="text-[11px] text-[#4A3D32] leading-snug">
+                    <p className="text-[11px] text-[#320C16] leading-snug">
                       ¿Tienes un <strong>código de descuento</strong>? Aplícalo aquí.
                     </p>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <Tag size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5B4A3E]/50" />
+                        <Tag size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3B0E1A]/50" />
                         <Input
-                          className="pl-8 bg-[#5B4A3E]/[0.06] border-[#5B4A3E]/15 text-[#2A211B] placeholder:text-[#5B4A3E]/40 uppercase"
+                          className="pl-8 bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B] placeholder:text-[#3B0E1A]/40 uppercase"
                           placeholder="Ej. FAMILIA10 o el código de tu amiga"
                           value={discountCode}
                           onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
@@ -554,7 +554,7 @@ const Checkout = () => {
                       <button
                         onClick={() => validateCodeMutation.mutate()}
                         disabled={!discountCode || validateCodeMutation.isPending}
-                        className="px-4 py-2 rounded-xl text-xs font-semibold border border-[#5B4A3E]/30 text-[#5B4A3E] bg-[#5B4A3E]/5 hover:bg-[#5B4A3E]/10 transition-all disabled:opacity-40"
+                        className="px-4 py-2 rounded-xl text-xs font-semibold border border-[#3B0E1A]/30 text-[#3B0E1A] bg-[#3B0E1A]/5 hover:bg-[#3B0E1A]/10 transition-all disabled:opacity-40"
                       >
                         Aplicar
                       </button>
@@ -567,10 +567,10 @@ const Checkout = () => {
                   )}
 
                   {/* Total */}
-                  <div className="flex items-center justify-between py-3 border-t border-[#5B4A3E]/15">
-                    <span className="text-sm text-[#2A211B]/60">Total a pagar</span>
+                  <div className="flex items-center justify-between py-3 border-t border-[#3B0E1A]/15">
+                    <span className="text-sm text-[#1A060B]/60">Total a pagar</span>
                     <div className="text-right">
-                      <span className="text-2xl font-bold text-[#2A211B]">${basePrice.toLocaleString("es-MX")} <span className="text-sm font-normal text-[#2A211B]/35">MXN</span></span>
+                      <span className="text-2xl font-bold text-[#1A060B]">${basePrice.toLocaleString("es-MX")} <span className="text-sm font-normal text-[#1A060B]/35">MXN</span></span>
                       {cashTransferPrice && cashTransferPrice < basePrice && (
                         <p className="text-[11px] text-[#1a6b0a] font-bold mt-0.5">
                           💰 Transferencia: ${cashTransferPrice.toLocaleString("es-MX")}
@@ -581,7 +581,7 @@ const Checkout = () => {
 
                   <button
                     onClick={() => setStep("method")}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors"
                   >
                     Seleccionar método de pago <ChevronRight size={15} />
                   </button>
@@ -593,21 +593,21 @@ const Checkout = () => {
           {/* ── Step 2: Payment method ── */}
           {step === "method" && (
             <div className="space-y-4">
-              <button onClick={() => setStep("select")} className="flex items-center gap-1.5 text-xs text-[#2A211B]/40 hover:text-[#2A211B]/70 transition-colors">
+              <button onClick={() => setStep("select")} className="flex items-center gap-1.5 text-xs text-[#1A060B]/40 hover:text-[#1A060B]/70 transition-colors">
                 <ArrowLeft size={13} /> Cambiar plan
               </button>
 
-              <div className="rounded-2xl border border-[#5B4A3E]/20 bg-[#5B4A3E]/5 px-4 py-3">
+              <div className="rounded-2xl border border-[#3B0E1A]/20 bg-[#3B0E1A]/5 px-4 py-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-[#2A211B]/70">{selectedPlan?.name}</span>
+                  <span className="text-sm text-[#1A060B]/70">{selectedPlan?.name}</span>
                   <div className="text-right">
                     {paymentMethod === "transfer" && cashTransferPrice && cashTransferPrice < basePrice ? (
                       <>
-                        <span className="text-xs text-[#2A211B]/30 line-through mr-2">${basePrice.toLocaleString("es-MX")}</span>
+                        <span className="text-xs text-[#1A060B]/30 line-through mr-2">${basePrice.toLocaleString("es-MX")}</span>
                         <span className="text-lg font-bold text-[#1a6b0a]">${finalAmount.toLocaleString("es-MX")} MXN</span>
                       </>
                     ) : (
-                      <span className="text-lg font-bold text-[#2A211B]">${finalAmount.toLocaleString("es-MX")} MXN</span>
+                      <span className="text-lg font-bold text-[#1A060B]">${finalAmount.toLocaleString("es-MX")} MXN</span>
                     )}
                   </div>
                 </div>
@@ -619,7 +619,7 @@ const Checkout = () => {
                 {/* Sin recargo por pago con tarjeta. El estudio absorbe la comisión de MercadoPago. */}
               </div>
 
-              <p className="text-sm font-semibold text-[#2A211B]/80">¿Cómo quieres pagar?</p>
+              <p className="text-sm font-semibold text-[#1A060B]/80">¿Cómo quieres pagar?</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
@@ -628,19 +628,19 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "transfer"
-                      ? "border-[#5B4A3E]/50 bg-[#F1EAE0]"
-                      : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25"
+                      ? "border-[#3B0E1A]/50 bg-[#F4E6EA]"
+                      : "border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:border-[#3B0E1A]/25"
                   )}
                 >
-                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", paymentMethod === "transfer" ? "bg-[#D5C4B8]/20 text-[#D5C4B8]" : "bg-[#5B4A3E]/[0.06] text-[#2A211B]/40")}>
+                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", paymentMethod === "transfer" ? "bg-[#C9A5A8]/20 text-[#C9A5A8]" : "bg-[#3B0E1A]/[0.06] text-[#1A060B]/40")}>
                     <Building2 size={22} />
                   </div>
                   <div className="text-center">
-                    <p className={cn("text-sm font-semibold", paymentMethod === "transfer" ? "text-[#D5C4B8]" : "text-[#2A211B]/60")}>Transferencia</p>
-                    <p className="text-[10px] text-[#2A211B]/30 mt-0.5">SPEI / banco</p>
+                    <p className={cn("text-sm font-semibold", paymentMethod === "transfer" ? "text-[#C9A5A8]" : "text-[#1A060B]/60")}>Transferencia</p>
+                    <p className="text-[10px] text-[#1A060B]/30 mt-0.5">SPEI / banco</p>
                   </div>
                   {paymentMethod === "transfer" && (
-                    <span className="w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#3B0E1A] flex items-center justify-center">
                       <Check size={10} className="text-white" />
                     </span>
                   )}
@@ -652,19 +652,19 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "card"
-                      ? "border-[#5B4A3E]/50 bg-[#F1EAE0]"
-                      : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/25"
+                      ? "border-[#3B0E1A]/50 bg-[#F4E6EA]"
+                      : "border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:border-[#3B0E1A]/25"
                   )}
                 >
-                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", paymentMethod === "card" ? "bg-[#5B4A3E]/20 text-[#5B4A3E]" : "bg-[#5B4A3E]/[0.06] text-[#2A211B]/40")}>
+                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", paymentMethod === "card" ? "bg-[#3B0E1A]/20 text-[#3B0E1A]" : "bg-[#3B0E1A]/[0.06] text-[#1A060B]/40")}>
                     <CreditCard size={22} />
                   </div>
                   <div className="text-center">
-                    <p className={cn("text-sm font-semibold", paymentMethod === "card" ? "text-[#5B4A3E]" : "text-[#2A211B]/60")}>Tarjeta de crédito/débito</p>
-                    <p className="text-[10px] text-[#2A211B]/30 mt-0.5">Pago en línea seguro · sin comisión</p>
+                    <p className={cn("text-sm font-semibold", paymentMethod === "card" ? "text-[#3B0E1A]" : "text-[#1A060B]/60")}>Tarjeta de crédito/débito</p>
+                    <p className="text-[10px] text-[#1A060B]/30 mt-0.5">Pago en línea seguro · sin comisión</p>
                   </div>
                   {paymentMethod === "card" && (
-                    <span className="w-5 h-5 rounded-full bg-[#5B4A3E] flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#3B0E1A] flex items-center justify-center">
                       <Check size={10} className="text-white" />
                     </span>
                   )}
@@ -674,7 +674,7 @@ const Checkout = () => {
               <button
                 onClick={() => createOrderMutation.mutate()}
                 disabled={createOrderMutation.isPending}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors disabled:opacity-50"
               >
                 {createOrderMutation.isPending ? <Loader2 className="animate-spin" size={16} /> : <CreditCard size={16} />}
                 {createOrderMutation.isPending
@@ -687,9 +687,9 @@ const Checkout = () => {
           {/* ── Step 3a: Bank details (transfer) ── */}
           {step === "bank" && bankDetails && (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-5 space-y-1">
-                <p className="text-base font-bold text-[#2A211B] mb-1">Datos de transferencia SPEI</p>
-                <p className="text-sm text-[#4A3D32] mb-4">Realiza la transferencia y luego sube tu comprobante.</p>
+              <div className="rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-5 space-y-1">
+                <p className="text-base font-bold text-[#1A060B] mb-1">Datos de transferencia SPEI</p>
+                <p className="text-sm text-[#320C16] mb-4">Realiza la transferencia y luego sube tu comprobante.</p>
                 {[
                   // Solo CLABE para SPEI — el número de cuenta no se muestra.
                   { label: "CLABE", value: bankDetails.clabe },
@@ -697,22 +697,22 @@ const Checkout = () => {
                   { label: "Titular", value: bankDetails.account_holder ?? bankDetails.accountHolder },
                   { label: "Monto", value: `$${bankDetails.amount?.toLocaleString("es-MX")} MXN` },
                 ].map(({ label, value }) => value && (
-                  <div key={label} className="flex items-center justify-between py-3 border-b border-[#E8DED4] last:border-0">
-                    <span className="text-sm text-[#4A3D32] font-medium">{label}</span>
+                  <div key={label} className="flex items-center justify-between py-3 border-b border-[#EADCDD] last:border-0">
+                    <span className="text-sm text-[#320C16] font-medium">{label}</span>
                     <button
                       onClick={() => { navigator.clipboard.writeText(String(value).replace(/\s/g, "")); toast({ title: `${label} copiado` }); }}
                       className="flex items-center gap-2 group"
                     >
-                      <span className="font-mono text-sm font-bold text-[#2A211B] select-all">{value}</span>
-                      <span className="w-7 h-7 rounded-lg bg-[#5B4A3E]/10 flex items-center justify-center text-[#5B4A3E] group-hover:bg-[#5B4A3E]/20 transition-colors">
+                      <span className="font-mono text-sm font-bold text-[#1A060B] select-all">{value}</span>
+                      <span className="w-7 h-7 rounded-lg bg-[#3B0E1A]/10 flex items-center justify-center text-[#3B0E1A] group-hover:bg-[#3B0E1A]/20 transition-colors">
                         <Copy size={13} />
                       </span>
                     </button>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-[#4A3D32] text-center">Toca cualquier dato para copiarlo al portapapeles</p>
-              <button onClick={() => setStep("upload")} className="w-full py-3.5 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors text-sm tracking-wide uppercase">
+              <p className="text-xs text-[#320C16] text-center">Toca cualquier dato para copiarlo al portapapeles</p>
+              <button onClick={() => setStep("upload")} className="w-full py-3.5 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors text-sm tracking-wide uppercase">
                 Ya realicé la transferencia →
               </button>
             </div>
@@ -721,21 +721,21 @@ const Checkout = () => {
           {/* ── Step 3b: Pago con tarjeta en estudio ── */}
           {step === "cash" && (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-[#5B4A3E]/20 bg-[#5B4A3E]/5 p-6 text-center space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-[#5B4A3E]/15 flex items-center justify-center mx-auto">
-                  <CreditCard size={26} className="text-[#5B4A3E]" />
+              <div className="rounded-2xl border border-[#3B0E1A]/20 bg-[#3B0E1A]/5 p-6 text-center space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-[#3B0E1A]/15 flex items-center justify-center mx-auto">
+                  <CreditCard size={26} className="text-[#3B0E1A]" />
                 </div>
-                <p className="font-semibold text-[#2A211B]">Pago con tarjeta en el estudio</p>
-                <p className="text-sm text-[#2A211B]/55">Acércate a la recepción con tu tarjeta y el número de orden para completar el pago en la terminal.</p>
+                <p className="font-semibold text-[#1A060B]">Pago con tarjeta en el estudio</p>
+                <p className="text-sm text-[#1A060B]/55">Acércate a la recepción con tu tarjeta y el número de orden para completar el pago en la terminal.</p>
                 {orderId && (
-                  <div className="bg-[#5B4A3E]/[0.06] border border-[#5B4A3E]/15 rounded-xl px-4 py-2 inline-block">
-                    <p className="text-[10px] text-[#2A211B]/35 uppercase tracking-wider mb-0.5">Número de orden</p>
-                    <p className="font-mono font-bold text-[#2A211B] text-sm">{orderId}</p>
+                  <div className="bg-[#3B0E1A]/[0.06] border border-[#3B0E1A]/15 rounded-xl px-4 py-2 inline-block">
+                    <p className="text-[10px] text-[#1A060B]/35 uppercase tracking-wider mb-0.5">Número de orden</p>
+                    <p className="font-mono font-bold text-[#1A060B] text-sm">{orderId}</p>
                   </div>
                 )}
-                <p className="text-xs text-[#2A211B]/30">Tu paquete se activará una vez que el equipo confirme el pago.</p>
+                <p className="text-xs text-[#1A060B]/30">Tu paquete se activará una vez que el equipo confirme el pago.</p>
               </div>
-              <button onClick={() => window.location.replace("/app")} className="w-full py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors">
+              <button onClick={() => window.location.replace("/app")} className="w-full py-3 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors">
                 Ir a mi panel
               </button>
             </div>
@@ -743,16 +743,16 @@ const Checkout = () => {
 
           {/* ── Step 4: Upload proof ── */}
           {step === "upload" && (
-            <div className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-5 space-y-4">
+            <div className="rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-5 space-y-4">
               <div>
-                <p className="font-semibold text-[#2A211B]">Sube tu comprobante</p>
-                <p className="text-xs text-[#4A3D32] mt-1">
+                <p className="font-semibold text-[#1A060B]">Sube tu comprobante</p>
+                <p className="text-xs text-[#320C16] mt-1">
                   Hasta {MAX_PROOFS} imágenes claras (JPG, PNG, WEBP). Tu membresía se activa al instante.
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {files.map((f, i) => (
-                  <div key={i} className="relative aspect-square rounded-xl border border-[#5B4A3E]/20 bg-[#5B4A3E]/[0.04] overflow-hidden">
+                  <div key={i} className="relative aspect-square rounded-xl border border-[#3B0E1A]/20 bg-[#3B0E1A]/[0.04] overflow-hidden">
                     <img src={URL.createObjectURL(f)} alt="" className="w-full h-full object-cover" />
                     <button
                       type="button"
@@ -763,7 +763,7 @@ const Checkout = () => {
                   </div>
                 ))}
                 {files.length < MAX_PROOFS && (
-                  <label className="aspect-square rounded-xl border-2 border-dashed border-[#5B4A3E]/30 flex flex-col items-center justify-center cursor-pointer hover:bg-[#5B4A3E]/[0.04] text-[#5B4A3E]">
+                  <label className="aspect-square rounded-xl border-2 border-dashed border-[#3B0E1A]/30 flex flex-col items-center justify-center cursor-pointer hover:bg-[#3B0E1A]/[0.04] text-[#3B0E1A]">
                     <Upload size={20} />
                     <span className="text-[10px] mt-1">Agregar</span>
                     <input
@@ -780,7 +780,7 @@ const Checkout = () => {
               <button
                 disabled={files.length === 0 || uploadProofMutation.isPending}
                 onClick={() => uploadProofMutation.mutate()}
-                className="w-full py-3 rounded-xl font-semibold text-white bg-[#5B4A3E] hover:bg-[#4A3D32] transition-colors disabled:opacity-50"
+                className="w-full py-3 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors disabled:opacity-50"
               >
                 {uploadProofMutation.isPending
                   ? "Subiendo…"
@@ -790,7 +790,7 @@ const Checkout = () => {
                 type="button"
                 onClick={showBankDetailsAgain}
                 disabled={loadingBankAgain}
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-[#4A3D32] hover:text-[#2A211B] transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 text-xs text-[#320C16] hover:text-[#1A060B] transition-colors disabled:opacity-50"
               >
                 {loadingBankAgain
                   ? <Loader2 size={13} className="animate-spin" />
@@ -806,11 +806,11 @@ const Checkout = () => {
               <div className="w-16 h-16 rounded-full bg-[#4ade80]/12 border border-[#4ade80]/30 flex items-center justify-center mx-auto">
                 <CheckCircle size={30} className="text-[#4ade80]" />
               </div>
-              <p className="text-base font-semibold text-[#2A211B]">¡Tu membresía está activa!</p>
-              <p className="text-sm text-[#4A3D32]">
+              <p className="text-base font-semibold text-[#1A060B]">¡Tu membresía está activa!</p>
+              <p className="text-sm text-[#320C16]">
                 Ya puedes reservar tus clases. La admin verificará el comprobante en las próximas 24 horas — te avisamos si encuentra algún detalle.
               </p>
-              <button onClick={() => window.location.replace("/app")} className="mt-2 px-6 py-2.5 rounded-xl text-sm font-semibold border border-[#5B4A3E]/20 text-[#2A211B]/70 hover:text-[#2A211B] hover:border-[#5B4A3E]/30 transition-all">
+              <button onClick={() => window.location.replace("/app")} className="mt-2 px-6 py-2.5 rounded-xl text-sm font-semibold border border-[#3B0E1A]/20 text-[#1A060B]/70 hover:text-[#1A060B] hover:border-[#3B0E1A]/30 transition-all">
                 Ir a mi panel
               </button>
             </div>

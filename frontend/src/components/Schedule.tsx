@@ -46,11 +46,11 @@ interface ScheduleClass {
 // VARRE24 ofrece Pilates Mat, Barre y Experience Class; el color principal
 // viene de la BD vía class_type_color, esto es solo defensa por si llega vacío.
 const fallbackColors: Record<string, string> = {
-  "Pilates Mat": "#5B4A3E",
-  "Barre": "#5B4A3E",
-  "Experience Class": "#5B4A3E",
+  "Pilates Mat": "#3B0E1A",
+  "Barre": "#3B0E1A",
+  "Experience Class": "#3B0E1A",
 };
-const DEFAULT_COLOR = "#5B4A3E";
+const DEFAULT_COLOR = "#3B0E1A";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -103,7 +103,7 @@ function generateMockClasses(weekStart: Date, weeks: number = 2): ApiClass[] {
         start_time: `${dateStr}T${startTime}:00`,
         end_time: `${dateStr}T${endTime}:00`,
         class_type_name: "Pilates Mat",
-        class_type_color: "#5B4A3E",
+        class_type_color: "#3B0E1A",
         instructor_name: "Isabel",
         capacity: 7,
         max_capacity: 7,
@@ -265,15 +265,15 @@ export default function Schedule() {
 
         {/* ── HEADER ──────────────────────────────────────────────────────── */}
         <div className="reveal opacity-0 translate-y-10 transition-all duration-700">
-          <div className="text-[0.72rem] tracking-[0.18em] uppercase text-[#5B4A3E] font-semibold mb-4 flex items-center gap-3">
-            <span className="w-8 h-[1px] bg-[#5B4A3E]/40 inline-block" />
+          <div className="text-[0.72rem] tracking-[0.18em] uppercase text-[#3B0E1A] font-semibold mb-4 flex items-center gap-3">
+            <span className="w-8 h-[1px] bg-[#3B0E1A]/40 inline-block" />
             Horario semanal
           </div>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10">
-            <h2 className="font-bebas text-[clamp(2.8rem,4.5vw,4.5rem)] leading-[0.95] text-[#2A211B]">
+            <h2 className="font-bebas text-[clamp(2.8rem,4.5vw,4.5rem)] leading-[0.95] text-[#1A060B]">
               RESERVA TU CLASE
             </h2>
-            <p className="text-[0.9rem] text-[#4A3D32] max-w-[380px] leading-[1.7] font-alilato">
+            <p className="text-[0.9rem] text-[#320C16] max-w-[380px] leading-[1.7] font-alilato">
               Consulta el horario y reserva tu lugar. Los espacios son limitados.
             </p>
           </div>
@@ -283,18 +283,18 @@ export default function Schedule() {
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => setWeekStart((p) => subWeeks(p, 1))}
-            className="w-10 h-10 rounded-full border border-[#E8DED4] bg-[#F6F2EB] flex items-center justify-center text-[#4A3D32] hover:border-[#5B4A3E] hover:text-[#5B4A3E] transition-all cursor-pointer"
+            className="w-10 h-10 rounded-full border border-[#EADCDD] bg-[#F3EFE9] flex items-center justify-center text-[#320C16] hover:border-[#3B0E1A] hover:text-[#3B0E1A] transition-all cursor-pointer"
             aria-label="Semana anterior"
           >
             <ChevronLeft size={16} />
           </button>
-          <h3 className="flex-1 font-alilato text-[1.3rem] font-semibold text-[#2A211B]">
+          <h3 className="flex-1 font-alilato text-[1.3rem] font-semibold text-[#1A060B]">
             <span className="capitalize">{format(weekStart, "MMMM", { locale: es })}</span>{" "}
-            <span className="text-[#5B4A3E]">{format(weekStart, "yyyy")}</span>
+            <span className="text-[#3B0E1A]">{format(weekStart, "yyyy")}</span>
           </h3>
           <button
             onClick={() => setWeekStart((p) => addWeeks(p, 1))}
-            className="w-10 h-10 rounded-full border border-[#E8DED4] bg-[#F6F2EB] flex items-center justify-center text-[#4A3D32] hover:border-[#5B4A3E] hover:text-[#5B4A3E] transition-all cursor-pointer"
+            className="w-10 h-10 rounded-full border border-[#EADCDD] bg-[#F3EFE9] flex items-center justify-center text-[#320C16] hover:border-[#3B0E1A] hover:text-[#3B0E1A] transition-all cursor-pointer"
             aria-label="Semana siguiente"
           >
             <ChevronRight size={16} />
@@ -317,21 +317,21 @@ export default function Schedule() {
                 className={[
                   "flex flex-col items-center gap-1.5 px-5 py-3.5 rounded-2xl min-w-[72px] select-none transition-all duration-200 border cursor-pointer",
                   selected
-                    ? "bg-[#5B4A3E] border-[#5B4A3E] text-white shadow-[0_4px_20px_rgba(131,106,93,0.3)] -translate-y-0.5"
+                    ? "bg-[#3B0E1A] border-[#3B0E1A] text-white shadow-[0_4px_20px_rgba(131,106,93,0.3)] -translate-y-0.5"
                     : todayDay
-                      ? "bg-[#F6F2EB] border-[#D5C4B8]/40 text-[#2A211B]"
-                      : "bg-[#F6F2EB] border-[#E8DED4] text-[#2A211B] hover:border-[#5B4A3E]/30 hover:-translate-y-0.5",
+                      ? "bg-[#F3EFE9] border-[#C9A5A8]/40 text-[#1A060B]"
+                      : "bg-[#F3EFE9] border-[#EADCDD] text-[#1A060B] hover:border-[#3B0E1A]/30 hover:-translate-y-0.5",
                 ].join(" ")}
               >
                 <span className={[
                   "text-[10px] font-semibold tracking-[0.12em] uppercase",
-                  selected ? "text-white/70" : "text-[#4A3D32]/60",
+                  selected ? "text-white/70" : "text-[#320C16]/60",
                 ].join(" ")}>
                   {format(day, "EEE", { locale: es })}
                 </span>
                 <span className={[
                   "font-bebas text-[1.5rem] leading-none",
-                  selected ? "text-white" : todayDay ? "text-[#5B4A3E]" : "text-[#2A211B]",
+                  selected ? "text-white" : todayDay ? "text-[#3B0E1A]" : "text-[#1A060B]",
                 ].join(" ")}>
                   {format(day, "d")}
                 </span>
@@ -342,8 +342,8 @@ export default function Schedule() {
                       className="w-1 h-1 rounded-full"
                       style={{
                         background: selected ? "rgba(255,255,255,0.6)"
-                          : todayDay ? "#D5C4B8"
-                          : "#5B4A3E40",
+                          : todayDay ? "#C9A5A8"
+                          : "#3B0E1A40",
                       }}
                     />
                   ))}
@@ -355,9 +355,9 @@ export default function Schedule() {
 
         {/* ── FILTERS ROW ─────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 flex-wrap">
-          <div className="font-alilato text-[1.1rem] font-semibold text-[#2A211B]">
+          <div className="font-alilato text-[1.1rem] font-semibold text-[#1A060B]">
             {filteredClasses.length} clase{filteredClasses.length !== 1 ? "s" : ""}{" "}
-            <span className="text-[#4A3D32]/50 text-[0.88rem] font-normal">
+            <span className="text-[#320C16]/50 text-[0.88rem] font-normal">
               · {format(selectedDate, "EEE d 'de' MMMM", { locale: es })}
             </span>
           </div>
@@ -369,8 +369,8 @@ export default function Schedule() {
                 className={[
                   "px-4 py-2 rounded-full text-[0.75rem] font-semibold transition-all border cursor-pointer",
                   filter === "all"
-                    ? "bg-[#5B4A3E] border-[#5B4A3E] text-white shadow-[0_2px_12px_rgba(131,106,93,0.25)]"
-                    : "bg-[#F6F2EB] border-[#E8DED4] text-[#4A3D32] hover:border-[#5B4A3E]/40 hover:text-[#5B4A3E]",
+                    ? "bg-[#3B0E1A] border-[#3B0E1A] text-white shadow-[0_2px_12px_rgba(131,106,93,0.25)]"
+                    : "bg-[#F3EFE9] border-[#EADCDD] text-[#320C16] hover:border-[#3B0E1A]/40 hover:text-[#3B0E1A]",
                 ].join(" ")}
               >
                 Todas
@@ -382,8 +382,8 @@ export default function Schedule() {
                   className={[
                     "px-4 py-2 rounded-full text-[0.75rem] font-semibold transition-all border cursor-pointer",
                     filter === t
-                      ? "bg-[#5B4A3E] border-[#5B4A3E] text-white shadow-[0_2px_12px_rgba(131,106,93,0.25)]"
-                      : "bg-[#F6F2EB] border-[#E8DED4] text-[#4A3D32] hover:border-[#5B4A3E]/40 hover:text-[#5B4A3E]",
+                      ? "bg-[#3B0E1A] border-[#3B0E1A] text-white shadow-[0_2px_12px_rgba(131,106,93,0.25)]"
+                      : "bg-[#F3EFE9] border-[#EADCDD] text-[#320C16] hover:border-[#3B0E1A]/40 hover:text-[#3B0E1A]",
                   ].join(" ")}
                 >
                   {t}
@@ -395,15 +395,15 @@ export default function Schedule() {
 
         {/* ── CARDS ───────────────────────────────────────────────────── */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20 text-[#4A3D32]/40 gap-2">
+          <div className="flex items-center justify-center py-20 text-[#320C16]/40 gap-2">
             <Loader2 size={20} className="animate-spin" />
             <span className="text-sm tracking-wide font-alilato">Cargando clases...</span>
           </div>
         ) : filteredClasses.length === 0 ? (
-          <div className="text-center py-20 text-[#4A3D32]/50">
+          <div className="text-center py-20 text-[#320C16]/50">
             <p className="text-sm font-alilato">No hay clases para este día.</p>
             {filter !== "all" && (
-              <button onClick={() => setFilter("all")} className="mt-3 text-[#5B4A3E] text-sm underline underline-offset-2 cursor-pointer bg-transparent border-none">
+              <button onClick={() => setFilter("all")} className="mt-3 text-[#3B0E1A] text-sm underline underline-offset-2 cursor-pointer bg-transparent border-none">
                 Ver todas
               </button>
             )}
@@ -421,7 +421,7 @@ export default function Schedule() {
               const initials     = cls.instructor.split(" ").map((w: string) => w[0]).slice(0, 2).join("");
 
               const badgeCfg = (() => {
-                if (isPast)   return { label: "Finalizada", bg: "#E8DED4", color: "#4A3D32", dot: false };
+                if (isPast)   return { label: "Finalizada", bg: "#EADCDD", color: "#320C16", dot: false };
                 if (inProg)   return { label: ts!.label, bg: `${accent}18`, color: accent, dot: "pulse" };
                 if (upcoming) return { label: ts!.label, bg: `${accent}12`, color: accent, dot: true };
                 return null;
@@ -432,9 +432,9 @@ export default function Schedule() {
                   key={cls.id}
                   style={{ animationDelay: `${idx * 0.06}s` }}
                   className={[
-                    "relative bg-[#F6F2EB] border border-[#E8DED4] rounded-2xl p-6 overflow-hidden",
+                    "relative bg-[#F3EFE9] border border-[#EADCDD] rounded-2xl p-6 overflow-hidden",
                     "transition-all duration-300 group",
-                    isPast ? "opacity-50" : "hover:border-[#D5C4B8]/40 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 cursor-pointer",
+                    isPast ? "opacity-50" : "hover:border-[#C9A5A8]/40 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 cursor-pointer",
                     "animate-[fadeSlideUp_0.4s_both]",
                   ].join(" ")}
                   onClick={() => !isPast && !full && handleBook(cls)}
@@ -442,7 +442,7 @@ export default function Schedule() {
                   {/* Accent top line */}
                   <div
                     className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl"
-                    style={{ background: isPast ? "#D5C4B8" : accent }}
+                    style={{ background: isPast ? "#C9A5A8" : accent }}
                   />
 
                   {/* ── Card top row ── */}
@@ -471,7 +471,7 @@ export default function Schedule() {
                         className={[
                           "px-4 py-2 rounded-full text-[0.72rem] font-semibold tracking-wide transition-all cursor-pointer",
                           full
-                            ? "bg-[#E8DED4] text-[#4A3D32]/40 cursor-not-allowed"
+                            ? "bg-[#EADCDD] text-[#320C16]/40 cursor-not-allowed"
                             : "text-white hover:scale-105 hover:shadow-lg",
                         ].join(" ")}
                         style={!full ? {
@@ -486,7 +486,7 @@ export default function Schedule() {
 
                   {/* ── Class name + category badge ── */}
                   <div className="flex items-start gap-2 flex-wrap mb-3">
-                    <h3 className="font-alilato font-bold text-[1.2rem] leading-tight text-[#2A211B] group-hover:text-[#5B4A3E] transition-colors">
+                    <h3 className="font-alilato font-bold text-[1.2rem] leading-tight text-[#1A060B] group-hover:text-[#3B0E1A] transition-colors">
                       {cls.name}
                     </h3>
                     <ClassCategoryBadge classTypeName={cls.name} className="mt-[3px]" />
@@ -494,11 +494,11 @@ export default function Schedule() {
 
                   {/* ── Time row ── */}
                   <div className="flex items-center gap-2 mb-3 text-[0.82rem]">
-                    <Clock size={14} className="text-[#5B4A3E] shrink-0" />
-                    <span className="text-[#2A211B] font-medium">
+                    <Clock size={14} className="text-[#3B0E1A] shrink-0" />
+                    <span className="text-[#1A060B] font-medium">
                       {formatTime(cls.time)}{cls.endTime ? ` — ${cls.endTime.slice(0, 5)}` : ""}
                     </span>
-                    <span className="ml-auto bg-white text-[#4A3D32] text-[0.7rem] px-2.5 py-0.5 rounded-full font-medium">
+                    <span className="ml-auto bg-white text-[#320C16] text-[0.7rem] px-2.5 py-0.5 rounded-full font-medium">
                       {cls.duration} min
                     </span>
                   </div>
@@ -508,22 +508,22 @@ export default function Schedule() {
                        no por nombre. Sigue visible en /admin/classes. */}
 
                   {/* ── Divider ── */}
-                  <div className="h-px bg-[#E8DED4] mb-3" />
+                  <div className="h-px bg-[#EADCDD] mb-3" />
 
                   {/* ── Capacity bar ── */}
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-[0.68rem] font-semibold tracking-[0.08em] uppercase text-[#4A3D32]/40">Lugares</span>
+                      <span className="text-[0.68rem] font-semibold tracking-[0.08em] uppercase text-[#320C16]/40">Lugares</span>
                       <span
                         className="text-[0.75rem] font-semibold"
-                        style={{ color: full ? "#d97706" : "#2A211B" }}
+                        style={{ color: full ? "#d97706" : "#1A060B" }}
                       >
                         {full
                           ? `${cls.maxSpots} / ${cls.maxSpots} — Lleno`
                           : `${cls.spots} disponibles`}
                       </span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-[#E8DED4] overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-[#EADCDD] overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{
@@ -544,19 +544,19 @@ export default function Schedule() {
         )}
 
         {/* ── CTA ─────────────────────────────────────────────────────── */}
-        <div className="mt-14 rounded-2xl border border-[#D5C4B8]/25 bg-[#F6F2EB] p-8 sm:p-10 text-center">
-          <p className="text-[0.72rem] tracking-[0.18em] uppercase text-[#5B4A3E] font-semibold mb-2">
+        <div className="mt-14 rounded-2xl border border-[#C9A5A8]/25 bg-[#F3EFE9] p-8 sm:p-10 text-center">
+          <p className="text-[0.72rem] tracking-[0.18em] uppercase text-[#3B0E1A] font-semibold mb-2">
             ¿Primera vez en VARRE24?
           </p>
-          <h3 className="font-bebas text-[clamp(1.8rem,3vw,2.5rem)] leading-none text-[#2A211B] mb-3">
+          <h3 className="font-bebas text-[clamp(1.8rem,3vw,2.5rem)] leading-none text-[#1A060B] mb-3">
             Prueba una clase sin compromiso
           </h3>
-          <p className="text-[0.88rem] text-[#4A3D32] mb-7 max-w-sm mx-auto font-alilato">
+          <p className="text-[0.88rem] text-[#320C16] mb-7 max-w-sm mx-auto font-alilato">
             Reserva tu sesión muestra y descubre por qué cientos de mujeres eligen VARRE24.
           </p>
           <Link
             to="/auth/register?returnUrl=/app/book"
-            className="inline-flex items-center gap-2 bg-[#5B4A3E] text-white px-8 py-3.5 rounded-full text-[0.82rem] font-semibold tracking-wider uppercase hover:bg-[#3A2F26] hover:shadow-[0_12px_40px_rgba(131,106,93,0.3)] transition-all no-underline"
+            className="inline-flex items-center gap-2 bg-[#3B0E1A] text-white px-8 py-3.5 rounded-full text-[0.82rem] font-semibold tracking-wider uppercase hover:bg-[#260910] hover:shadow-[0_12px_40px_rgba(131,106,93,0.3)] transition-all no-underline"
           >
             Reservar mi primera clase
             <ArrowUpRight size={15} strokeWidth={2.5} />

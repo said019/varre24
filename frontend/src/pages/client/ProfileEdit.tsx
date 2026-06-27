@@ -75,8 +75,8 @@ const ProfileEdit = () => {
   };
 
   const inputCls =
-    "rounded-xl border-[#E4DACE] bg-[#FBF8F4] font-alilato text-[#2A211B] placeholder:text-[#8A8077]/60 focus:border-[#5B4A3E] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
-  const labelCls = "font-alilato text-[0.66rem] uppercase tracking-[0.18em] text-[#8A8077]";
+    "rounded-xl border-[#E8D7D6] bg-[#FCF8F7] font-alilato text-[#1A060B] placeholder:text-[#9C8A8B]/60 focus:border-[#3B0E1A] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+  const labelCls = "font-alilato text-[0.66rem] uppercase tracking-[0.18em] text-[#9C8A8B]";
 
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
@@ -88,11 +88,11 @@ const ProfileEdit = () => {
             <button
               type="button"
               onClick={() => navigate("/app/profile")}
-              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#9C8A8B] transition-colors hover:text-[#3B0E1A]"
             >
               <ArrowLeft size={14} strokeWidth={1.75} /> Perfil
             </button>
-            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">
               Editar perfil
             </h1>
           </section>
@@ -133,7 +133,7 @@ const ProfileEdit = () => {
               <Label className={labelCls}>Sexo</Label>
               <select
                 {...register("gender")}
-                className="w-full rounded-xl border border-[#E4DACE] bg-[#FBF8F4] px-3 py-2.5 font-alilato text-sm text-[#2A211B] transition-colors focus:border-[#5B4A3E] focus:outline-none"
+                className="w-full rounded-xl border border-[#E8D7D6] bg-[#FCF8F7] px-3 py-2.5 font-alilato text-sm text-[#1A060B] transition-colors focus:border-[#3B0E1A] focus:outline-none"
               >
                 <option value="">Selecciona…</option>
                 <option value="female">Femenino</option>
@@ -152,7 +152,7 @@ const ProfileEdit = () => {
             </div>
             <Button
               type="submit"
-              className="press w-full rounded-full bg-[#5B4A3E] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] hover:bg-[#4A3D32]"
+              className="press w-full rounded-full bg-[#3B0E1A] py-6 font-alilato text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] hover:bg-[#320C16]"
               disabled={mutation.isPending}
             >
               {mutation.isPending ? <Loader2 className="mr-2 animate-spin" size={16} /> : null}

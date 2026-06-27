@@ -45,11 +45,11 @@ interface ClientOption {
 
 // ── Status config ──────────────────────────────────────────────────────────────
 const statusConfig: Record<string, { label: string; className: string }> = {
-  confirmed:  { label: "Confirmada",   className: "text-[#E8DED4] border-[#E8DED4]/30 bg-[#E8DED4]/5" },
+  confirmed:  { label: "Confirmada",   className: "text-[#EADCDD] border-[#EADCDD]/30 bg-[#EADCDD]/5" },
   checked_in: { label: "Asistió ✓",   className: "text-[#4ade80] border-[#4ade80]/30 bg-[#4ade80]/5" },
-  waitlist:   { label: "Lista espera", className: "text-[#D5C4B8] border-[#D5C4B8]/30 bg-[#D5C4B8]/5" },
+  waitlist:   { label: "Lista espera", className: "text-[#C9A5A8] border-[#C9A5A8]/30 bg-[#C9A5A8]/5" },
   no_show:    { label: "No asistió",   className: "text-[#f87171] border-[#f87171]/30 bg-[#f87171]/5" },
-  cancelled:  { label: "Cancelada",    className: "text-[#2A211B]/30 border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04]" },
+  cancelled:  { label: "Cancelada",    className: "text-[#1A060B]/30 border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04]" },
 };
 
 // ── Class Roster panel ─────────────────────────────────────────────────────────
@@ -196,7 +196,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
       {/* Back button */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-[#2A211B]/40 hover:text-[#2A211B]/70 transition-colors"
+        className="flex items-center gap-2 text-sm text-[#1A060B]/40 hover:text-[#1A060B]/70 transition-colors"
       >
         <ArrowLeft size={14} /> Volver al calendario
       </button>
@@ -205,26 +205,26 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
       {isLoading ? (
         <Skeleton className="h-28 rounded-2xl" />
       ) : classInfo && (
-        <div className="rounded-2xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] p-5">
+        <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className="w-2.5 h-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: classInfo.color || "#5B4A3E" }}
+                  style={{ backgroundColor: classInfo.color || "#3B0E1A" }}
                 />
-                <h2 className="text-xl font-bold text-[#2A211B]">{classInfo.classTypeName}</h2>
+                <h2 className="text-xl font-bold text-[#1A060B]">{classInfo.classTypeName}</h2>
               </div>
-              <p className="text-sm text-[#2A211B]/50">
+              <p className="text-sm text-[#1A060B]/50">
                 {classInfo.startsAt
                   ? format(new Date(classInfo.startsAt), "EEEE d 'de' MMMM · HH:mm", { locale: es })
                   : classInfo.date ?? "—"}
               </p>
-              <p className="text-xs text-[#2A211B]/35 mt-0.5">Instructor: {classInfo.instructorName}</p>
+              <p className="text-xs text-[#1A060B]/35 mt-0.5">Instructor: {classInfo.instructorName}</p>
             </div>
             <button
               onClick={() => refetch()}
-              className="text-xs text-[#D5C4B8]/60 hover:text-[#D5C4B8] transition-colors flex items-center gap-1"
+              className="text-xs text-[#C9A5A8]/60 hover:text-[#C9A5A8] transition-colors flex items-center gap-1"
             >
               <Clock size={11} /> Actualizar
             </button>
@@ -234,7 +234,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
             <Button
               size="sm"
               onClick={() => setAssignOpen(true)}
-              className="bg-gradient-to-r from-[#D5C4B8] to-[#5B4A3E] text-white"
+              className="bg-gradient-to-r from-[#C9A5A8] to-[#3B0E1A] text-white"
             >
               <Plus size={14} className="mr-1" /> Asignar miembro
             </Button>
@@ -243,14 +243,14 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
             {[
-              { label: "Confirmadas", value: confirmed, color: "#E8DED4" },
+              { label: "Confirmadas", value: confirmed, color: "#EADCDD" },
               { label: "Asistieron",  value: checkedIn, color: "#4ade80" },
-              { label: "Lista esp.",  value: waitlist,  color: "#D5C4B8" },
+              { label: "Lista esp.",  value: waitlist,  color: "#C9A5A8" },
               { label: "No asistió",  value: noShow,    color: "#f87171" },
             ].map((s) => (
-              <div key={s.label} className="rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.05] px-3 py-2 text-center">
+              <div key={s.label} className="rounded-xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.05] px-3 py-2 text-center">
                 <p className="text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-[10px] text-[#2A211B]/35 leading-tight">{s.label}</p>
+                <p className="text-[10px] text-[#1A060B]/35 leading-tight">{s.label}</p>
               </div>
             ))}
           </div>
@@ -263,7 +263,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
           ? Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)
           : roster.length === 0
             ? (
-              <div className="text-center py-12 text-[#2A211B]/25 text-sm">
+              <div className="text-center py-12 text-[#1A060B]/25 text-sm">
                 <Users size={28} className="mx-auto mb-2 opacity-30" />
                 No hay reservas para esta clase
               </div>
@@ -293,7 +293,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                       ? "border-[#4ade80]/20 bg-[#4ade80]/5"
                       : entry.status === "no_show"
                         ? "border-[#f87171]/15 bg-[#f87171]/3 opacity-60"
-                        : "border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:bg-[#5B4A3E]/[0.06]"
+                        : "border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:bg-[#3B0E1A]/[0.06]"
                   )}
                 >
                   {/* Avatar */}
@@ -301,7 +301,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                     "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
                     entry.status === "checked_in"
                       ? "bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/30"
-                      : "bg-gradient-to-br from-[#5B4A3E]/20 to-[#D5C4B8]/10 border border-[#5B4A3E]/20 text-[#5B4A3E]"
+                      : "bg-gradient-to-br from-[#3B0E1A]/20 to-[#C9A5A8]/10 border border-[#3B0E1A]/20 text-[#3B0E1A]"
                   )}>
                     {entry.status === "checked_in"
                       ? <UserCheck size={16} />
@@ -310,18 +310,18 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
 
                   {/* Info — walk-in (sin cuenta): su nombre va en guestName. */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-[#2A211B]/90 truncate flex items-center gap-1.5">
+                    <p className="font-semibold text-sm text-[#1A060B]/90 truncate flex items-center gap-1.5">
                       {entry.userId ? entry.displayName : (entry.guestName ?? "Invitado")}
                       {!entry.userId && (
                         <span className="text-[9px] font-semibold px-1.5 py-0 rounded-full border border-amber-400/60 text-amber-600">Walk-in</span>
                       )}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap mt-0.5">
-                      <span className="text-xs text-[#2A211B]/35 truncate">{entry.userId ? entry.email : "Sin cuenta"}</span>
-                      {entry.phone && <span className="text-xs text-[#2A211B]/25">{entry.phone}</span>}
+                      <span className="text-xs text-[#1A060B]/35 truncate">{entry.userId ? entry.email : "Sin cuenta"}</span>
+                      {entry.phone && <span className="text-xs text-[#1A060B]/25">{entry.phone}</span>}
                     </div>
                     {entry.userId && entry.planName && (
-                      <p className="text-[10px] text-[#D5C4B8]/60 mt-0.5">
+                      <p className="text-[10px] text-[#C9A5A8]/60 mt-0.5">
                         {entry.planName}
                         {entry.classesRemaining !== null
                           ? ` · ${entry.classesRemaining} clases restantes`
@@ -329,7 +329,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                       </p>
                     )}
                     {entry.userId && entry.guestName && (
-                      <span className="inline-flex items-center gap-1 mt-1 rounded-full bg-[#D5C4B8]/25 border border-[#5B4A3E]/20 px-2 py-0.5 text-[10px] font-semibold text-[#3A2F26]">
+                      <span className="inline-flex items-center gap-1 mt-1 rounded-full bg-[#C9A5A8]/25 border border-[#3B0E1A]/20 px-2 py-0.5 text-[10px] font-semibold text-[#260910]">
                         +1 invitada · {entry.guestName} · cuenta como 2
                       </span>
                     )}
@@ -358,7 +358,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                           }}
                           disabled={guestRemoveMutation.isPending}
                           title="Quitar invitada"
-                          className="w-8 h-8 rounded-lg bg-[#D5C4B8]/15 border border-[#5B4A3E]/25 text-[#3A2F26] hover:bg-[#D5C4B8]/25 flex items-center justify-center transition-all disabled:opacity-40"
+                          className="w-8 h-8 rounded-lg bg-[#C9A5A8]/15 border border-[#3B0E1A]/25 text-[#260910] hover:bg-[#C9A5A8]/25 flex items-center justify-center transition-all disabled:opacity-40"
                         >
                           <UserMinus size={14} />
                         </button>
@@ -370,7 +370,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                             setGuestEditorPhone("");
                           }}
                           title="Agregar invitada"
-                          className="w-8 h-8 rounded-lg bg-[#5B4A3E]/8 border border-[#5B4A3E]/20 text-[#5B4A3E]/80 hover:bg-[#5B4A3E]/15 flex items-center justify-center transition-all"
+                          className="w-8 h-8 rounded-lg bg-[#3B0E1A]/8 border border-[#3B0E1A]/20 text-[#3B0E1A]/80 hover:bg-[#3B0E1A]/15 flex items-center justify-center transition-all"
                         >
                           <UserPlus size={14} />
                         </button>
@@ -401,7 +401,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                         onClick={() => { if (window.confirm("¿Cancelar esta reserva y devolver crédito?")) cancelMutation.mutate(entry.bookingId); }}
                         disabled={cancelMutation.isPending}
                         title="Cancelar reserva"
-                        className="w-8 h-8 rounded-lg bg-[#5B4A3E]/8 border border-[#5B4A3E]/20 text-[#5B4A3E]/70 hover:bg-[#5B4A3E]/15 flex items-center justify-center transition-all disabled:opacity-40"
+                        className="w-8 h-8 rounded-lg bg-[#3B0E1A]/8 border border-[#3B0E1A]/20 text-[#3B0E1A]/70 hover:bg-[#3B0E1A]/15 flex items-center justify-center transition-all disabled:opacity-40"
                       >
                         <Ban size={14} />
                       </button>
@@ -441,13 +441,13 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
           </DialogHeader>
           <div className="space-y-3">
             {/* Toggle invitada */}
-            <div className="rounded-xl border border-[#5B4A3E]/20 bg-[#5B4A3E]/[0.04] p-3">
+            <div className="rounded-xl border border-[#3B0E1A]/20 bg-[#3B0E1A]/[0.04] p-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <Label className="text-sm font-semibold text-[#2A211B] flex items-center gap-1.5">
-                    <UserPlus size={13} className="text-[#5B4A3E]" /> Llevar invitada
+                  <Label className="text-sm font-semibold text-[#1A060B] flex items-center gap-1.5">
+                    <UserPlus size={13} className="text-[#3B0E1A]" /> Llevar invitada
                   </Label>
-                  <p className="text-[11px] text-[#4A3D32] leading-snug mt-0.5">
+                  <p className="text-[11px] text-[#320C16] leading-snug mt-0.5">
                     Se cobran 2 créditos y se ocupan 2 lugares. No aplica en Clase de prueba.
                   </p>
                 </div>
@@ -479,7 +479,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
             </div>
 
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2A211B]/35" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A060B]/35" />
               <Input
                 className="pl-8"
                 value={memberSearch}
@@ -500,7 +500,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                     disabled={assignMutation.isPending || (assignBringGuest && !assignGuestName.trim())}
                     onClick={() => assignMutation.mutate(u.id)}
                     title={assignBringGuest && !assignGuestName.trim() ? "Captura el nombre de la invitada primero" : undefined}
-                    className="w-full px-3 py-2.5 text-left hover:bg-[#5B4A3E]/[0.06] border-b last:border-b-0 border-border disabled:opacity-60"
+                    className="w-full px-3 py-2.5 text-left hover:bg-[#3B0E1A]/[0.06] border-b last:border-b-0 border-border disabled:opacity-60"
                   >
                     <p className="text-sm font-medium">
                       {u.displayName}
@@ -525,7 +525,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
             <DialogTitle>Marcar como no asistió</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-[#3A2F26]/80">
+            <p className="text-sm text-[#260910]/80">
               La reserva pasará a <strong>no_show</strong>. El cupo ya está libre (la alumna no asistió a la clase).
             </p>
             <label className="flex items-start gap-2 cursor-pointer">
@@ -537,7 +537,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
               />
               <span className="text-sm">
                 <strong>Devolver el crédito</strong> a la alumna
-                <span className="block text-xs text-[#3A2F26]/55">
+                <span className="block text-xs text-[#260910]/55">
                   Úsalo solo si hay una razón humana (emergencia, error). Por defecto NO se devuelve.
                 </span>
               </span>
@@ -567,7 +567,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
           <div className="space-y-3">
             {guestEditor && (
               <p className="text-xs text-muted-foreground">
-                Reserva de <strong className="text-[#2A211B]">{guestEditor.userName}</strong>. Se descuenta 1 crédito y se ocupa 1 lugar adicional.
+                Reserva de <strong className="text-[#1A060B]">{guestEditor.userName}</strong>. Se descuenta 1 crédito y se ocupa 1 lugar adicional.
               </p>
             )}
             <Input
@@ -630,22 +630,22 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
       <div className="flex items-center gap-3">
         <button
           onClick={() => setWeekStart((w) => subWeeks(w, 1))}
-          className="w-8 h-8 rounded-lg border border-[#5B4A3E]/15 text-[#2A211B]/40 hover:text-[#2A211B]/70 hover:border-[#5B4A3E]/25 flex items-center justify-center transition-all"
+          className="w-8 h-8 rounded-lg border border-[#3B0E1A]/15 text-[#1A060B]/40 hover:text-[#1A060B]/70 hover:border-[#3B0E1A]/25 flex items-center justify-center transition-all"
         >
           <ChevronLeft size={14} />
         </button>
-        <span className="text-sm font-semibold text-[#2A211B]/70 min-w-[200px] text-center">
+        <span className="text-sm font-semibold text-[#1A060B]/70 min-w-[200px] text-center">
           {format(weekStart, "d MMM", { locale: es })} – {format(weekEnd, "d MMM yyyy", { locale: es })}
         </span>
         <button
           onClick={() => setWeekStart((w) => addWeeks(w, 1))}
-          className="w-8 h-8 rounded-lg border border-[#5B4A3E]/15 text-[#2A211B]/40 hover:text-[#2A211B]/70 hover:border-[#5B4A3E]/25 flex items-center justify-center transition-all"
+          className="w-8 h-8 rounded-lg border border-[#3B0E1A]/15 text-[#1A060B]/40 hover:text-[#1A060B]/70 hover:border-[#3B0E1A]/25 flex items-center justify-center transition-all"
         >
           <ChevronRight size={14} />
         </button>
         <button
           onClick={() => setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}
-          className="ml-2 text-xs text-[#5B4A3E]/60 hover:text-[#5B4A3E] transition-colors"
+          className="ml-2 text-xs text-[#3B0E1A]/60 hover:text-[#3B0E1A] transition-colors"
         >
           Hoy
         </button>
@@ -673,12 +673,12 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
               <div className="flex items-center gap-2 mb-2">
                 <p className={cn(
                   "text-xs font-semibold uppercase tracking-wider",
-                  isToday ? "text-[#5B4A3E]" : "text-[#2A211B]/30"
+                  isToday ? "text-[#3B0E1A]" : "text-[#1A060B]/30"
                 )}>
                   {format(day, "EEEE d", { locale: es })}
                 </p>
                 {isToday && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#5B4A3E]/15 text-[#5B4A3E] border border-[#5B4A3E]/25 font-semibold">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#3B0E1A]/15 text-[#3B0E1A] border border-[#3B0E1A]/25 font-semibold">
                     Hoy
                   </span>
                 )}
@@ -701,32 +701,32 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
                       <button
                         key={cls.id}
                         onClick={() => onSelectClass(cls.id)}
-                        className="w-full flex items-center gap-4 p-4 rounded-xl border border-[#5B4A3E]/15 bg-[#5B4A3E]/[0.04] hover:border-[#5B4A3E]/30 hover:bg-[#5B4A3E]/5 transition-all group text-left"
+                        className="w-full flex items-center gap-4 p-4 rounded-xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:border-[#3B0E1A]/30 hover:bg-[#3B0E1A]/5 transition-all group text-left"
                       >
                         <span
                           className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: cls.class_type_color ?? cls.color ?? "#5B4A3E" }}
+                          style={{ backgroundColor: cls.class_type_color ?? cls.color ?? "#3B0E1A" }}
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-[#2A211B]/85 truncate">
+                          <p className="text-sm font-semibold text-[#1A060B]/85 truncate">
                             {cls.class_type_name ?? cls.className ?? "Clase"}
                           </p>
-                          <p className="text-xs text-[#2A211B]/35">{time} · {cls.instructor_name ?? "—"}</p>
+                          <p className="text-xs text-[#1A060B]/35">{time} · {cls.instructor_name ?? "—"}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <div className="text-right">
-                            <p className={cn("text-sm font-bold", full ? "text-[#f87171]" : "text-[#2A211B]/70")}>
+                            <p className={cn("text-sm font-bold", full ? "text-[#f87171]" : "text-[#1A060B]/70")}>
                               {booked}/{capacity}
                             </p>
-                            <p className="text-[10px] text-[#2A211B]/25">lugares</p>
+                            <p className="text-[10px] text-[#1A060B]/25">lugares</p>
                           </div>
-                          <div className="w-12 h-1.5 rounded-full bg-[#5B4A3E]/10 overflow-hidden">
+                          <div className="w-12 h-1.5 rounded-full bg-[#3B0E1A]/10 overflow-hidden">
                             <div
-                              className={cn("h-full rounded-full transition-all", full ? "bg-[#f87171]" : "bg-[#5B4A3E]")}
+                              className={cn("h-full rounded-full transition-all", full ? "bg-[#f87171]" : "bg-[#3B0E1A]")}
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <ChevronRight size={14} className="text-[#2A211B]/20 group-hover:text-[#5B4A3E]/60 transition-colors" />
+                          <ChevronRight size={14} className="text-[#1A060B]/20 group-hover:text-[#3B0E1A]/60 transition-colors" />
                         </div>
                       </button>
                     );
@@ -738,7 +738,7 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
         })}
 
         {!isLoading && classes.length === 0 && (
-          <div className="text-center py-16 text-[#2A211B]/25 text-sm">
+          <div className="text-center py-16 text-[#1A060B]/25 text-sm">
             <Calendar size={28} className="mx-auto mb-2 opacity-30" />
             No hay clases programadas esta semana
           </div>
@@ -758,8 +758,8 @@ const BookingsList = () => {
         <div className="admin-page max-w-3xl">
           <div className="mb-7 flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-[#2A211B] mb-1">Reservas</h1>
-              <p className="text-sm text-[#2A211B]/35">
+              <h1 className="text-3xl font-bold text-[#1A060B] mb-1">Reservas</h1>
+              <p className="text-sm text-[#1A060B]/35">
                 {selectedClassId
                   ? "Lista de alumnos · check-in y asistencia"
                   : "Selecciona una clase para ver su lista de alumnos"}

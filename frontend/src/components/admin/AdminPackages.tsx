@@ -93,8 +93,8 @@ const AdminPackages = () => {
   };
 
   const CATEGORY_BADGE: Record<Package["category"], string> = {
-    pilates: "bg-[#D5C4B8]/20 text-[#D5C4B8]",
-    bienestar: "bg-[#5B4A3E]/20 text-[#5B4A3E]",
+    pilates: "bg-[#C9A5A8]/20 text-[#C9A5A8]",
+    bienestar: "bg-[#3B0E1A]/20 text-[#3B0E1A]",
   };
 
   return (
@@ -218,7 +218,7 @@ const AdminPackages = () => {
 
       {/* Delete confirm */}
       {deleteId && (
-        <div className="fixed inset-0 bg-[#5B4A3E]/20 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[#3B0E1A]/20 flex items-center justify-center z-50 p-4">
           <div className="bg-background border border-border rounded-2xl p-6 max-w-sm w-full">
             <h3 className="font-semibold text-foreground mb-2">Eliminar paquete</h3>
             <p className="text-sm text-muted-foreground mb-6">Esta accion no se puede deshacer.</p>

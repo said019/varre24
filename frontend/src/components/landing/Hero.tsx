@@ -13,14 +13,14 @@ export function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "12%"]);
 
   return (
-    <section ref={ref} className="relative h-[100svh] min-h-[600px] overflow-hidden bg-[#2A211B]">
+    <section ref={ref} className="relative h-[100svh] min-h-[600px] overflow-hidden bg-[#1A060B]">
       <motion.img
         src={heroPhoto}
         alt="VARRE24 — estudio de Barre y Pilates en Nápoles, CDMX"
         style={{ y }}
         className="absolute inset-0 h-[112%] w-full object-cover"
       />
-      <div className="absolute inset-0 bg-[#2A211B]/45" />
+      <div className="absolute inset-0 bg-[#1A060B]/45" />
 
       <motion.div
         initial={reduce ? false : { opacity: 0, y: 14 }}
@@ -33,15 +33,15 @@ export function Hero() {
           alt="VARRE24"
           className="w-[min(78vw,540px)] drop-shadow-[0_2px_24px_rgba(20,12,8,0.45)]"
         />
-        <span className="mt-5 text-[clamp(0.66rem,1.5vw,0.95rem)] tracking-[0.42em] uppercase text-[#F6F2EB]/85">
+        <span className="mt-5 text-[clamp(0.66rem,1.5vw,0.95rem)] tracking-[0.42em] uppercase text-[#F3EFE9]/85">
           Barre &amp; Pilates
         </span>
       </motion.div>
 
       {/* scroll cue */}
-      <div className="absolute inset-x-0 bottom-9 z-10 flex flex-col items-center gap-2 text-[#F6F2EB]/65">
+      <div className="absolute inset-x-0 bottom-9 z-10 flex flex-col items-center gap-2 text-[#F3EFE9]/65">
         <span className="text-[0.58rem] tracking-[0.3em] uppercase">Desliza</span>
-        <span className="h-8 w-px bg-[#F6F2EB]/35" />
+        <span className="h-8 w-px bg-[#F3EFE9]/35" />
       </div>
     </section>
   );

@@ -49,23 +49,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* ── VARRE24 brand palette (estética real: espresso · oat · cream) ── */
+        /* ── VARRE24 brand palette (MODDO: burgundy · dusty rose · ivory) ── */
         brand: {
-          50:  "#F6F2EB",
-          100: "#E8DED4",
-          200: "#D5C4B8",
-          300: "#B5A091",
-          400: "#5B4A3E",
-          500: "#4A3D32",
-          600: "#3A2F26",
-          700: "#2A211B",
-          cream: "#E8DED4",
+          50:  "#F3EFE9",
+          100: "#EADCDD",
+          200: "#C9A5A8",
+          300: "#C2A6A0",
+          400: "#3B0E1A",
+          500: "#320C16",
+          600: "#260910",
+          700: "#1A060B",
+          cream: "#EADCDD",
         },
         /* alias compat: tokens viejos siguen apuntando a la nueva paleta */
         punto: {
-          cream: "#E8DED4",
-          green: "#B5A593",
-          taupe: "#5B4A3E",
+          cream: "#EADCDD",
+          green: "#C2A6A0",
+          taupe: "#3B0E1A",
         },
       },
       borderRadius: {

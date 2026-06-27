@@ -21,21 +21,21 @@ const BADGE_STYLES: Record<
   { background: string; color: string; border: string; label: string }
 > = {
   pilates: {
-    background: "#F6F2EB",
-    color:      "#5B4A3E",
-    border:     "1px solid #E8DDD5",
+    background: "#F3EFE9",
+    color:      "#3B0E1A",
+    border:     "1px solid #E9D9D9",
     label:      "PILATES",
   },
   barre: {
-    background: "#E8DED4",
-    color:      "#3A2F26",
-    border:     "1px solid #B5A593",
+    background: "#EADCDD",
+    color:      "#260910",
+    border:     "1px solid #C2A6A0",
     label:      "BARRE",
   },
   especial: {
-    background: "#CBBFAF",
-    color:      "#4A3D32",
-    border:     "1px solid #B5A593",
+    background: "#C9A5A8",
+    color:      "#320C16",
+    border:     "1px solid #C2A6A0",
     label:      "ESPECIAL",
   },
 };

@@ -18,7 +18,7 @@ type FormValues = { email: string; password: string };
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#5B4A3E] text-[#F6F2EB] text-[0.65rem] font-semibold flex items-center justify-center mt-0.5 tabular">
+      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#3B0E1A] text-[#F3EFE9] text-[0.65rem] font-semibold flex items-center justify-center mt-0.5 tabular">
         {n}
       </span>
       <span className="flex-1">{children}</span>
@@ -79,8 +79,8 @@ const Login = () => {
 
   const heading = (
     <>
-      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#5B4A3E] font-semibold mb-3 flex items-center gap-2">
-        <span className="w-5 h-[1px] bg-[#5B4A3E] inline-block" />
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#3B0E1A] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[1px] bg-[#3B0E1A] inline-block" />
         Bienvenida de vuelta
       </p>
       <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">
@@ -108,7 +108,7 @@ const Login = () => {
             autoComplete="email"
             placeholder="tu@email.com"
             {...register("email")}
-            className="font-alilato bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
           />
           {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
         </div>
@@ -117,7 +117,7 @@ const Login = () => {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Contraseña</label>
-            <Link to="/auth/forgot-password" className="text-xs text-[#5B4A3E] hover:text-[#5B4A3E]/80 transition-colors no-underline">
+            <Link to="/auth/forgot-password" className="text-xs text-[#3B0E1A] hover:text-[#3B0E1A]/80 transition-colors no-underline">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
@@ -127,7 +127,7 @@ const Login = () => {
               autoComplete="current-password"
               placeholder="••••••••"
               {...register("password")}
-              className="font-alilato w-full bg-[#FBF8F4] border border-[#E8DDD5] rounded-xl px-4 py-3.5 pr-12 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#5B4A3E] transition-all"
+              className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 pr-12 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             <button
               type="button"
@@ -144,7 +144,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="press mt-2 bg-[#5B4A3E] text-[#F6F2EB] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+          className="press mt-2 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
         >
           {isLoading ? (
             <Loader2 size={16} className="animate-spin" />
@@ -160,7 +160,7 @@ const Login = () => {
       {/* crear cuenta — inline, minimal */}
       <p className="mt-7 text-center text-sm text-muted-foreground font-alilato">
         ¿Primera vez?{" "}
-        <Link to="/auth/register" className="text-[#5B4A3E] font-medium underline-offset-4 hover:underline">
+        <Link to="/auth/register" className="text-[#3B0E1A] font-medium underline-offset-4 hover:underline">
           Crea tu cuenta
         </Link>
       </p>
@@ -175,7 +175,7 @@ const Login = () => {
             catch { setResetting(false); }
           }}
           disabled={resetting}
-          className="inline-flex items-center justify-center gap-1.5 text-[0.72rem] text-muted-foreground/70 hover:text-[#5B4A3E] transition-colors disabled:opacity-60 font-alilato"
+          className="inline-flex items-center justify-center gap-1.5 text-[0.72rem] text-muted-foreground/70 hover:text-[#3B0E1A] transition-colors disabled:opacity-60 font-alilato"
         >
           {resetting ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
           {resetting ? "Reiniciando…" : "¿Problemas para entrar? Reiniciar la app"}
@@ -184,10 +184,10 @@ const Login = () => {
 
       {/* PWA Install — colapsado por defecto para mantener la vista limpia */}
       {!isStandalone && (
-        <details className="group mt-10 rounded-2xl border border-[#E8DDD5] bg-[#FBF8F4] px-5 py-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-alilato text-[#3A2F26]">
+        <details className="group mt-10 rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] px-5 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-alilato text-[#260910]">
             <span className="inline-flex items-center gap-2">
-              <Smartphone size={14} className="text-[#5B4A3E]" />
+              <Smartphone size={14} className="text-[#3B0E1A]" />
               Instala VARRE24 en tu teléfono
             </span>
             <span className="text-muted-foreground/60 transition-transform group-open:rotate-180">⌄</span>
@@ -195,7 +195,7 @@ const Login = () => {
           <div className="mt-4">
 
           {/* Tabs iOS / Android */}
-          <div className="inline-flex p-0.5 bg-[#FBF8F4] rounded-full border border-[#5B4A3E]/15 mb-4">
+          <div className="inline-flex p-0.5 bg-[#FCF8F7] rounded-full border border-[#3B0E1A]/15 mb-4">
             {(["android", "ios"] as const).map((p) => (
               <button
                 key={p}
@@ -203,8 +203,8 @@ const Login = () => {
                 onClick={() => setInstallPlatform(p)}
                 className={`press px-4 py-1.5 rounded-full text-[0.7rem] tracking-[0.14em] uppercase font-semibold transition-colors ${
                   installPlatform === p
-                    ? "bg-[#5B4A3E] text-[#F6F2EB] shadow-soft"
-                    : "text-[#3A2F26] hover:text-[#2A211B]"
+                    ? "bg-[#3B0E1A] text-[#F3EFE9] shadow-soft"
+                    : "text-[#260910] hover:text-[#1A060B]"
                 }`}
               >
                 <Smartphone size={11} className="inline -mt-0.5 mr-1.5" />
@@ -214,20 +214,20 @@ const Login = () => {
           </div>
 
           {/* Pasos */}
-          <ol className="space-y-2.5 text-[0.82rem] text-[#2A211B]/85 leading-[1.55] font-alilato">
+          <ol className="space-y-2.5 text-[0.82rem] text-[#1A060B]/85 leading-[1.55] font-alilato">
             {installPlatform === "ios" ? (
               <>
                 <Step n={1}>
                   Abre el sitio en <span className="font-semibold">Safari</span> y toca el botón
-                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FBF8F4] border border-[#5B4A3E]/20 text-[#5B4A3E]">
+                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FCF8F7] border border-[#3B0E1A]/20 text-[#3B0E1A]">
                     <Share size={11} />
-                    <span className="text-[0.7rem] font-medium text-[#2A211B]">Compartir</span>
+                    <span className="text-[0.7rem] font-medium text-[#1A060B]">Compartir</span>
                   </span>
                 </Step>
                 <Step n={2}>
                   Desliza y elige
-                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FBF8F4] border border-[#5B4A3E]/20 text-[0.74rem] font-medium">
-                    <Plus size={11} className="text-[#5B4A3E]" /> Agregar a pantalla de inicio
+                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FCF8F7] border border-[#3B0E1A]/20 text-[0.74rem] font-medium">
+                    <Plus size={11} className="text-[#3B0E1A]" /> Agregar a pantalla de inicio
                   </span>
                 </Step>
                 <Step n={3}>
@@ -238,15 +238,15 @@ const Login = () => {
               <>
                 <Step n={1}>
                   Abre el sitio en <span className="font-semibold">Chrome</span> y toca el menú
-                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FBF8F4] border border-[#5B4A3E]/20">
-                    <MoreVertical size={11} className="text-[#5B4A3E]" />
+                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FCF8F7] border border-[#3B0E1A]/20">
+                    <MoreVertical size={11} className="text-[#3B0E1A]" />
                     <span className="text-[0.7rem] font-medium">Más</span>
                   </span>
                   arriba a la derecha
                 </Step>
                 <Step n={2}>
                   Toca
-                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FBF8F4] border border-[#5B4A3E]/20 text-[0.74rem] font-medium">
+                  <span className="inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-md bg-[#FCF8F7] border border-[#3B0E1A]/20 text-[0.74rem] font-medium">
                     Instalar app
                   </span>
                   o <span className="font-semibold">Agregar a pantalla de inicio</span>

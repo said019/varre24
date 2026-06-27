@@ -94,22 +94,22 @@ export function ProfilePhotoUpload({
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
-        <Avatar className={`${sizeClass} rounded-2xl border border-[#E4DACE]`}>
+        <Avatar className={`${sizeClass} rounded-2xl border border-[#E8D7D6]`}>
           <AvatarImage src={photoSrc} alt="Foto de perfil" className="rounded-2xl" />
-          <AvatarFallback className="rounded-2xl bg-[#5B4A3E] font-bebas text-2xl font-light tracking-wide text-[#F6F2EB]">
+          <AvatarFallback className="rounded-2xl bg-[#3B0E1A] font-bebas text-2xl font-light tracking-wide text-[#F3EFE9]">
             {initials}
           </AvatarFallback>
         </Avatar>
         {mutation.isPending && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#3A2F26]/55">
-            <Loader2 className="h-6 w-6 animate-spin text-[#F6F2EB]" />
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#260910]/55">
+            <Loader2 className="h-6 w-6 animate-spin text-[#F3EFE9]" />
           </div>
         )}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={mutation.isPending}
-          className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 items-center justify-center rounded-xl bg-[#5B4A3E] text-[#F6F2EB] transition-colors hover:bg-[#4A3D32] active:scale-95 disabled:opacity-50"
+          className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 items-center justify-center rounded-xl bg-[#3B0E1A] text-[#F3EFE9] transition-colors hover:bg-[#320C16] active:scale-95 disabled:opacity-50"
           aria-label="Cambiar foto"
         >
           <Camera size={14} strokeWidth={1.75} />
@@ -128,7 +128,7 @@ export function ProfilePhotoUpload({
         size="sm"
         disabled={mutation.isPending}
         onClick={() => fileInputRef.current?.click()}
-        className="font-alilato text-[0.7rem] uppercase tracking-[0.16em] text-[#8A8077] hover:bg-transparent hover:text-[#5B4A3E]"
+        className="font-alilato text-[0.7rem] uppercase tracking-[0.16em] text-[#9C8A8B] hover:bg-transparent hover:text-[#3B0E1A]"
       >
         {mutation.isPending ? "Subiendo…" : "Cambiar foto"}
       </Button>

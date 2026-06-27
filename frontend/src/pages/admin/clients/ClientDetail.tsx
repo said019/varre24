@@ -485,7 +485,7 @@ const ClientDetail = () => {
                   return ["booking_created_with_guest", "admin_guest_added", "admin_booking_assigned_with_guest"].includes(r);
                 }).length;
                 return guestEvents > 0 ? (
-                  <p className="text-xs mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#E8DED4] text-[#3A2F26] px-3 py-1">
+                  <p className="text-xs mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#EADCDD] text-[#260910] px-3 py-1">
                     👤 Invitadas que ha llevado: <strong>{guestEvents}</strong> · {guestEvents} crédito(s) extra
                   </p>
                 ) : null;
@@ -543,8 +543,8 @@ const ClientDetail = () => {
                 Comparte esta contraseña temporal con <strong className="text-foreground">{resetResult?.name}</strong> ({resetResult?.email}).
                 Podrá entrar con ella y cambiarla después desde su perfil.
               </p>
-              <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-[#F6F2EB]/60 px-3 py-2.5">
-                <code className="text-lg font-bold tracking-wide text-[#2A211B]">{resetResult?.tempPassword}</code>
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-[#F3EFE9]/60 px-3 py-2.5">
+                <code className="text-lg font-bold tracking-wide text-[#1A060B]">{resetResult?.tempPassword}</code>
                 <Button
                   variant="ghost" size="icon"
                   onClick={async () => {

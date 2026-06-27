@@ -81,9 +81,9 @@ const BookingCard = ({
   const showLateMessage = policy.enabled && booking.status === "confirmed" && !isPast && !insideWindow && policy.late_cancel_message;
   const hasReview = Boolean(booking.has_review);
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
+    <div className="flex items-center justify-between rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4">
       <div className="space-y-1">
-        <p className="font-alilato font-medium text-[#2A211B]">{booking.class_type_name}</p>
+        <p className="font-alilato font-medium text-[#1A060B]">{booking.class_type_name}</p>
         <p className="font-alilato text-sm text-muted-foreground">
           {booking.start_time ? format(safeParse(booking.start_time), "EEEE d MMM · HH:mm", { locale: es }) : "—"}
         </p>
@@ -91,7 +91,7 @@ const BookingCard = ({
           <p className="text-xs text-muted-foreground">{booking.instructor_name}</p>
         )}
         {booking.guest_name && (
-          <span className="inline-flex items-center gap-1 mt-1.5 rounded-full bg-[#D5C4B8]/25 border border-[#5B4A3E]/20 px-2 py-0.5 text-[10.5px] font-semibold text-[#3A2F26]">
+          <span className="inline-flex items-center gap-1 mt-1.5 rounded-full bg-[#C9A5A8]/25 border border-[#3B0E1A]/20 px-2 py-0.5 text-[10.5px] font-semibold text-[#260910]">
             +1 invitada · {booking.guest_name}
           </span>
         )}
@@ -104,7 +104,7 @@ const BookingCard = ({
           {STATUS_LABELS[booking.status] ?? booking.status}
         </Badge>
         {canRemoveGuest && (
-          <Button variant="ghost" size="sm" className="text-[#3A2F26]" onClick={() => onRemoveGuest(booking.id)}>
+          <Button variant="ghost" size="sm" className="text-[#260910]" onClick={() => onRemoveGuest(booking.id)}>
             Quitar invitada
           </Button>
         )}
@@ -286,8 +286,8 @@ const MyBookings = () => {
         <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-6">
           <div className="flex items-end justify-between gap-3 flex-wrap">
             <div>
-              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Tu actividad</p>
-              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Mis reservas</h1>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B]">Tu actividad</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">Mis reservas</h1>
             </div>
             {policy.enabled && policy.free_cancellations_per_membership > 0 && (
               loadingQuota ? (
@@ -295,17 +295,17 @@ const MyBookings = () => {
                 // antes de que /bookings/cancellation-quota descuente las usadas.
                 <Skeleton className="h-4 w-56" />
               ) : (
-                <div className="flex items-center gap-2 text-xs text-[#4A3D32]">
+                <div className="flex items-center gap-2 text-xs text-[#320C16]">
                   <span>Cancelaciones gratis en esta membresía:</span>
                   <span className="flex gap-1" aria-label={`${quota.remaining} de ${quota.free_per_membership} disponibles`}>
                     {Array.from({ length: quota.free_per_membership }).map((_, i) => (
                       <span
                         key={i}
-                        className={`inline-block w-2 h-2 rounded-full ${i < quota.used ? "bg-[#5B4A3E]/25" : "bg-[#1a6b0a]"}`}
+                        className={`inline-block w-2 h-2 rounded-full ${i < quota.used ? "bg-[#3B0E1A]/25" : "bg-[#1a6b0a]"}`}
                       />
                     ))}
                   </span>
-                  <span className="font-semibold text-[#2A211B]">
+                  <span className="font-semibold text-[#1A060B]">
                     {quota.remaining} restante{quota.remaining === 1 ? "" : "s"}
                   </span>
                 </div>

@@ -28,9 +28,9 @@ import { useToast } from "@/hooks/use-toast";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 const CATEGORIES = [
-  { value: "pilates", label: "Pilates",        color: "bg-[#D5C4B8]/20 text-[#D5C4B8] border-[#D5C4B8]/30" },
-  { value: "bienestar", label: "Bienestar",    color: "bg-[#5B4A3E]/20 text-[#5B4A3E] border-[#5B4A3E]/30" },
-  { value: "all",     label: "Todas (sin filtro)", color: "bg-[#5B4A3E]/10 text-[#2A211B]/60 border-[#5B4A3E]/20" },
+  { value: "pilates", label: "Pilates",        color: "bg-[#C9A5A8]/20 text-[#C9A5A8] border-[#C9A5A8]/30" },
+  { value: "bienestar", label: "Bienestar",    color: "bg-[#3B0E1A]/20 text-[#3B0E1A] border-[#3B0E1A]/30" },
+  { value: "all",     label: "Todas (sin filtro)", color: "bg-[#3B0E1A]/10 text-[#1A060B]/60 border-[#3B0E1A]/20" },
 ] as const;
 
 type CategoryValue = (typeof CATEGORIES)[number]["value"];

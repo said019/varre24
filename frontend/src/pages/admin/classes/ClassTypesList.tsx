@@ -18,9 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 const PALETTE_COLORS = [
-  { label: "Sage", value: "#D5C4B8" },
-  { label: "Taupe", value: "#5B4A3E" },
-  { label: "Crema", value: "#E8DED4" },
+  { label: "Sage", value: "#C9A5A8" },
+  { label: "Taupe", value: "#3B0E1A" },
+  { label: "Crema", value: "#EADCDD" },
   { label: "Azul", value: "#3B82F6" },
   { label: "Esmeralda", value: "#10B981" },
   { label: "Naranja", value: "#F97316" },
@@ -30,7 +30,7 @@ const PALETTE_COLORS = [
 
 const typeSchema = z.object({
   name: z.string().min(1),
-  color: z.string().default("#D5C4B8"),
+  color: z.string().default("#C9A5A8"),
   defaultDuration: z.coerce.number().min(1),
   maxCapacity: z.coerce.number().min(1),
   isActive: z.boolean().default(true),
@@ -51,7 +51,7 @@ const ClassTypesList = () => {
   });
   const types = Array.isArray(data?.data) ? data.data : [];
 
-  const form = useForm<TypeFormData>({ resolver: zodResolver(typeSchema), defaultValues: { color: "#D5C4B8", defaultDuration: 60, maxCapacity: 10, isActive: true } });
+  const form = useForm<TypeFormData>({ resolver: zodResolver(typeSchema), defaultValues: { color: "#C9A5A8", defaultDuration: 60, maxCapacity: 10, isActive: true } });
 
   const createMutation = useMutation({
     mutationFn: (d: TypeFormData) => api.post("/class-types", d),
@@ -79,7 +79,7 @@ const ClassTypesList = () => {
     setEditing(t);
     setOpen(true);
   };
-  const openCreate = () => { form.reset({ color: "#D5C4B8", defaultDuration: 60, maxCapacity: 10, isActive: true }); setEditing(null); setOpen(true); };
+  const openCreate = () => { form.reset({ color: "#C9A5A8", defaultDuration: 60, maxCapacity: 10, isActive: true }); setEditing(null); setOpen(true); };
 
   return (
     <AuthGuard>

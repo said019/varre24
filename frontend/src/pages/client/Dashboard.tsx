@@ -113,25 +113,25 @@ const Dashboard = () => {
 
           {/* ── Saludo editorial ── */}
           <section>
-            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077] first-letter:uppercase">
+            <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B] first-letter:uppercase">
               {todayLabel}
             </p>
-            <h1 className="font-bebas mt-3 text-[clamp(2.2rem,5vw,3.2rem)] font-light leading-[1.05] tracking-[0.01em] text-[#2A211B]">
+            <h1 className="font-bebas mt-3 text-[clamp(2.2rem,5vw,3.2rem)] font-light leading-[1.05] tracking-[0.01em] text-[#1A060B]">
               Hola{firstName ? `, ${firstName}` : ""}
             </h1>
-            <p className="font-alilato mt-3 text-sm text-[#5B4A3E]/75">
+            <p className="font-alilato mt-3 text-sm text-[#3B0E1A]/75">
               Tu resumen de clases y membresía en VARRE24.
             </p>
           </section>
 
           {/* ── Resumen — fila con hairlines ── */}
-          <section className="grid grid-cols-3 border-y border-[#E4DACE]">
+          <section className="grid grid-cols-3 border-y border-[#E8D7D6]">
             {SUMMARY.map((s, i) => (
-              <div key={s.label} className={`py-5 pr-4 ${i > 0 ? "border-l border-[#E4DACE] pl-4 sm:pl-6" : ""}`}>
-                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#8A8077]">{s.label}</p>
+              <div key={s.label} className={`py-5 pr-4 ${i > 0 ? "border-l border-[#E8D7D6] pl-4 sm:pl-6" : ""}`}>
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">{s.label}</p>
                 {s.loading
                   ? <Skeleton className="mt-2.5 h-5 w-16" />
-                  : <p className="font-alilato mt-2.5 truncate text-[0.95rem] font-medium text-[#2A211B]">{s.value}</p>}
+                  : <p className="font-alilato mt-2.5 truncate text-[0.95rem] font-medium text-[#1A060B]">{s.value}</p>}
               </div>
             ))}
           </section>
@@ -142,13 +142,13 @@ const Dashboard = () => {
               <Link
                 key={to}
                 to={to}
-                className="group flex items-center justify-between rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] px-5 py-4 no-underline transition-colors hover:border-[#5B4A3E]/45"
+                className="group flex items-center justify-between rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] px-5 py-4 no-underline transition-colors hover:border-[#3B0E1A]/45"
               >
                 <span className="flex items-center gap-3">
-                  <Icon size={17} className="text-[#5B4A3E]" strokeWidth={1.75} />
-                  <span className="font-alilato text-sm text-[#2A211B]">{label}</span>
+                  <Icon size={17} className="text-[#3B0E1A]" strokeWidth={1.75} />
+                  <span className="font-alilato text-sm text-[#1A060B]">{label}</span>
                 </span>
-                <ArrowRight size={14} className="text-[#8A8077] transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight size={14} className="text-[#9C8A8B] transition-transform group-hover:translate-x-0.5" />
               </Link>
             ))}
           </section>
@@ -156,24 +156,24 @@ const Dashboard = () => {
           {/* ── Mi membresía ── */}
           <section>
             <div className="mb-4 flex items-end justify-between gap-3">
-              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">Mi membresía</p>
-              <Link to="/app/checkout" className="font-alilato text-xs text-[#5B4A3E] no-underline hover:underline underline-offset-4">Ver planes</Link>
+              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">Mi membresía</p>
+              <Link to="/app/checkout" className="font-alilato text-xs text-[#3B0E1A] no-underline hover:underline underline-offset-4">Ver planes</Link>
             </div>
             {loadingMembership ? (
               <Skeleton className="h-44 w-full rounded-2xl" />
             ) : membership ? (
               <MembershipCard membership={membership} />
             ) : (
-              <div className="flex flex-col gap-5 rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-5 rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-6 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="font-alilato text-base font-medium text-[#2A211B]">No tienes membresía activa</p>
-                  <p className="font-alilato mt-1 max-w-[48ch] text-sm text-[#5B4A3E]/70">
+                  <p className="font-alilato text-base font-medium text-[#1A060B]">No tienes membresía activa</p>
+                  <p className="font-alilato mt-1 max-w-[48ch] text-sm text-[#3B0E1A]/70">
                     Elige un plan para reservar clases y ver tus créditos.
                   </p>
                 </div>
                 <Link
                   to="/app/checkout"
-                  className="press inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-[#5B4A3E] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                  className="press inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-[#3B0E1A] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
                 >
                   Adquirir membresía
                 </Link>
@@ -184,43 +184,43 @@ const Dashboard = () => {
           {/* ── Próximas clases ── */}
           <section>
             <div className="mb-4 flex items-end justify-between gap-3">
-              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">Próximas clases</p>
-              <Link to="/app/classes" className="font-alilato text-xs text-[#5B4A3E] no-underline hover:underline underline-offset-4">Reservar</Link>
+              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">Próximas clases</p>
+              <Link to="/app/classes" className="font-alilato text-xs text-[#3B0E1A] no-underline hover:underline underline-offset-4">Reservar</Link>
             </div>
             {loadingBookings ? (
               <Skeleton className="h-24 w-full rounded-2xl" />
             ) : upcomingBookings.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-[#E4DACE] bg-[#FBF8F4] p-8 text-center">
-                <p className="font-alilato text-sm font-medium text-[#2A211B]">No tienes clases próximas</p>
-                <p className="font-alilato mt-1 text-sm text-[#5B4A3E]/60">Reserva desde el calendario semanal del estudio.</p>
+              <div className="rounded-2xl border border-dashed border-[#E8D7D6] bg-[#FCF8F7] p-8 text-center">
+                <p className="font-alilato text-sm font-medium text-[#1A060B]">No tienes clases próximas</p>
+                <p className="font-alilato mt-1 text-sm text-[#3B0E1A]/60">Reserva desde el calendario semanal del estudio.</p>
                 <Link
                   to="/app/classes"
-                  className="press mt-5 inline-flex items-center justify-center rounded-full bg-[#5B4A3E] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                  className="press mt-5 inline-flex items-center justify-center rounded-full bg-[#3B0E1A] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
                 >
                   Reservar ahora
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-[#E4DACE] border-y border-[#E4DACE]">
+              <div className="divide-y divide-[#E8D7D6] border-y border-[#E8D7D6]">
                 {upcomingBookings.map((b) => (
                   <div key={b.id} className="flex items-center gap-4 py-4">
                     <div className="w-12 shrink-0 text-center">
-                      <p className="font-bebas text-xl font-light leading-none tracking-tight text-[#2A211B] tabular">
+                      <p className="font-bebas text-xl font-light leading-none tracking-tight text-[#1A060B] tabular">
                         {b.start_time ? format(safeParse(b.start_time), "HH:mm") : "—"}
                       </p>
-                      <p className="font-alilato mt-1 text-[10px] uppercase tracking-wide text-[#8A8077]">
+                      <p className="font-alilato mt-1 text-[10px] uppercase tracking-wide text-[#9C8A8B]">
                         {b.start_time ? format(safeParse(b.start_time), "EEE d", { locale: es }) : ""}
                       </p>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-alilato truncate text-sm font-medium text-[#2A211B]">{b.class_type_name}</p>
-                      <p className="font-alilato mt-0.5 truncate text-xs text-[#5B4A3E]/60">{b.instructor_name ?? b.class_type_name}</p>
+                      <p className="font-alilato truncate text-sm font-medium text-[#1A060B]">{b.class_type_name}</p>
+                      <p className="font-alilato mt-0.5 truncate text-xs text-[#3B0E1A]/60">{b.instructor_name ?? b.class_type_name}</p>
                     </div>
                     <span
                       className={`font-alilato shrink-0 rounded-full px-3 py-1 text-[0.64rem] uppercase tracking-[0.1em] ${
                         b.status === "waitlist"
-                          ? "border border-[#E4DACE] text-[#8A8077]"
-                          : "bg-[#5B4A3E] text-[#F6F2EB]"
+                          ? "border border-[#E8D7D6] text-[#9C8A8B]"
+                          : "bg-[#3B0E1A] text-[#F3EFE9]"
                       }`}
                     >
                       {b.status === "waitlist" ? "Espera" : "Confirmada"}
@@ -235,36 +235,36 @@ const Dashboard = () => {
           {isLowCredits && membership && (
             <Link
               to="/app/checkout"
-              className="flex items-center justify-between gap-4 rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] px-5 py-4 no-underline transition-colors hover:border-[#5B4A3E]/45"
+              className="flex items-center justify-between gap-4 rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] px-5 py-4 no-underline transition-colors hover:border-[#3B0E1A]/45"
             >
               <div>
-                <p className="font-alilato text-sm font-medium text-[#2A211B]">Renueva tu plan</p>
-                <p className="font-alilato mt-0.5 text-xs text-[#5B4A3E]/60">
+                <p className="font-alilato text-sm font-medium text-[#1A060B]">Renueva tu plan</p>
+                <p className="font-alilato mt-0.5 text-xs text-[#3B0E1A]/60">
                   {classesRemaining} clase{classesRemaining === 1 ? "" : "s"} restantes
                 </p>
               </div>
-              <ArrowRight size={15} className="shrink-0 text-[#5B4A3E]" />
+              <ArrowRight size={15} className="shrink-0 text-[#3B0E1A]" />
             </Link>
           )}
 
           {/* ── Órdenes pendientes ── */}
           {pendingOrders.length > 0 && (
             <section>
-              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
                 <CreditCard size={12} strokeWidth={1.75} />
                 {pendingOrders.length === 1 ? "Orden pendiente" : "Órdenes pendientes"}
               </p>
               <div className="space-y-3">
                 {pendingOrders.map((o: any) => (
-                  <div key={o.id} className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
+                  <div key={o.id} className="rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-0.5">
-                        <p className="font-alilato text-sm font-medium text-[#2A211B]">{o.plan_name}</p>
-                        <p className="font-alilato text-xs text-[#5B4A3E]/60">
+                        <p className="font-alilato text-sm font-medium text-[#1A060B]">{o.plan_name}</p>
+                        <p className="font-alilato text-xs text-[#3B0E1A]/60">
                           ${Number(o.total_amount).toLocaleString("es-MX")} MXN · {o.payment_method === "card" ? "Tarjeta en línea" : o.payment_method === "cash" ? "Tarjeta (estudio)" : "Transferencia"}
                         </p>
                         {o.order_number && (
-                          <p className="font-mono text-[10px] text-[#8A8077]">Orden: {o.order_number}</p>
+                          <p className="font-mono text-[10px] text-[#9C8A8B]">Orden: {o.order_number}</p>
                         )}
                       </div>
                       <Badge
@@ -283,7 +283,7 @@ const Dashboard = () => {
                     {o.status === "pending_payment" && (
                       <Link
                         to={o.payment_method === "card" ? "/app/orders" : `/app/checkout?orderId=${o.id}`}
-                        className="press mt-3 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#5B4A3E] py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-[#F6F2EB] no-underline transition-colors hover:bg-[#4A3D32]"
+                        className="press mt-3 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#3B0E1A] py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
                       >
                         {o.payment_method === "card"
                           ? <><CreditCard size={13} /> Completar pago</>
@@ -306,17 +306,17 @@ const Dashboard = () => {
           {/* ── Consultas pendientes ── */}
           {consultations.length > 0 && (
             <section>
-              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#8A8077]">
+              <p className="mb-4 flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
                 <Stethoscope size={12} strokeWidth={1.75} />
                 Consulta pendiente
               </p>
               <div className="space-y-3">
                 {consultations.map((c) => (
-                  <div key={c.id} className="rounded-2xl border border-[#E4DACE] bg-[#FBF8F4] p-4">
+                  <div key={c.id} className="rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-0.5">
-                        <p className="font-alilato text-sm font-medium text-[#2A211B]">{c.complement_name}</p>
-                        <p className="font-alilato text-xs text-[#5B4A3E]/60">Especialista: {c.specialist}</p>
+                        <p className="font-alilato text-sm font-medium text-[#1A060B]">{c.complement_name}</p>
+                        <p className="font-alilato text-xs text-[#3B0E1A]/60">Especialista: {c.specialist}</p>
                         {c.status === "scheduled" && c.scheduled_date && (
                           <p className="mt-1 flex items-center gap-1 text-xs font-medium text-green-700">
                             <CalendarCheck size={11} />
@@ -337,7 +337,7 @@ const Dashboard = () => {
                       </p>
                     )}
                     {c.notes && (
-                      <p className="mt-2 font-alilato text-xs italic text-[#5B4A3E]/50">Nota: {c.notes}</p>
+                      <p className="mt-2 font-alilato text-xs italic text-[#3B0E1A]/50">Nota: {c.notes}</p>
                     )}
                   </div>
                 ))}

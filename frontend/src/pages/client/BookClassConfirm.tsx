@@ -108,11 +108,11 @@ const BookClassConfirm = () => {
             <button
               type="button"
               onClick={() => navigate("/app/classes")}
-              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#8A8077] transition-colors hover:text-[#5B4A3E]"
+              className="flex items-center gap-1.5 font-alilato text-[0.7rem] uppercase tracking-[0.18em] text-[#9C8A8B] transition-colors hover:text-[#3B0E1A]"
             >
               <ArrowLeft size={14} strokeWidth={1.75} /> Volver al calendario
             </button>
-            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Confirmar reserva</h1>
+            <h1 className="mt-4 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">Confirmar reserva</h1>
           </div>
           {isLoading ? (
             <Skeleton className="h-48 w-full rounded-xl" />
@@ -150,13 +150,13 @@ const BookClassConfirm = () => {
                 {loadingMembership ? (
                   <Skeleton className="h-16 w-full rounded-xl" />
                 ) : (
-                <div className="rounded-xl border border-[#5B4A3E]/20 bg-[#5B4A3E]/[0.04] p-3 space-y-3">
+                <div className="rounded-xl border border-[#3B0E1A]/20 bg-[#3B0E1A]/[0.04] p-3 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#2A211B] flex items-center gap-1.5">
-                        <UserPlus size={14} className="text-[#5B4A3E]" /> Llevar invitada
+                      <p className="text-sm font-semibold text-[#1A060B] flex items-center gap-1.5">
+                        <UserPlus size={14} className="text-[#3B0E1A]" /> Llevar invitada
                       </p>
-                      <p className="text-[11px] text-[#4A3D32] leading-snug mt-0.5">
+                      <p className="text-[11px] text-[#320C16] leading-snug mt-0.5">
                         {isTrial
                           ? "La clase de prueba no permite llevar invitada."
                           : "Se cobrarán 2 créditos (uno tuyo, uno de la invitada) y se ocupan 2 lugares."}

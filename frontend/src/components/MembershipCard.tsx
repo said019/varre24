@@ -28,10 +28,10 @@ function detectCategory(planName: string): PlanCategory {
 // ─────────────────────────────────────────────
 const PALETTE = {
   pilates: {
-    gradient:     "linear-gradient(145deg, #F6F2EB 0%, #E8DED4 55%, #F6F2EB 100%)",
+    gradient:     "linear-gradient(145deg, #F3EFE9 0%, #EADCDD 55%, #F3EFE9 100%)",
     noise:        "rgba(181,191,156,0.06)",
-    glow1:        "#D5C4B8",
-    glow2:        "#5B4A3E",
+    glow1:        "#C9A5A8",
+    glow2:        "#3B0E1A",
     accent:       "#6b7a52",
     accentLight:  "#4a5638",
     badge:        "rgba(181,191,156,0.25)",
@@ -43,48 +43,48 @@ const PALETTE = {
     stampBorder:  "rgba(107,122,82,0.35)",
     iconHighlight:"#6b7a52",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#D5C4B8",
+    progressFrom: "#C9A5A8",
     progressTo:   "#6b7a52",
     divider:      "rgba(181,191,156,0.25)",
   },
   bienestar: {
-    gradient:     "linear-gradient(145deg, #E8DED4 0%, #E8DED4 55%, #E8DED4 100%)",
+    gradient:     "linear-gradient(145deg, #EADCDD 0%, #EADCDD 55%, #EADCDD 100%)",
     noise:        "rgba(131,106,93,0.06)",
-    glow1:        "#5B4A3E",
-    glow2:        "#D5C4B8",
-    accent:       "#8A8077",
-    accentLight:  "#3A2F26",
+    glow1:        "#3B0E1A",
+    glow2:        "#C9A5A8",
+    accent:       "#9C8A8B",
+    accentLight:  "#260910",
     badge:        "rgba(131,106,93,0.25)",
-    badgeText:    "#3A2F26",
+    badgeText:    "#260910",
     badgeBorder:  "rgba(122,109,98,0.35)",
     label:        "Bienestar",
     border:       "rgba(131,106,93,0.40)",
     stampBg:      "rgba(131,106,93,0.15)",
     stampBorder:  "rgba(122,109,98,0.35)",
-    iconHighlight:"#8A8077",
+    iconHighlight:"#9C8A8B",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#5B4A3E",
-    progressTo:   "#8A8077",
+    progressFrom: "#3B0E1A",
+    progressTo:   "#9C8A8B",
     divider:      "rgba(131,106,93,0.20)",
   },
   other: {
-    gradient:     "linear-gradient(145deg, #E8DED4 0%, #E8DED4 55%, #E8DED4 100%)",
+    gradient:     "linear-gradient(145deg, #EADCDD 0%, #EADCDD 55%, #EADCDD 100%)",
     noise:        "rgba(131,106,93,0.04)",
-    glow1:        "#5B4A3E",
-    glow2:        "#D5C4B8",
-    accent:       "#8A8077",
-    accentLight:  "#3A2F26",
+    glow1:        "#3B0E1A",
+    glow2:        "#C9A5A8",
+    accent:       "#9C8A8B",
+    accentLight:  "#260910",
     badge:        "rgba(131,106,93,0.20)",
-    badgeText:    "#3A2F26",
+    badgeText:    "#260910",
     badgeBorder:  "rgba(131,106,93,0.35)",
     label:        "Membresía",
     border:       "rgba(131,106,93,0.35)",
     stampBg:      "rgba(131,106,93,0.12)",
     stampBorder:  "rgba(131,106,93,0.30)",
-    iconHighlight:"#8A8077",
+    iconHighlight:"#9C8A8B",
     iconMuted:    "rgba(45,45,45,0.18)",
-    progressFrom: "#5B4A3E",
-    progressTo:   "#D5C4B8",
+    progressFrom: "#3B0E1A",
+    progressTo:   "#C9A5A8",
     divider:      "rgba(131,106,93,0.18)",
   },
 } satisfies Record<PlanCategory, {
@@ -274,7 +274,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
             </span>
 
             <h3
-              className="font-gulfs text-2xl leading-tight text-[#2A211B]"
+              className="font-gulfs text-2xl leading-tight text-[#1A060B]"
               style={{ textShadow: `0 0 24px ${pal.accent}55` }}
             >
               {planName}
@@ -297,7 +297,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
               >
                 {classesRemaining}
               </span>
-              <span className="font-alilato text-[9px] uppercase tracking-widest text-[#2A211B]/40 mt-0.5 leading-tight text-center">
+              <span className="font-alilato text-[9px] uppercase tracking-widest text-[#1A060B]/40 mt-0.5 leading-tight text-center">
                 de {classLimit}<br />clases
               </span>
             </div>
@@ -342,7 +342,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
                     }}
                   />
                 </div>
-                <p className="font-alilato text-[10px] text-[#2A211B]/30">
+                <p className="font-alilato text-[10px] text-[#1A060B]/30">
                   {used} de {classLimit} clases usadas
                 </p>
               </div>
@@ -355,8 +355,8 @@ export function MembershipCard({ membership }: MembershipCardProps) {
           >
             <InfinityIcon size={20} style={{ color: pal.accent }} />
             <div>
-              <p className="font-gulfs text-base text-[#2A211B]">Clases ilimitadas</p>
-              <p className="font-alilato text-[11px] text-[#2A211B]/40">Sin límite de sesiones</p>
+              <p className="font-gulfs text-base text-[#1A060B]">Clases ilimitadas</p>
+              <p className="font-alilato text-[11px] text-[#1A060B]/40">Sin límite de sesiones</p>
             </div>
           </div>
         ) : null}
@@ -367,9 +367,9 @@ export function MembershipCard({ membership }: MembershipCardProps) {
             <div className="h-px w-full" style={{ background: pal.divider }} />
             <div className="flex items-center gap-2">
               <CalendarDays size={12} style={{ color: pal.accent, opacity: 0.8 }} />
-              <span className="font-alilato text-[11px] text-[#2A211B]/40">
+              <span className="font-alilato text-[11px] text-[#1A060B]/40">
                 Vence el{" "}
-                <span className="text-[#2A211B]/65 font-medium">
+                <span className="text-[#1A060B]/65 font-medium">
                   {format(safeParse(endDate), "d 'de' MMMM yyyy", { locale: es })}
                 </span>
                 {daysRemaining !== null && (

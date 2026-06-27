@@ -43,7 +43,7 @@ const typeColor: Record<string, string> = {
   error: "text-red-500",
   warning: "text-amber-500",
   info: "text-blue-500",
-  reminder: "text-[#5B4A3E]",
+  reminder: "text-[#3B0E1A]",
 };
 
 const Notifications = () => {
@@ -69,8 +69,8 @@ const Notifications = () => {
         <div className="mx-auto w-full max-w-lg px-1 py-4 sm:py-8 space-y-6">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#8A8077]">Al día</p>
-              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#2A211B]">Notificaciones</h1>
+              <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B]">Al día</p>
+              <h1 className="mt-2 font-bebas text-[clamp(1.7rem,4vw,2.4rem)] font-light leading-[1.1] tracking-[0.01em] text-[#1A060B]">Notificaciones</h1>
             </div>
             {unreadCount > 0 && (
               <Badge variant="secondary">{unreadCount} nueva{unreadCount !== 1 ? "s" : ""}</Badge>
@@ -96,19 +96,19 @@ const Notifications = () => {
                 return (
                   <div
                     key={n.id}
-                    className={`flex gap-3 rounded-2xl border p-4 transition-colors ${n.unread ? "border-[#D8C9BC] bg-[#F1EAE0]" : "border-[#E4DACE] bg-[#FBF8F4]"}`}
+                    className={`flex gap-3 rounded-2xl border p-4 transition-colors ${n.unread ? "border-[#DCC6CA] bg-[#F4E6EA]" : "border-[#E8D7D6] bg-[#FCF8F7]"}`}
                   >
                     <div className="mt-0.5 flex-shrink-0">
-                      <Icon size={16} strokeWidth={1.75} className={n.unread ? color : "text-[#8A8077]"} />
+                      <Icon size={16} strokeWidth={1.75} className={n.unread ? color : "text-[#9C8A8B]"} />
                     </div>
                     <div className="flex-1 min-w-0 space-y-0.5">
-                      <p className={`font-alilato text-sm font-medium ${n.unread ? "text-[#2A211B]" : "text-[#5B4A3E]/70"}`}>
+                      <p className={`font-alilato text-sm font-medium ${n.unread ? "text-[#1A060B]" : "text-[#3B0E1A]/70"}`}>
                         {n.title}
                       </p>
                       <p className="font-alilato text-xs text-muted-foreground">{n.body}</p>
                       <p className="font-alilato text-xs text-muted-foreground/60">{timeAgo(n.time)}</p>
                     </div>
-                    {n.unread && <div className="mt-1.5 h-2 w-2 rounded-full bg-[#5B4A3E] flex-shrink-0" />}
+                    {n.unread && <div className="mt-1.5 h-2 w-2 rounded-full bg-[#3B0E1A] flex-shrink-0" />}
                   </div>
                 );
               })}
