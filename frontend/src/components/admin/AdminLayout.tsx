@@ -10,6 +10,7 @@ import {
   Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut, Globe, Menu, X,
 } from "lucide-react";
 import { AdminPendingBell } from "./AdminPendingBell";
+import { SHELL_PHOTOS } from "@/components/landing/photoAssets";
 
 const NAV_GROUPS = [
   {
@@ -226,6 +227,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             );
           })}
         </nav>
+
+        {!isCompact && (
+          <div className="px-3 pb-3">
+            <div
+              data-testid="admin-photo-accent"
+              className="overflow-hidden rounded-[6px] border border-[#260910] bg-[#260910]"
+              aria-hidden="true"
+            >
+              <img src={SHELL_PHOTOS.admin.src} alt="" className="h-20 w-full object-cover opacity-80" />
+            </div>
+          </div>
+        )}
 
         <div className="border-t border-[#260910] px-3 py-3 shrink-0 space-y-0.5">
           <Link

@@ -1,5 +1,6 @@
 import { Reveal } from "@/lib/motion";
 import { CLASSES, waLink } from "./data";
+import { CLASS_PHOTOS } from "./photoAssets";
 
 /**
  * Lista editorial minimal — sobre crema, separada por hairlines.
@@ -23,15 +24,23 @@ export function ClassesGallery() {
                 href={waLink(c.name)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group grid grid-cols-1 gap-x-6 gap-y-2 border-b border-[#E8D7D6] py-9 sm:grid-cols-12 sm:items-baseline"
+                className="group grid grid-cols-1 gap-x-6 gap-y-5 border-b border-[#E8D7D6] py-8 sm:grid-cols-12 sm:items-center"
               >
-                <span className="font-alilato text-[0.7rem] tracking-[0.24em] text-[#9C8A8B] sm:col-span-1">
+                <div className="overflow-hidden rounded-[6px] bg-[#E8D7D6] sm:col-span-3 lg:col-span-2">
+                  <img
+                    src={CLASS_PHOTOS[c.key].src}
+                    alt={CLASS_PHOTOS[c.key].alt}
+                    loading="lazy"
+                    className="aspect-[4/3] h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                  />
+                </div>
+                <span className="font-alilato text-[0.7rem] tracking-[0.24em] text-[#9C8A8B] sm:col-span-1 lg:text-center">
                   {c.n}
                 </span>
-                <h3 className="font-bebas text-[clamp(1.6rem,3vw,2.3rem)] font-light leading-none tracking-[0.01em] text-[#1A060B] sm:col-span-4">
+                <h3 className="font-bebas text-[clamp(1.6rem,3vw,2.3rem)] font-light leading-none tracking-[0.01em] text-[#1A060B] sm:col-span-3">
                   {c.name}
                 </h3>
-                <p className="font-alilato text-sm leading-relaxed text-[#3B0E1A]/85 sm:col-span-5">
+                <p className="font-alilato text-sm leading-relaxed text-[#3B0E1A]/85 sm:col-span-3 lg:col-span-4">
                   {c.blurb}
                 </p>
                 <span className="font-alilato mt-1 inline-flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.18em] text-[#3B0E1A] sm:col-span-2 sm:mt-0 sm:justify-end">

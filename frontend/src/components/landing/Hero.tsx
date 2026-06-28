@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
-import heroPhoto from "@/assets/varre24/hero-varre24.jpg";
+import { LANDING_PHOTOS } from "./photoAssets";
 
 /**
  * Hero como el sitio original (varre24fit.com): foto a pantalla completa con el
@@ -15,12 +15,13 @@ export function Hero() {
   return (
     <section ref={ref} className="relative h-[100svh] min-h-[600px] overflow-hidden bg-[#1A060B]">
       <motion.img
-        src={heroPhoto}
-        alt="VARRE24 — estudio de Barre y Pilates en Nápoles, CDMX"
+        src={LANDING_PHOTOS.hero.src}
+        alt={LANDING_PHOTOS.hero.alt}
         style={{ y }}
-        className="absolute inset-0 h-[112%] w-full object-cover"
+        className="absolute inset-0 h-[112%] w-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-[#1A060B]/45" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(26,6,11,0.24)_72%)]" />
 
       <motion.div
         initial={reduce ? false : { opacity: 0, y: 14 }}

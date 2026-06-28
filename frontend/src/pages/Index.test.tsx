@@ -13,6 +13,7 @@ describe("Index landing", () => {
     );
     expect(screen.getAllByText(/BARRE/).length).toBeGreaterThan(0);
     expect(screen.getByText("PILATES MAT")).toBeInTheDocument();
+    expect(screen.getByText("Comunidad VARRE24")).toBeInTheDocument();
     expect(screen.getByText("Alexandra Murillo")).toBeInTheDocument();
     expect(screen.getByText(/Ven a VARRE24/i)).toBeInTheDocument();
   });

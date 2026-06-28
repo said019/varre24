@@ -1,5 +1,6 @@
 import { Reveal } from "@/lib/motion";
 import { EXPERIENCES } from "./data";
+import { EXPERIENCE_PHOTOS } from "./photoAssets";
 
 /**
  * Un único momento oscuro de ritmo — minimal/editorial, celdas con hairlines.
@@ -18,11 +19,19 @@ export function ExperienceClass() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[#F3EFE9]/12 bg-[#F3EFE9]/12 sm:grid-cols-3">
-          {EXPERIENCES.map((e) => (
-            <div key={e.name} className="bg-[#1A060B] p-8">
-              <h3 className="font-bebas text-xl font-light tracking-[0.04em] text-[#C9A5A8]">{e.name}</h3>
-              <p className="font-alilato mt-2 text-sm leading-relaxed text-[#F3EFE9]/65">{e.note}</p>
+        <div className="mt-12 grid gap-px overflow-hidden rounded-[6px] border border-[#F3EFE9]/12 bg-[#F3EFE9]/12 sm:grid-cols-3">
+          {EXPERIENCES.map((e, index) => (
+            <div key={e.name} className="bg-[#1A060B]">
+              <img
+                src={EXPERIENCE_PHOTOS[index].src}
+                alt={EXPERIENCE_PHOTOS[index].alt}
+                loading="lazy"
+                className="h-48 w-full object-cover opacity-90"
+              />
+              <div className="p-8">
+                <h3 className="font-bebas text-xl font-light tracking-[0.04em] text-[#C9A5A8]">{e.name}</h3>
+                <p className="font-alilato mt-2 text-sm leading-relaxed text-[#F3EFE9]/65">{e.note}</p>
+              </div>
             </div>
           ))}
         </div>

@@ -4,6 +4,7 @@ import { Manifesto } from "@/components/landing/Manifesto";
 import { ClassesGallery } from "@/components/landing/ClassesGallery";
 import { Horarios } from "@/components/landing/Horarios";
 import { ExperienceClass } from "@/components/landing/ExperienceClass";
+import { CommunityMoments } from "@/components/landing/CommunityMoments";
 import { FounderSpread } from "@/components/landing/FounderSpread";
 import { PlansTeaser } from "@/components/landing/PlansTeaser";
 import { ContactFooter } from "@/components/landing/ContactFooter";
@@ -18,6 +19,7 @@ export default function Index() {
         <ClassesGallery />
         <Horarios />
         <ExperienceClass />
+        <CommunityMoments />
         <FounderSpread />
         <PlansTeaser />
         <ContactFooter />
