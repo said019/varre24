@@ -80,8 +80,10 @@ const BookingCard = ({
   const canRemoveGuest = !!booking.guest_name && canCancel;
   const showLateMessage = policy.enabled && booking.status === "confirmed" && !isPast && !insideWindow && policy.late_cancel_message;
   const hasReview = Boolean(booking.has_review);
+  const accent = /pilates/i.test(booking.class_type_name ?? "") ? "#C9A5A8" : "#3B0E1A";
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4">
+    <div className="relative flex items-center justify-between overflow-hidden rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-4 pl-5">
+      <span className="absolute bottom-4 left-0 top-4 w-[3px] rounded-full" style={{ backgroundColor: accent }} />
       <div className="space-y-1">
         <p className="font-alilato font-medium text-[#1A060B]">{booking.class_type_name}</p>
         <p className="font-alilato text-sm text-muted-foreground">

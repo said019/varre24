@@ -11,17 +11,17 @@ type RowProps = {
   to?: string;
   onClick?: () => void;
   danger?: boolean;
+  chip?: string;
+  ic?: string;
 };
 
-const ProfileRow = ({ icon: Icon, label, description, to, onClick, danger }: RowProps) => {
+const ProfileRow = ({ icon: Icon, label, description, to, onClick, danger, chip = "bg-[#F4E6EA]", ic = "text-[#3B0E1A]" }: RowProps) => {
   const inner = (
     <>
       <span className="flex items-center gap-4">
-        <Icon
-          size={18}
-          strokeWidth={1.6}
-          className={danger ? "text-[#9B5B53]" : "text-[#3B0E1A]"}
-        />
+        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${danger ? "bg-[#9B5B53]/12" : chip}`}>
+          <Icon size={16} strokeWidth={1.6} className={danger ? "text-[#9B5B53]" : ic} />
+        </span>
         <span className="block">
           <span className={`block font-alilato text-sm font-medium ${danger ? "text-[#9B5B53]" : "text-[#1A060B]"}`}>
             {label}
@@ -95,9 +95,9 @@ const Profile = () => {
                 {user?.phone && (
                   <p className="truncate font-alilato text-sm text-[#3B0E1A]/70">{user.phone}</p>
                 )}
-                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#E8D7D6] px-3 py-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#3B0E1A]" />
-                  <span className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#9C8A8B]">
+                <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#F4E6EA] px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#C9A5A8]" />
+                  <span className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#8A5A5E]">
                     {roleLabel}
                   </span>
                 </span>
@@ -116,12 +116,16 @@ const Profile = () => {
                 icon={User}
                 label="Editar perfil"
                 description="Nombre, teléfono, foto y más"
+                chip="bg-[#F4E6EA]"
+                ic="text-[#3B0E1A]"
               />
               <ProfileRow
                 to="/app/profile/preferences"
                 icon={Bell}
                 label="Preferencias"
                 description="Notificaciones y comunicaciones"
+                chip="bg-[#C9A5A8]/25"
+                ic="text-[#8A5A5E]"
               />
             </div>
           </section>
