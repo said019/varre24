@@ -32,14 +32,22 @@ const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 type ClassCat = "pilates" | "bienestar" | "all";
 
 const CAT_COLORS: Record<ClassCat, { bg: string; text: string; border: string; dot: string }> = {
-  pilates:   { bg: "bg-[#C9A5A8]/15", text: "text-[#4a5638]",  border: "border-[#C9A5A8]/40", dot: "bg-[#6b7a52]"  },
-  bienestar: { bg: "bg-[#3B0E1A]/15", text: "text-[#260910]",  border: "border-[#3B0E1A]/40", dot: "bg-[#9C8A8B]"  },
-  all:       { bg: "bg-[#3B0E1A]/[0.06]",      text: "text-[#1A060B]/70",   border: "border-[#3B0E1A]/20",     dot: "bg-[#3B0E1A]/40"   },
+  pilates:   { bg: "bg-[#C9A5A8]/20", text: "text-[#8A5A5E]", border: "border-[#C9A5A8]/45", dot: "bg-[#C9A5A8]" },
+  bienestar: { bg: "bg-[#806248]/12", text: "text-[#806248]", border: "border-[#806248]/35", dot: "bg-[#806248]" },
+  all:       { bg: "bg-[#3B0E1A]/[0.06]", text: "text-[#3B0E1A]", border: "border-[#3B0E1A]/20", dot: "bg-[#3B0E1A]" },
 };
 
 const CAT_LABELS: Record<ClassCat, string> = {
   pilates: "Pilates", bienestar: "Bienestar", all: "Todas",
 };
+
+// Tono visual por tipo de clase (coherente con el horario público):
+// Barre → burgundy, Pilates → dusty rose.
+function classTone(name: string): { accent: string; text: string } {
+  return /pilates/i.test(name ?? "")
+    ? { accent: "#C9A5A8", text: "text-[#8A5A5E]" }
+    : { accent: "#3B0E1A", text: "text-[#3B0E1A]" };
+}
 
 function inferClassCat(name: string): ClassCat {
   const n = name?.toLowerCase() ?? "";
@@ -89,30 +97,30 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
             <Sparkles size={18} className={colors.text} />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-[#1A060B]">{membership.planName ?? membership.plan_name}</p>
+            <p className="truncate font-alilato text-sm font-medium text-[#1A060B]">{membership.planName ?? membership.plan_name}</p>
             <div className="mt-1 flex items-center gap-2">
               <span className={cn("h-2 w-2 rounded-full", colors.dot)} />
-              <span className={cn("text-[0.68rem] font-bold uppercase tracking-[0.16em]", colors.text)}>
+              <span className={cn("font-alilato text-[0.66rem] font-medium uppercase tracking-[0.16em]", colors.text)}>
                 {CAT_LABELS[cat]}
               </span>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:min-w-[16rem]">
-          <div className="rounded-2xl border border-[#3B0E1A]/10 bg-[#F3EFE9]/70 px-4 py-3">
-            <div className={cn("text-2xl font-bold leading-none", colors.text)}>
+          <div className="rounded-2xl border border-[#E8D7D6] bg-[#F3EFE9]/70 px-4 py-3">
+            <div className={cn("font-bebas text-3xl font-light leading-none", colors.text)}>
               {isUnlimited ? "∞" : remaining}
             </div>
-            <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#320C16]/60">
+            <div className="mt-1 font-alilato text-[0.62rem] uppercase tracking-[0.16em] text-[#9C8A8B]">
               {isUnlimited ? "Ilimitado" : "Clases"}
             </div>
           </div>
           {endDate && (
-            <div className="rounded-2xl border border-[#3B0E1A]/10 bg-[#F3EFE9]/70 px-4 py-3 text-right">
-              <div className="text-sm font-bold text-[#1A060B]">
+            <div className="rounded-2xl border border-[#E8D7D6] bg-[#F3EFE9]/70 px-4 py-3 text-right">
+              <div className="font-alilato text-sm font-medium text-[#1A060B]">
                 {new Date(endDate).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}
               </div>
-              <div className="mt-1 text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-[#320C16]/60">
+              <div className="mt-1 font-alilato text-[0.62rem] uppercase tracking-[0.16em] text-[#9C8A8B]">
                 Vence
               </div>
             </div>
@@ -217,31 +225,28 @@ const BookClasses = () => {
                   Revisa cupos por día y confirma el horario que mejor acompañe tu semana.
                 </p>
               </div>
-              <div className="flex items-center gap-2 self-start rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-1.5 lg:self-auto">
-                <Button
-                  variant="ghost"
-                  size="icon"
+              <div className="flex items-center gap-3 self-start lg:self-auto">
+                <button
+                  type="button"
                   onClick={() => setWeekStart((w) => subWeeks(w, 1))}
-                  className="h-11 w-11 rounded-xl text-[#1A060B] hover:bg-[#3B0E1A]/10"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA]"
                   aria-label="Semana anterior"
                 >
-                  <ChevronLeft size={18} />
-                </Button>
-                <div className="min-w-[12.5rem] px-3 text-center">
-                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#3B0E1A]/55">Semana</p>
-                  <p className="mt-0.5 text-sm font-bold text-[#1A060B]">
-                    {format(weekStart, "d MMM", { locale: es })} – {format(weekEnd, "d MMM yyyy", { locale: es })}
-                  </p>
+                  <ChevronLeft size={18} strokeWidth={1.75} />
+                </button>
+                <div className="rounded-full bg-[#3B0E1A] px-6 py-2.5">
+                  <span className="font-alilato text-[0.8rem] uppercase tracking-[0.14em] text-[#F3EFE9]">
+                    {format(weekStart, "d MMM", { locale: es })} – {format(weekEnd, "d MMM", { locale: es })}
+                  </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <button
+                  type="button"
                   onClick={() => setWeekStart((w) => addWeeks(w, 1))}
-                  className="h-11 w-11 rounded-xl text-[#1A060B] hover:bg-[#3B0E1A]/10"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA]"
                   aria-label="Semana siguiente"
                 >
-                  <ChevronRight size={18} />
-                </Button>
+                  <ChevronRight size={18} strokeWidth={1.75} />
+                </button>
               </div>
             </div>
           </section>
@@ -269,38 +274,42 @@ const BookClasses = () => {
             <div className="rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-[#3B0E1A]/55">Disponibles</p>
+                  <p className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-[#9C8A8B]">Disponibles</p>
                   {/* Gate: evita el flash de "0" antes de que carguen clases/membresía. */}
                   {(loadingClasses || loadingMembership) ? (
-                    <Skeleton className="mt-2 h-8 w-12" />
+                    <Skeleton className="mt-2 h-9 w-12" />
                   ) : (
-                    <p className="mt-2 text-3xl font-bold leading-none text-[#1A060B]">{bookableThisWeek}</p>
+                    <p className="mt-2 font-bebas text-[2.4rem] font-light leading-none text-[#1A060B]">{bookableThisWeek}</p>
                   )}
                 </div>
-                <CalendarDays size={22} className="text-[#3B0E1A]/55" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F4E6EA]">
+                  <CalendarDays size={18} className="text-[#3B0E1A]" strokeWidth={1.75} />
+                </span>
               </div>
             </div>
             <div className="rounded-[1.5rem] border border-emerald-500/18 bg-emerald-50/60 p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-emerald-700/60">Reservadas</p>
+                  <p className="font-alilato text-[0.62rem] uppercase tracking-[0.18em] text-emerald-700/70">Reservadas</p>
                   {/* Gate: evita el flash de "0" antes de que carguen las reservas. */}
                   {loadingBookings ? (
-                    <Skeleton className="mt-2 h-8 w-12" />
+                    <Skeleton className="mt-2 h-9 w-12" />
                   ) : (
-                    <p className="mt-2 text-3xl font-bold leading-none text-emerald-800">{bookedThisWeek}</p>
+                    <p className="mt-2 font-bebas text-[2.4rem] font-light leading-none text-emerald-800">{bookedThisWeek}</p>
                   )}
                 </div>
-                <CheckCircle2 size={22} className="text-emerald-600/65" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100/70">
+                  <CheckCircle2 size={18} className="text-emerald-700" strokeWidth={1.75} />
+                </span>
               </div>
             </div>
           </section>
 
           {/* Filter hint */}
           {membershipCat && membershipCat !== "all" && (
-            <div className="flex items-center gap-2 rounded-2xl border border-[#3B0E1A]/10 bg-white/42 px-4 py-3 text-xs">
+            <div className="flex items-center gap-2 rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] px-4 py-3 text-xs">
               <CheckCircle2 size={13} className={CAT_COLORS[membershipCat].text} />
-              <span className="text-[#320C16]/72">
+              <span className="font-alilato text-[#3B0E1A]/75">
                 Tu membresía <span className={cn("font-semibold", CAT_COLORS[membershipCat].text)}>{CAT_LABELS[membershipCat]}</span> solo permite reservar clases de esa categoría.
               </span>
             </div>
@@ -325,12 +334,14 @@ const BookClasses = () => {
           <section className="overflow-hidden rounded-[2rem] border border-[#E8D7D6] bg-[#FCF8F7]">
             <div className="overflow-x-auto">
               <div className="grid min-w-[980px] grid-cols-7 divide-x divide-[#3B0E1A]/10">
-              {days.map((day, i) => (
+              {days.map((day, i) => {
+                const isToday = format(day, "yyyy-MM-dd") === format(now, "yyyy-MM-dd");
+                return (
                 <div key={i} className="min-h-[36rem] bg-[#F3EFE9]/20">
-                  <div className="sticky top-0 z-[1] border-b border-[#E8D7D6] bg-[#FCF8F7] px-4 py-4 text-center">
-                    <div className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#320C16]/58">{DAYS[i]}</div>
-                    <div className="mt-1 text-2xl font-bold leading-none text-[#1A060B]">{format(day, "d")}</div>
-                    <div className="mt-2 text-[0.68rem] font-semibold text-[#3B0E1A]/58">
+                  <div className={cn("sticky top-0 z-[1] border-b px-4 py-3 text-center", isToday ? "border-[#3B0E1A]/20 bg-[#3B0E1A]" : "border-[#E8D7D6] bg-[#FCF8F7]")}>
+                    <div className={cn("font-alilato text-[0.66rem] uppercase tracking-[0.18em]", isToday ? "text-[#F3EFE9]/80" : "text-[#9C8A8B]")}>{DAYS[i]}</div>
+                    <div className={cn("mt-1 font-bebas text-2xl font-light leading-none", isToday ? "text-[#F3EFE9]" : "text-[#1A060B]")}>{format(day, "d")}</div>
+                    <div className={cn("mt-1.5 font-alilato text-[0.64rem]", isToday ? "text-[#F3EFE9]/70" : "text-[#3B0E1A]/55")}>
                       {classesForDay(day).length} {classesForDay(day).length === 1 ? "clase" : "clases"}
                     </div>
                   </div>
@@ -346,7 +357,7 @@ const BookClasses = () => {
                         const isPast = cls.start_time ? isBefore(safeParse(cls.start_time), now) : true;
                         const isBooked = myBookedClassIds.has(cls.id);
                         const classCat = inferClassCat(cls.class_type_name ?? "");
-                        const c = CAT_COLORS[classCat];
+                        const tone = classTone(cls.class_type_name ?? "");
                         const allowed = canBook(classCat, membershipCat);
                         const trialBlocked = isTrial && !isClassAllowedForTrial(day, format(safeParse(cls.start_time), "HH:mm"));
                         const locked = !isBooked && !isPast && (!allowed || trialBlocked);
@@ -358,24 +369,23 @@ const BookClasses = () => {
                             disabled={disabled}
                             onClick={() => navigate(`/app/classes/${cls.id}`)}
                             className={cn(
-                              "group relative w-full overflow-hidden rounded-2xl border p-4 text-left text-xs transition-all duration-200 active:scale-[0.99]",
+                              "group relative w-full overflow-hidden rounded-2xl border p-4 pl-5 text-left text-xs transition-all duration-200 active:scale-[0.98]",
                               isBooked  && "border-emerald-500/30 bg-emerald-50/80",
-                              !isBooked && !disabled && cn(c.border, "cursor-pointer bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35 hover:bg-[#F4E6EA]"),
-                              !isBooked && isPast  && "cursor-not-allowed border-[#E8D7D6] bg-[#F3EFE9]/40 opacity-50",
-                              !isBooked && locked  && "cursor-not-allowed border-[#E8D7D6] bg-[#F3EFE9]/40 opacity-50",
+                              !isBooked && !disabled && "cursor-pointer border-[#E8D7D6] bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35 hover:bg-[#F4E6EA]/60",
+                              !isBooked && disabled && "cursor-not-allowed border-[#E8D7D6] bg-[#F3EFE9]/40 opacity-50",
                             )}
                           >
+                            <span
+                              className="absolute bottom-3 left-0 top-3 w-[3px] rounded-full"
+                              style={{ backgroundColor: isBooked ? "#059669" : disabled ? "#C9A5A8" : tone.accent }}
+                            />
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", isBooked ? "bg-emerald-500" : c.dot)} />
-                                  <p className={cn("truncate text-sm font-bold", isBooked ? "text-emerald-900" : "text-[#1A060B]")}>
-                                    {cls.class_type_name}
-                                  </p>
-                                  <ClassCategoryBadge classTypeName={cls.class_type_name ?? ""} />
-                                </div>
-                                <p className="mt-3 flex items-center gap-1.5 text-lg font-bold leading-none text-[#1A060B]">
-                                  <Clock size={14} className="text-[#3B0E1A]/58" />
+                                <p className={cn("truncate font-alilato text-sm font-medium", isBooked ? "text-emerald-900" : "text-[#1A060B]")}>
+                                  {cls.class_type_name}
+                                </p>
+                                <p className="mt-2 flex items-center gap-1.5 font-bebas text-xl font-light leading-none text-[#1A060B]">
+                                  <Clock size={13} className="text-[#9C8A8B]" strokeWidth={1.75} />
                                   {cls.start_time ? format(safeParse(cls.start_time), "HH:mm") : "—"}
                                 </p>
                               </div>
@@ -385,22 +395,22 @@ const BookClasses = () => {
                                 </span>
                               )}
                               {locked && (
-                                <span className="rounded-full bg-[#3B0E1A]/8 p-1 text-[#320C16]/45">
+                                <span className="rounded-full bg-[#3B0E1A]/8 p-1 text-[#9C8A8B]">
                                   <Lock size={13} />
                                 </span>
                               )}
                             </div>
-                            <div className="mt-4 flex items-center justify-between border-t border-[#3B0E1A]/10 pt-3">
-                              <span className="text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-[#320C16]/52">
+                            <div className="mt-4 flex items-center justify-between border-t border-[#E8D7D6] pt-3">
+                              <span className="font-alilato text-[0.64rem] uppercase tracking-[0.12em] text-[#9C8A8B]">
                                 50 min
                               </span>
                               <span className={cn(
-                                "rounded-full px-2.5 py-1 text-[0.66rem] font-bold uppercase tracking-[0.12em]",
+                                "font-alilato rounded-full px-2.5 py-1 text-[0.64rem] font-medium uppercase tracking-[0.1em] transition-colors",
                                 isBooked
                                   ? "bg-emerald-100 text-emerald-700"
                                   : disabled
-                                    ? "bg-[#3B0E1A]/8 text-[#320C16]/42"
-                                    : "bg-[#3B0E1A]/10 text-[#3B0E1A]"
+                                    ? "bg-[#3B0E1A]/6 text-[#9C8A8B]"
+                                    : "bg-[#3B0E1A] text-[#F3EFE9]"
                               )}>
                                 {isBooked ? "Reservada" : disabled ? "No disponible" : "Reservar"}
                               </span>
@@ -409,27 +419,28 @@ const BookClasses = () => {
                         );
                       })}
                       {classesForDay(day).length === 0 && (
-                        <div className="rounded-2xl border border-dashed border-[#3B0E1A]/14 p-5 text-center">
-                          <p className="text-xs font-semibold text-[#320C16]/52">Sin clases</p>
+                        <div className="rounded-2xl border border-dashed border-[#E8D7D6] p-5 text-center">
+                          <p className="font-alilato text-xs text-[#9C8A8B]">Sin clases</p>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
               </div>
             </div>
           </section>
 
           {/* Legend — solo estados, no categorías (VARRE24 ofrece un único método) */}
           <div className="flex flex-wrap gap-2">
-            <div className="flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-50/80 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+            <div className="flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-50/80 px-3 py-1.5 font-alilato text-xs font-medium text-emerald-700">
               <CheckCircle2 size={12} /> Reservada
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-[#3B0E1A]/15 bg-white/55 px-3 py-1.5 text-xs font-semibold text-[#3B0E1A]">
+            <div className="flex items-center gap-2 rounded-full border border-[#E8D7D6] bg-[#FCF8F7] px-3 py-1.5 font-alilato text-xs font-medium text-[#3B0E1A]">
               <CalendarDays size={12} /> Disponible
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-[#3B0E1A]/10 bg-[#3B0E1A]/[0.04] px-3 py-1.5 text-xs font-semibold text-[#320C16]/55">
+            <div className="flex items-center gap-2 rounded-full border border-[#E8D7D6] bg-[#3B0E1A]/[0.04] px-3 py-1.5 font-alilato text-xs font-medium text-[#9C8A8B]">
               <Lock size={11} /> No disponible
             </div>
           </div>
