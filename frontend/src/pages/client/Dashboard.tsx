@@ -10,7 +10,6 @@ import ClientLayout from "@/components/layout/ClientLayout";
 import { safeParse } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MembershipCard } from "@/components/MembershipCard";
 import { Calendar, ClipboardList, Stethoscope, Clock, CalendarCheck, ShoppingBag, ArrowRight, Upload, CreditCard } from "lucide-react";
 import type { ClientMembership } from "@/types/membership";
 import type { BookingClient } from "@/types/booking";
@@ -100,49 +99,107 @@ const Dashboard = () => {
     { to: "/app/checkout", icon: ShoppingBag, label: "Comprar plan", chip: "bg-[#806248]/15", ic: "text-[#806248]" },
   ];
 
-  const SUMMARY = [
-    { label: "Membresía", value: membershipName, loading: loadingMembership },
-    { label: "Créditos", value: creditsLabel, loading: loadingMembership },
-    { label: "Próximas", value: `${upcomingBookings.length}`, loading: loadingBookings },
-  ];
+  const attended = bookings.filter((b) => b.status === "checked_in").length;
+  const creditsBig = membership ? (classesRemaining === null ? "∞" : `${classesRemaining}`) : "—";
+  const creditsCaption = membership
+    ? classesRemaining === null
+      ? "Clases ilimitadas"
+      : `clase${classesRemaining === 1 ? "" : "s"} disponible${classesRemaining === 1 ? "" : "s"}`
+    : "Sin plan activo";
 
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
       <ClientLayout>
-        <div className="mx-auto w-full max-w-3xl px-1 py-4 sm:py-8 space-y-12">
+        <div className="mx-auto w-full max-w-5xl px-1 py-4 sm:py-8 space-y-8">
 
-          {/* ── Saludo editorial ── */}
+          {/* ── Saludo ── */}
           <section>
             <p className="font-alilato text-[0.68rem] uppercase tracking-[0.28em] text-[#9C8A8B] first-letter:uppercase">
               {todayLabel}
             </p>
-            <h1 className="font-bebas mt-3 text-[clamp(2.2rem,5vw,3.2rem)] font-light leading-[1.05] tracking-[0.01em] text-[#1A060B]">
+            <h1 className="font-bebas mt-2 text-[clamp(2.2rem,5vw,3.2rem)] font-light leading-[1.04] tracking-[0.01em] text-[#1A060B]">
               Hola{firstName ? `, ${firstName}` : ""}
             </h1>
-            <p className="font-alilato mt-3 text-sm text-[#3B0E1A]/75">
-              Tu resumen de clases y membresía en VARRE24.
+            <p className="font-alilato mt-1.5 text-sm text-[#3B0E1A]/70">
+              Tu práctica en VARRE24, en un vistazo.
             </p>
           </section>
 
-          {/* ── Resumen — fila con hairlines ── */}
-          <section className="grid grid-cols-3 border-y border-[#E8D7D6]">
-            {SUMMARY.map((s, i) => (
-              <div key={s.label} className={`py-5 pr-4 ${i > 0 ? "border-l border-[#E8D7D6] pl-4 sm:pl-6" : ""}`}>
-                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">{s.label}</p>
-                {s.loading
-                  ? <Skeleton className="mt-2.5 h-5 w-16" />
-                  : <p className="font-alilato mt-2.5 truncate text-[0.95rem] font-medium text-[#1A060B]">{s.value}</p>}
+          {/* ── Bento principal: membresía (foco) + stats ── */}
+          <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+            {/* Panel destacado de membresía */}
+            <div className="relative flex min-h-[252px] flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[#3B0E1A] p-7 text-[#F3EFE9] transition-transform duration-300 hover:-translate-y-0.5 sm:p-8 lg:col-span-7">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#C9A5A8]/15 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-24 -left-12 h-48 w-48 rounded-full bg-[#806248]/15 blur-3xl" />
+              <div className="relative">
+                <p className="font-alilato text-[0.64rem] uppercase tracking-[0.26em] text-[#E8D9DA]/65">Tu membresía</p>
+                {loadingMembership ? (
+                  <Skeleton className="mt-4 h-10 w-52 bg-[#F3EFE9]/10" />
+                ) : membership ? (
+                  <>
+                    <h2 className="font-bebas mt-3 text-[clamp(1.9rem,3.4vw,2.7rem)] font-light leading-[1.04] text-[#F3EFE9]">
+                      {membershipName}
+                    </h2>
+                    <p className="mt-4 flex items-baseline gap-2">
+                      <span className="font-bebas text-[2.6rem] font-light leading-none text-[#F3EFE9]">{creditsBig}</span>
+                      <span className="font-alilato text-xs uppercase tracking-[0.16em] text-[#E8D9DA]/70">{creditsCaption}</span>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="font-bebas mt-3 text-[clamp(1.9rem,3.4vw,2.7rem)] font-light leading-[1.04] text-[#F3EFE9]">
+                      Comienza tu práctica
+                    </h2>
+                    <p className="font-alilato mt-3 max-w-[44ch] text-sm leading-relaxed text-[#E8D9DA]/85">
+                      Elige un plan para reservar Barre y Pilates y llevar el control de tus créditos.
+                    </p>
+                    <div className="mt-5 flex items-center gap-5">
+                      <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[#C9A5A8]" /><span className="font-alilato text-[0.66rem] uppercase tracking-[0.16em] text-[#E8D9DA]/75">Barre</span></span>
+                      <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[#C9A5A8]" /><span className="font-alilato text-[0.66rem] uppercase tracking-[0.16em] text-[#E8D9DA]/75">Pilates</span></span>
+                    </div>
+                  </>
+                )}
               </div>
-            ))}
+              <div className="relative mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+                <Link
+                  to={membership ? "/app/classes" : "/app/checkout"}
+                  className="press inline-flex items-center gap-2 rounded-full bg-[#F3EFE9] px-6 py-3 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#3B0E1A] no-underline transition-colors hover:bg-[#EADCDD]"
+                >
+                  {membership ? "Reservar clase" : "Adquirir membresía"}
+                  <ArrowRight size={14} />
+                </Link>
+                <Link to="/app/checkout" className="font-alilato text-[0.72rem] uppercase tracking-[0.14em] text-[#E8D9DA]/80 no-underline transition-colors hover:text-[#F3EFE9]">
+                  Ver planes
+                </Link>
+              </div>
+            </div>
+
+            {/* Stats — columna derecha */}
+            <div className="grid grid-cols-2 gap-4 lg:col-span-5 lg:grid-cols-1">
+              <div className="flex flex-col justify-center rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-6 transition-transform duration-300 hover:-translate-y-0.5">
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">Próximas reservas</p>
+                {loadingBookings
+                  ? <Skeleton className="mt-3 h-9 w-12" />
+                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#1A060B]">{upcomingBookings.length}</p>}
+                <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/55">clases agendadas</p>
+              </div>
+              <div className="flex flex-col justify-center rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-6 transition-transform duration-300 hover:-translate-y-0.5">
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">Clases tomadas</p>
+                {loadingBookings
+                  ? <Skeleton className="mt-3 h-9 w-12" />
+                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#1A060B]">{attended}</p>}
+                <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/55">en tu historial</p>
+              </div>
+            </div>
           </section>
 
-          {/* ── Acciones rápidas ── */}
-          <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {/* ── Acciones (barra agrupada, no 3 cards iguales) ── */}
+          <section className="grid grid-cols-1 divide-y divide-[#E8D7D6] overflow-hidden rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {QUICK.map(({ to, icon: Icon, label, chip, ic }) => (
               <Link
                 key={to}
                 to={to}
-                className="group flex items-center justify-between rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] px-5 py-4 no-underline transition-colors hover:border-[#3B0E1A]/45"
+                className="group flex items-center justify-between px-5 py-4 no-underline transition-colors hover:bg-[#F4E6EA]/50"
               >
                 <span className="flex items-center gap-3">
                   <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${chip}`}>
@@ -153,34 +210,6 @@ const Dashboard = () => {
                 <ArrowRight size={14} className="text-[#9C8A8B] transition-transform group-hover:translate-x-0.5" />
               </Link>
             ))}
-          </section>
-
-          {/* ── Mi membresía ── */}
-          <section>
-            <div className="mb-4 flex items-end justify-between gap-3">
-              <p className="font-alilato text-[0.7rem] uppercase tracking-[0.24em] text-[#9C8A8B]">Mi membresía</p>
-              <Link to="/app/checkout" className="font-alilato text-xs text-[#3B0E1A] no-underline hover:underline underline-offset-4">Ver planes</Link>
-            </div>
-            {loadingMembership ? (
-              <Skeleton className="h-44 w-full rounded-2xl" />
-            ) : membership ? (
-              <MembershipCard membership={membership} />
-            ) : (
-              <div className="flex flex-col gap-5 rounded-2xl border border-[#E7CFD3] bg-[#F4E6EA] p-6 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="font-alilato text-base font-medium text-[#1A060B]">No tienes membresía activa</p>
-                  <p className="font-alilato mt-1 max-w-[48ch] text-sm text-[#3B0E1A]/70">
-                    Elige un plan para reservar clases y ver tus créditos.
-                  </p>
-                </div>
-                <Link
-                  to="/app/checkout"
-                  className="press inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-[#3B0E1A] px-6 py-3 text-[0.76rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
-                >
-                  Adquirir membresía
-                </Link>
-              </div>
-            )}
           </section>
 
           {/* ── Próximas clases ── */}
