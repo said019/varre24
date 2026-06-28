@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { startOfWeek, addWeeks, addDays, format, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Clock, User, Users, Timer, ArrowRight } from "lucide-react";
 import api from "@/lib/api";
 import { Reveal } from "@/lib/motion";
+import { waLink } from "./data";
 
 interface Slot {
   day_of_week: number;
   time_slot: string;
   class_type_name: string;
   instructor_name?: string | null;
+  capacity?: number | null;
 }
 
 const DAY_SHORT: Record<number, string> = { 1: "Lun", 2: "Mar", 3: "Mié", 4: "Jue", 5: "Vie" };
+const DAY_LABEL: Record<number, string> = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes" };
 const WEEKDAYS = [1, 2, 3, 4, 5]; // Lun–Vie
 
 // Código de color por tipo de clase.
@@ -22,6 +26,12 @@ function classStyle(name: string) {
   return isPilates
     ? { accent: "#C9A5A8", label: "text-[#8A5A5E]" }   // Pilates → dusty rose
     : { accent: "#3B0E1A", label: "text-[#3B0E1A]" };  // Barre → burgundy
+}
+
+function classDesc(name: string): string {
+  return /pilates/i.test(name)
+    ? "Fuerza profunda, control y equilibrio desde el centro del cuerpo. Trabajo de core, postura y respiración consciente."
+    : "Ballet, fuerza y resistencia para tonificar cuerpo y postura. Movimientos precisos al ritmo de la música.";
 }
 
 function toMinutes(t: string): number {
@@ -39,8 +49,11 @@ function splitTime(t: string) {
   return m ? { hm: m[1], ap: m[2].toUpperCase() } : { hm: t, ap: "" };
 }
 
+type Selected = { slot: Slot; dow: number; date: Date };
+
 export function Horarios() {
   const [weekOffset, setWeekOffset] = useState(0);
+  const [selected, setSelected] = useState<Selected | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["public-schedule-slots"],
@@ -74,7 +87,7 @@ export function Horarios() {
             Horario semanal
           </h2>
           <p className="font-alilato mt-3 max-w-md text-sm text-[#3B0E1A]/75">
-            Lunes a viernes. Reserva tu lugar con anticipación.
+            Lunes a viernes. Toca una clase para ver el detalle y el cupo.
           </p>
         </Reveal>
 
@@ -135,8 +148,8 @@ export function Horarios() {
                 return (
                   <div
                     key={dow}
-                    className={`flex flex-col overflow-hidden rounded-2xl border bg-[#FCF8F7] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-32px_rgba(59,14,26,0.4)] ${
-                      today ? "border-[#3B0E1A]/50" : "border-[#E8D7D6] hover:border-[#C9A5A8]/60"
+                    className={`flex flex-col overflow-hidden rounded-2xl border bg-[#FCF8F7] transition-all duration-300 hover:shadow-[0_24px_50px_-32px_rgba(59,14,26,0.4)] ${
+                      today ? "border-[#3B0E1A]/50" : "border-[#E8D7D6]"
                     }`}
                   >
                     {/* Banda de día + fecha */}
@@ -154,17 +167,23 @@ export function Horarios() {
                     </div>
 
                     {/* Clases */}
-                    <div className="flex flex-1 flex-col divide-y divide-[#E8D7D6]/70 px-4">
+                    <div className="flex flex-1 flex-col divide-y divide-[#E8D7D6]/70 px-1">
                       {daySlots.length === 0 ? (
                         <p className="py-6 text-center font-alilato text-xs text-[#9C8A8B]">Sin clases</p>
                       ) : (
                         daySlots.map((s, i) => {
                           const st = classStyle(s.class_type_name);
                           const { hm, ap } = splitTime(s.time_slot);
+                          const cupo = s.capacity ?? 7;
                           return (
-                            <div key={i} className="relative py-4 pl-3.5">
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setSelected({ slot: s, dow, date })}
+                              className="group relative w-full rounded-xl px-2.5 py-3.5 pl-4 text-left transition-colors hover:bg-[#F4E6EA]/50"
+                            >
                               <span
-                                className="absolute bottom-4 left-0 top-4 w-[2px] rounded-full"
+                                className="absolute bottom-3.5 left-1.5 top-3.5 w-[2px] rounded-full"
                                 style={{ backgroundColor: st.accent }}
                               />
                               <p className="flex items-baseline gap-1">
@@ -183,7 +202,11 @@ export function Horarios() {
                                   {s.instructor_name}
                                 </p>
                               )}
-                            </div>
+                              <p className="mt-2 inline-flex items-center gap-1 font-alilato text-[0.6rem] uppercase tracking-[0.1em] text-[#9C8A8B]">
+                                <Users size={10} strokeWidth={1.75} />
+                                {cupo} lugares
+                              </p>
+                            </button>
                           );
                         })
                       )}
@@ -212,6 +235,85 @@ export function Horarios() {
           </p>
         </div>
       </div>
+
+      {/* ── Modal de detalle de clase ── */}
+      {selected && (() => {
+        const { slot, dow, date } = selected;
+        const st = classStyle(slot.class_type_name);
+        const { hm, ap } = splitTime(slot.time_slot);
+        const cupo = slot.capacity ?? 7;
+        const rows = [
+          { icon: Clock, label: "Hora", value: `${hm} ${ap}` },
+          { icon: User, label: "Instructora", value: slot.instructor_name || "Por confirmar" },
+          { icon: Timer, label: "Duración", value: "60 min" },
+          { icon: Users, label: "Cupo", value: `${cupo} lugares` },
+        ];
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A060B]/45 p-4 backdrop-blur-[2px] sm:items-center"
+            onClick={() => setSelected(null)}
+          >
+            <div
+              className="w-full max-w-md overflow-hidden rounded-3xl border border-[#E8D7D6] bg-[#FCF8F7] shadow-[0_40px_90px_-30px_rgba(26,6,11,0.55)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Encabezado con acento de tipo */}
+              <div className="relative border-b border-[#E8D7D6] p-7">
+                <span className="absolute left-0 top-0 h-full w-[3px]" style={{ backgroundColor: st.accent }} />
+                <button
+                  type="button"
+                  onClick={() => setSelected(null)}
+                  aria-label="Cerrar"
+                  className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-[#9C8A8B] transition-colors hover:bg-[#F4E6EA] hover:text-[#3B0E1A]"
+                >
+                  <X size={16} strokeWidth={1.75} />
+                </button>
+                <p className="font-alilato text-[0.64rem] uppercase tracking-[0.24em] text-[#9C8A8B]">
+                  {DAY_LABEL[dow]} {format(date, "d 'de' MMMM", { locale: es })}
+                </p>
+                <h3 className={`mt-2 font-bebas text-[2rem] font-light leading-none tracking-[0.01em] ${st.label}`}>
+                  {slot.class_type_name}
+                </h3>
+              </div>
+
+              {/* Datos */}
+              <div className="grid grid-cols-2 gap-px bg-[#E8D7D6]">
+                {rows.map((r) => (
+                  <div key={r.label} className="bg-[#FCF8F7] p-5">
+                    <p className="flex items-center gap-1.5 font-alilato text-[0.58rem] uppercase tracking-[0.16em] text-[#9C8A8B]">
+                      <r.icon size={11} strokeWidth={1.75} /> {r.label}
+                    </p>
+                    <p className="mt-1.5 font-alilato text-sm font-medium text-[#1A060B]">{r.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Descripción + CTA */}
+              <div className="p-7">
+                <p className="font-alilato text-sm leading-relaxed text-[#3B0E1A]/75">
+                  {classDesc(slot.class_type_name)}
+                </p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    to="/auth/login"
+                    className="press inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#3B0E1A] px-6 py-3 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
+                  >
+                    Reservar <ArrowRight size={14} />
+                  </Link>
+                  <a
+                    href={waLink(slot.class_type_name)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center rounded-full border border-[#E8D7D6] px-6 py-3 font-alilato text-[0.74rem] font-medium uppercase tracking-[0.12em] text-[#3B0E1A] no-underline transition-colors hover:bg-[#F4E6EA]"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </section>
   );
 }

@@ -619,6 +619,7 @@ async function ensureSchema() {
     await pool.query(`ALTER TABLE schedule_slots ADD COLUMN IF NOT EXISTS class_type_name VARCHAR(100)`).catch(() => { });
     await pool.query(`ALTER TABLE schedule_slots ADD COLUMN IF NOT EXISTS instructor_name VARCHAR(100)`).catch(() => { });
     await pool.query(`ALTER TABLE schedule_slots ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true`).catch(() => { });
+    await pool.query(`ALTER TABLE schedule_slots ADD COLUMN IF NOT EXISTS capacity INT DEFAULT 7`).catch(() => { });
     await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_schedule_slots_slot ON schedule_slots(time_slot, day_of_week) WHERE is_active = true`).catch(() => { });
     // ── schedule_templates (plantilla simple con class_label) ───────────────
     await pool.query(`
@@ -3157,7 +3158,7 @@ app.get("/api/memberships/my", authMiddleware, async (req, res) => {
 app.get("/api/public/schedule-slots", async (_req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT day_of_week, time_slot, class_type_name, instructor_name
+      `SELECT day_of_week, time_slot, class_type_name, instructor_name, COALESCE(capacity, 7) AS capacity
          FROM schedule_slots
         WHERE is_active = true
         ORDER BY day_of_week`
