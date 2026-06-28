@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1600">
+<title>VARRE24 — Brand Kit (MODDO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy:#3B0E1A; --burgundy2:#260910; --ink:#1A060B;
+    --rose:#C9A5A8; --pink:#FFD6E6; --mocha:#806248; --choc:#50311D;
+    --beige:#D4CABC; --ivory:#F3EFE9; --black:#0B090C;
+    --surface:#FCF8F7; --blush:#F4E6EA; --hair:#E8D7D6; --muted:#9C8A8B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:#E9DFDD;color:var(--ink);
+    -webkit-font-smoothing:antialiased;}
+  .board{width:1600px;padding:64px;background:
+     radial-gradient(120% 80% at 100% 0%, #F1E7E6 0%, #E9DFDD 55%, #E3D7D6 100%);}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;margin-top:28px}
+  .panel{background:var(--surface);border:1px solid var(--hair);border-radius:26px;
+    padding:34px;position:relative;overflow:hidden}
+  .tag{position:absolute;top:22px;right:26px;font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted)}
+  .label{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .logo{display:block}
+  .logo svg{display:block;width:100%;height:auto}
+
+  /* Header */
+  .head{display:flex;justify-content:space-between;align-items:flex-end}
+  .head h1{font-weight:300;font-size:15px;letter-spacing:.5em;text-transform:uppercase;color:var(--ink)}
+  .head .meta{text-align:right}
+
+  /* Cover */
+  .cover{grid-column:span 8;background:var(--burgundy);border-color:var(--burgundy);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:300px}
+  .cover .logo{color:var(--ivory);width:62%}
+  .cover .sub{margin-top:18px;color:#E8D9DA;font-size:12px;letter-spacing:.42em;text-transform:uppercase;font-weight:300}
+  .cover .tag{color:#E8D9DA;opacity:.7}
+
+  /* Isotipo */
+  .iso{grid-column:span 4;display:flex;flex-direction:column;gap:20px;align-items:flex-start;justify-content:center}
+  .iso .mark{width:130px;height:130px;border-radius:28px;background:var(--burgundy);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;padding:22px}
+  .iso .mark .logo{color:var(--ivory);width:74%}
+  .iso .mark.alt{background:var(--ivory);border:1px solid var(--hair)}
+  .iso .mark.alt .logo{color:var(--burgundy)}
+  .iso .row{display:flex;gap:16px}
+
+  /* Color */
+  .color{grid-column:span 12}
+  .sw{display:grid;grid-template-columns:repeat(8,1fr);gap:14px;margin-top:24px}
+  .chip .blk{height:120px;border-radius:18px;border:1px solid rgba(0,0,0,.06)}
+  .chip .nm{margin-top:12px;font-size:12px;font-weight:500;letter-spacing:.04em}
+  .chip .hx{margin-top:3px;font-size:10.5px;color:var(--muted);letter-spacing:.06em}
+  .chip .rl{margin-top:6px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  /* Type */
+  .type{grid-column:span 7}
+  .type .big{font-weight:300;font-size:64px;letter-spacing:.01em;line-height:1;color:var(--ink);margin-top:18px}
+  .type .weights{display:flex;gap:26px;margin-top:18px;flex-wrap:wrap}
+  .type .weights span{font-size:15px;color:var(--ink)}
+  .scale{margin-top:26px;border-top:1px solid var(--hair);padding-top:20px;display:flex;flex-direction:column;gap:14px}
+  .scale .r{display:flex;align-items:baseline;gap:18px}
+  .scale .r .k{width:90px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .d1{font-weight:300;font-size:34px;letter-spacing:.01em;color:var(--ink)}
+  .h1{font-weight:300;font-size:24px;color:var(--ink)}
+  .bd{font-weight:400;font-size:15px;color:#5b3b40}
+  .eb{font-weight:500;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+
+  /* Components */
+  .comp{grid-column:span 5;display:flex;flex-direction:column;gap:18px}
+  .comp .stack{display:flex;flex-direction:column;gap:14px;margin-top:18px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;padding:14px 26px}
+  .btn.primary{background:var(--burgundy);color:var(--ivory)}
+  .btn.outline{background:transparent;color:var(--burgundy);border:1px solid var(--burgundy)}
+  .badges{display:flex;gap:10px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 13px;
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+  .dot{width:8px;height:8px;border-radius:999px}
+  .b-barre{background:rgba(59,14,26,.07);color:var(--burgundy)}
+  .b-pil{background:rgba(201,165,168,.22);color:#8A5A5E}
+  .b-tag{background:var(--blush);color:var(--burgundy)}
+  .input{border:1px solid var(--hair);background:var(--surface);border-radius:14px;
+    padding:13px 16px;font-size:13px;color:var(--muted)}
+  .card-mini{border:1px solid var(--hair);border-radius:18px;padding:16px;background:var(--surface)}
+  .card-mini .t{font-size:13px;font-weight:500;color:var(--ink)}
+  .card-mini .s{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* Tagline */
+  .tagline{grid-column:span 7;background:var(--burgundy);border-color:var(--burgundy);
+    display:flex;flex-direction:column;justify-content:center;min-height:190px}
+  .tagline .q{font-weight:300;font-size:30px;line-height:1.25;color:var(--ivory);letter-spacing:.01em}
+  .tagline .q em{font-style:italic;color:var(--rose)}
+  .tagline .lab{color:#E8D9DA;opacity:.7}
+
+  /* Principles */
+  .princ{grid-column:span 5;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .princ ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:14px}
+  .princ li{display:flex;align-items:center;gap:12px;font-size:13px;color:#5b3b40}
+  .princ li .d{width:6px;height:6px;border-radius:999px;background:var(--rose)}
+  .foot{display:flex;justify-content:space-between;margin-top:30px;font-size:10px;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="board">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Sistema visual · MODDO</p>
+        <h1 style="margin-top:10px">VARRE24 — Brand Kit</h1>
+      </div>
+      <div class="meta">
+        <p class="label">Barre &amp; Pilates</p>
+        <p class="label" style="margin-top:6px">Nápoles · CDMX</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Logo cover -->
+      <section class="panel cover">
+        <span class="tag">01 · Logotipo</span>
+        <span class="logo"><svg xmlns="http://www.w3.org/2000/svg"
+ width="600.000000pt" height="126.000000pt" viewBox="0 0 600.000000 126.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)"
+fill="currentColor" stroke="none">
+<path d="M904 1102 c-17 -2 -29 -22 -53 -85 -18 -45 -43 -107 -56 -137 -63
+-148 -92 -219 -156 -385 -82 -208 -139 -316 -139 -260 0 15 -49 137 -195 485
+-47 113 -102 244 -122 293 -36 84 -38 87 -70 87 -37 0 -40 -6 -19 -36 8 -11
+24 -43 35 -70 17 -44 40 -97 143 -339 16 -38 43 -101 58 -140 157 -384 168
+-404 206 -378 6 5 34 66 64 138 29 72 117 285 196 475 79 189 140 347 136 350
+-4 3 -17 4 -28 2z"/>
+<path d="M4805 1104 c-11 -3 -35 -10 -54 -16 -67 -21 -190 -160 -159 -179 23
+-15 46 -10 53 12 12 37 69 92 120 115 68 32 136 32 203 -2 64 -32 88 -61 108
+-132 14 -46 14 -61 3 -101 -32 -116 -63 -162 -249 -356 -79 -82 -152 -161
+-223 -240 -15 -16 -26 -38 -25 -47 3 -16 28 -18 296 -21 l292 -3 0 28 0 29
+-255 -4 c-140 -2 -255 -1 -255 3 0 3 64 73 141 155 205 217 266 291 302 364
+28 58 32 75 31 146 0 118 -35 175 -134 225 -44 23 -150 35 -195 24z"/>
+<path d="M1945 783 c2 -175 4 -394 4 -486 l1 -168 31 3 31 3 -2 216 -1 216
+123 -2 123 -3 125 -210 125 -210 40 -5 c22 -3 41 -4 43 -2 4 3 -212 363 -248
+415 l-18 26 62 22 c121 43 176 117 176 233 0 81 -24 133 -80 182 -80 68 -129
+80 -347 85 l-192 4 4 -319z m326 257 c133 -25 218 -101 226 -202 4 -49 1 -58
+-34 -108 -32 -45 -49 -59 -98 -80 -52 -21 -79 -25 -207 -28 l-148 -4 0 216 0
+216 104 0 c57 0 128 -4 157 -10z"/>
+<path d="M2787 1033 c-3 -38 -3 -255 0 -483 l5 -415 30 0 30 0 -1 218 -2 217
+123 -1 123 0 74 -127 c41 -70 81 -138 90 -152 9 -14 32 -54 51 -89 34 -64 36
+-65 78 -67 24 -1 42 1 40 5 -6 13 -121 208 -189 319 -38 62 -69 114 -69 116 0
+2 27 13 59 25 207 75 243 330 62 438 -79 47 -164 63 -344 63 l-154 0 -6 -67z
+m403 -12 c98 -40 144 -101 142 -188 -2 -62 -30 -123 -69 -151 -67 -46 -136
+-62 -278 -62 l-135 0 0 216 0 217 143 -5 c116 -4 152 -9 197 -27z"/>
+<path d="M3640 1075 l0 -25 300 0 300 0 0 25 0 25 -300 0 -300 0 0 -25z"/>
+<path d="M5651 1074 c-12 -15 -21 -30 -21 -35 0 -4 -6 -14 -13 -21 -10 -11
+-42 -58 -107 -158 -55 -84 -214 -322 -257 -384 -19 -27 -33 -59 -33 -76 l0
+-30 228 -2 227 -3 2 -115 c1 -114 1 -115 25 -115 23 0 23 2 26 118 l3 117 59
+0 c57 0 60 1 60 25 0 24 -2 25 -62 25 l-63 0 3 340 3 340 -30 0 c-20 0 -36 -8
+-50 -26z m24 -352 l0 -297 -197 -3 c-109 -1 -198 1 -198 5 0 5 54 89 120 188
+65 99 152 231 191 293 40 61 75 112 78 112 3 0 6 -134 6 -298z"/>
+<path d="M1326 1062 c-2 -4 -7 -24 -11 -44 -8 -41 -1 -56 133 -306 40 -74 72
+-136 72 -138 0 -2 -96 -4 -214 -4 l-214 0 -16 -25 c-9 -13 -16 -29 -16 -35 0
+-7 78 -10 247 -10 l247 1 18 -33 c10 -18 53 -100 96 -183 l78 -150 37 -2 c20
+-1 37 0 37 3 0 3 -24 52 -54 107 -29 56 -138 265 -241 465 -103 199 -189 362
+-190 362 -2 0 -6 -3 -9 -8z"/>
+<path d="M3903 652 l-263 -2 0 -28 0 -27 267 2 c267 2 268 2 271 24 2 12 0 24
+-5 28 -4 3 -126 5 -270 3z"/>
+<path d="M3640 160 l0 -25 307 2 308 2 0 23 0 23 -307 0 -308 0 0 -25z"/>
+</g>
+</svg></span>
+        <span class="sub">Barre &amp; Pilates</span>
+      </section>
+
+      <!-- Isotipo -->
+      <section class="panel iso">
+        <span class="tag">02 · Iso</span>
+        <span class="label">Isotipo / App</span>
+        <div class="row">
+          <div class="mark"><span class="logo" style="width:80%"><svg xmlns="http://www.w3.org/2000/svg"
+ width="600.000000pt" height="126.000000pt" viewBox="0 0 600.000000 126.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)"
+fill="currentColor" stroke="none">
+<path d="M904 1102 c-17 -2 -29 -22 -53 -85 -18 -45 -43 -107 -56 -137 -63
+-148 -92 -219 -156 -385 -82 -208 -139 -316 -139 -260 0 15 -49 137 -195 485
+-47 113 -102 244 -122 293 -36 84 -38 87 -70 87 -37 0 -40 -6 -19 -36 8 -11
+24 -43 35 -70 17 -44 40 -97 143 -339 16 -38 43 -101 58 -140 157 -384 168
+-404 206 -378 6 5 34 66 64 138 29 72 117 285 196 475 79 189 140 347 136 350
+-4 3 -17 4 -28 2z"/>
+<path d="M4805 1104 c-11 -3 -35 -10 -54 -16 -67 -21 -190 -160 -159 -179 23
+-15 46 -10 53 12 12 37 69 92 120 115 68 32 136 32 203 -2 64 -32 88 -61 108
+-132 14 -46 14 -61 3 -101 -32 -116 -63 -162 -249 -356 -79 -82 -152 -161
+-223 -240 -15 -16 -26 -38 -25 -47 3 -16 28 -18 296 -21 l292 -3 0 28 0 29
+-255 -4 c-140 -2 -255 -1 -255 3 0 3 64 73 141 155 205 217 266 291 302 364
+28 58 32 75 31 146 0 118 -35 175 -134 225 -44 23 -150 35 -195 24z"/>
+<path d="M1945 783 c2 -175 4 -394 4 -486 l1 -168 31 3 31 3 -2 216 -1 216
+123 -2 123 -3 125 -210 125 -210 40 -5 c22 -3 41 -4 43 -2 4 3 -212 363 -248
+415 l-18 26 62 22 c121 43 176 117 176 233 0 81 -24 133 -80 182 -80 68 -129
+80 -347 85 l-192 4 4 -319z m326 257 c133 -25 218 -101 226 -202 4 -49 1 -58
+-34 -108 -32 -45 -49 -59 -98 -80 -52 -21 -79 -25 -207 -28 l-148 -4 0 216 0
+216 104 0 c57 0 128 -4 157 -10z"/>
+<path d="M2787 1033 c-3 -38 -3 -255 0 -483 l5 -415 30 0 30 0 -1 218 -2 217
+123 -1 123 0 74 -127 c41 -70 81 -138 90 -152 9 -14 32 -54 51 -89 34 -64 36
+-65 78 -67 24 -1 42 1 40 5 -6 13 -121 208 -189 319 -38 62 -69 114 -69 116 0
+2 27 13 59 25 207 75 243 330 62 438 -79 47 -164 63 -344 63 l-154 0 -6 -67z
+m403 -12 c98 -40 144 -101 142 -188 -2 -62 -30 -123 -69 -151 -67 -46 -136
+-62 -278 -62 l-135 0 0 216 0 217 143 -5 c116 -4 152 -9 197 -27z"/>
+<path d="M3640 1075 l0 -25 300 0 300 0 0 25 0 25 -300 0 -300 0 0 -25z"/>
+<path d="M5651 1074 c-12 -15 -21 -30 -21 -35 0 -4 -6 -14 -13 -21 -10 -11
+-42 -58 -107 -158 -55 -84 -214 -322 -257 -384 -19 -27 -33 -59 -33 -76 l0
+-30 228 -2 227 -3 2 -115 c1 -114 1 -115 25 -115 23 0 23 2 26 118 l3 117 59
+0 c57 0 60 1 60 25 0 24 -2 25 -62 25 l-63 0 3 340 3 340 -30 0 c-20 0 -36 -8
+-50 -26z m24 -352 l0 -297 -197 -3 c-109 -1 -198 1 -198 5 0 5 54 89 120 188
+65 99 152 231 191 293 40 61 75 112 78 112 3 0 6 -134 6 -298z"/>
+<path d="M1326 1062 c-2 -4 -7 -24 -11 -44 -8 -41 -1 -56 133 -306 40 -74 72
+-136 72 -138 0 -2 -96 -4 -214 -4 l-214 0 -16 -25 c-9 -13 -16 -29 -16 -35 0
+-7 78 -10 247 -10 l247 1 18 -33 c10 -18 53 -100 96 -183 l78 -150 37 -2 c20
+-1 37 0 37 3 0 3 -24 52 -54 107 -29 56 -138 265 -241 465 -103 199 -189 362
+-190 362 -2 0 -6 -3 -9 -8z"/>
+<path d="M3903 652 l-263 -2 0 -28 0 -27 267 2 c267 2 268 2 271 24 2 12 0 24
+-5 28 -4 3 -126 5 -270 3z"/>
+<path d="M3640 160 l0 -25 307 2 308 2 0 23 0 23 -307 0 -308 0 0 -25z"/>
+</g>
+</svg></span></div>
+          <div class="mark alt"><span class="logo" style="width:80%"><svg xmlns="http://www.w3.org/2000/svg"
+ width="600.000000pt" height="126.000000pt" viewBox="0 0 600.000000 126.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)"
+fill="currentColor" stroke="none">
+<path d="M904 1102 c-17 -2 -29 -22 -53 -85 -18 -45 -43 -107 -56 -137 -63
+-148 -92 -219 -156 -385 -82 -208 -139 -316 -139 -260 0 15 -49 137 -195 485
+-47 113 -102 244 -122 293 -36 84 -38 87 -70 87 -37 0 -40 -6 -19 -36 8 -11
+24 -43 35 -70 17 -44 40 -97 143 -339 16 -38 43 -101 58 -140 157 -384 168
+-404 206 -378 6 5 34 66 64 138 29 72 117 285 196 475 79 189 140 347 136 350
+-4 3 -17 4 -28 2z"/>
+<path d="M4805 1104 c-11 -3 -35 -10 -54 -16 -67 -21 -190 -160 -159 -179 23
+-15 46 -10 53 12 12 37 69 92 120 115 68 32 136 32 203 -2 64 -32 88 -61 108
+-132 14 -46 14 -61 3 -101 -32 -116 -63 -162 -249 -356 -79 -82 -152 -161
+-223 -240 -15 -16 -26 -38 -25 -47 3 -16 28 -18 296 -21 l292 -3 0 28 0 29
+-255 -4 c-140 -2 -255 -1 -255 3 0 3 64 73 141 155 205 217 266 291 302 364
+28 58 32 75 31 146 0 118 -35 175 -134 225 -44 23 -150 35 -195 24z"/>
+<path d="M1945 783 c2 -175 4 -394 4 -486 l1 -168 31 3 31 3 -2 216 -1 216
+123 -2 123 -3 125 -210 125 -210 40 -5 c22 -3 41 -4 43 -2 4 3 -212 363 -248
+415 l-18 26 62 22 c121 43 176 117 176 233 0 81 -24 133 -80 182 -80 68 -129
+80 -347 85 l-192 4 4 -319z m326 257 c133 -25 218 -101 226 -202 4 -49 1 -58
+-34 -108 -32 -45 -49 -59 -98 -80 -52 -21 -79 -25 -207 -28 l-148 -4 0 216 0
+216 104 0 c57 0 128 -4 157 -10z"/>
+<path d="M2787 1033 c-3 -38 -3 -255 0 -483 l5 -415 30 0 30 0 -1 218 -2 217
+123 -1 123 0 74 -127 c41 -70 81 -138 90 -152 9 -14 32 -54 51 -89 34 -64 36
+-65 78 -67 24 -1 42 1 40 5 -6 13 -121 208 -189 319 -38 62 -69 114 -69 116 0
+2 27 13 59 25 207 75 243 330 62 438 -79 47 -164 63 -344 63 l-154 0 -6 -67z
+m403 -12 c98 -40 144 -101 142 -188 -2 -62 -30 -123 -69 -151 -67 -46 -136
+-62 -278 -62 l-135 0 0 216 0 217 143 -5 c116 -4 152 -9 197 -27z"/>
+<path d="M3640 1075 l0 -25 300 0 300 0 0 25 0 25 -300 0 -300 0 0 -25z"/>
+<path d="M5651 1074 c-12 -15 -21 -30 -21 -35 0 -4 -6 -14 -13 -21 -10 -11
+-42 -58 -107 -158 -55 -84 -214 -322 -257 -384 -19 -27 -33 -59 -33 -76 l0
+-30 228 -2 227 -3 2 -115 c1 -114 1 -115 25 -115 23 0 23 2 26 118 l3 117 59
+0 c57 0 60 1 60 25 0 24 -2 25 -62 25 l-63 0 3 340 3 340 -30 0 c-20 0 -36 -8
+-50 -26z m24 -352 l0 -297 -197 -3 c-109 -1 -198 1 -198 5 0 5 54 89 120 188
+65 99 152 231 191 293 40 61 75 112 78 112 3 0 6 -134 6 -298z"/>
+<path d="M1326 1062 c-2 -4 -7 -24 -11 -44 -8 -41 -1 -56 133 -306 40 -74 72
+-136 72 -138 0 -2 -96 -4 -214 -4 l-214 0 -16 -25 c-9 -13 -16 -29 -16 -35 0
+-7 78 -10 247 -10 l247 1 18 -33 c10 -18 53 -100 96 -183 l78 -150 37 -2 c20
+-1 37 0 37 3 0 3 -24 52 -54 107 -29 56 -138 265 -241 465 -103 199 -189 362
+-190 362 -2 0 -6 -3 -9 -8z"/>
+<path d="M3903 652 l-263 -2 0 -28 0 -27 267 2 c267 2 268 2 271 24 2 12 0 24
+-5 28 -4 3 -126 5 -270 3z"/>
+<path d="M3640 160 l0 -25 307 2 308 2 0 23 0 23 -307 0 -308 0 0 -25z"/>
+</g>
+</svg></span></div>
+        </div>
+        <p class="label" style="color:var(--muted)">Wordmark sobre burgundy / ivory</p>
+      </section>
+
+      <!-- Color system -->
+      <section class="panel color">
+        <span class="tag">03 · Color</span>
+        <span class="label">Paleta · roles de uso</span>
+        <div class="sw">
+          <div class="chip"><div class="blk" style="background:#3B0E1A"></div><div class="nm">Burgundy</div><div class="hx">#3B0E1A</div><div class="rl">Primario</div></div>
+          <div class="chip"><div class="blk" style="background:#C9A5A8"></div><div class="nm">Dusty Rose</div><div class="hx">#C9A5A8</div><div class="rl">Secundario</div></div>
+          <div class="chip"><div class="blk" style="background:#FFD6E6"></div><div class="nm">Soft Pink</div><div class="hx">#FFD6E6</div><div class="rl">Acento</div></div>
+          <div class="chip"><div class="blk" style="background:#806248"></div><div class="nm">Mocha</div><div class="hx">#806248</div><div class="rl">Cálido</div></div>
+          <div class="chip"><div class="blk" style="background:#50311D"></div><div class="nm">Chocolate</div><div class="hx">#50311D</div><div class="rl">Cálido oscuro</div></div>
+          <div class="chip"><div class="blk" style="background:#D4CABC"></div><div class="nm">Beige</div><div class="hx">#D4CABC</div><div class="rl">Neutro</div></div>
+          <div class="chip"><div class="blk" style="background:#F3EFE9;border-color:#E8D7D6"></div><div class="nm">Ivory</div><div class="hx">#F3EFE9</div><div class="rl">Fondo</div></div>
+          <div class="chip"><div class="blk" style="background:#0B090C"></div><div class="nm">Deep Black</div><div class="hx">#0B090C</div><div class="rl">Tinta</div></div>
+        </div>
+      </section>
+
+      <!-- Typography -->
+      <section class="panel type">
+        <span class="tag">04 · Tipografía</span>
+        <span class="label">Poppins</span>
+        <div class="big">Aa</div>
+        <div class="weights">
+          <span style="font-weight:300">Light 300</span>
+          <span style="font-weight:400">Regular 400</span>
+          <span style="font-weight:500">Medium 500</span>
+          <span style="font-weight:600">SemiBold 600</span>
+        </div>
+        <div class="scale">
+          <div class="r"><span class="k">Display</span><span class="d1">Horario semanal</span></div>
+          <div class="r"><span class="k">Título</span><span class="h1">Reserva tu lugar</span></div>
+          <div class="r"><span class="k">Cuerpo</span><span class="bd">Movimiento consciente, en equilibrio y conectado contigo.</span></div>
+          <div class="r"><span class="k">Eyebrow</span><span class="eb">El estudio</span></div>
+        </div>
+      </section>
+
+      <!-- Components -->
+      <section class="panel comp">
+        <span class="tag">05 · UI</span>
+        <span class="label">Componentes</span>
+        <div class="stack">
+          <div style="display:flex;gap:12px">
+            <span class="btn primary">Reservar clase</span>
+            <span class="btn outline">Ver planes</span>
+          </div>
+          <div class="badges">
+            <span class="badge b-barre"><span class="dot" style="background:#3B0E1A"></span>Barre</span>
+            <span class="badge b-pil"><span class="dot" style="background:#C9A5A8"></span>Pilates</span>
+            <span class="badge b-tag">Más elegida</span>
+          </div>
+          <div class="input">tu@email.com</div>
+          <div class="card-mini"><div class="t">Membresía mensual</div><div class="s">12 clases · vigencia 30 días</div></div>
+        </div>
+      </section>
+
+      <!-- Tagline -->
+      <section class="panel tagline">
+        <span class="tag">06 · Esencia</span>
+        <p class="q">Movimiento con <em>intención</em>,<br>elegancia y constancia.</p>
+        <p class="lab label" style="margin-top:18px">varre24fit.com</p>
+      </section>
+
+      <!-- Principles -->
+      <section class="panel princ">
+        <span class="tag">07 · Principios</span>
+        <span class="label">Estética</span>
+        <ul>
+          <li><span class="d"></span>Superficies planas · hairlines finas</li>
+          <li><span class="d"></span>Mucho aire · jerarquía por peso</li>
+          <li><span class="d"></span>Poppins light para títulos, eyebrows en caps</li>
+          <li><span class="d"></span>Sin glassmorphism, sin gradientes pesados</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="foot">
+      <span>VARRE24 · Sistema visual MODDO</span>
+      <span>Burgundy · Dusty Rose · Ivory</span>
+    </div>
+  </div>
+</body>
+</html>
