@@ -95,9 +95,9 @@ const Dashboard = () => {
   const todayLabel = format(new Date(), "EEEE d 'de' MMMM", { locale: es });
 
   const QUICK = [
-    { to: "/app/classes", icon: Calendar, label: "Reservar clase" },
-    { to: "/app/bookings", icon: ClipboardList, label: "Mis reservas" },
-    { to: "/app/checkout", icon: ShoppingBag, label: "Comprar plan" },
+    { to: "/app/classes", icon: Calendar, label: "Reservar clase", chip: "bg-[#F4E6EA]", ic: "text-[#3B0E1A]" },
+    { to: "/app/bookings", icon: ClipboardList, label: "Mis reservas", chip: "bg-[#C9A5A8]/25", ic: "text-[#8A5A5E]" },
+    { to: "/app/checkout", icon: ShoppingBag, label: "Comprar plan", chip: "bg-[#806248]/15", ic: "text-[#806248]" },
   ];
 
   const SUMMARY = [
@@ -138,14 +138,16 @@ const Dashboard = () => {
 
           {/* ── Acciones rápidas ── */}
           <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {QUICK.map(({ to, icon: Icon, label }) => (
+            {QUICK.map(({ to, icon: Icon, label, chip, ic }) => (
               <Link
                 key={to}
                 to={to}
                 className="group flex items-center justify-between rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] px-5 py-4 no-underline transition-colors hover:border-[#3B0E1A]/45"
               >
                 <span className="flex items-center gap-3">
-                  <Icon size={17} className="text-[#3B0E1A]" strokeWidth={1.75} />
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${chip}`}>
+                    <Icon size={16} className={ic} strokeWidth={1.75} />
+                  </span>
                   <span className="font-alilato text-sm text-[#1A060B]">{label}</span>
                 </span>
                 <ArrowRight size={14} className="text-[#9C8A8B] transition-transform group-hover:translate-x-0.5" />
@@ -164,7 +166,7 @@ const Dashboard = () => {
             ) : membership ? (
               <MembershipCard membership={membership} />
             ) : (
-              <div className="flex flex-col gap-5 rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-5 rounded-2xl border border-[#E7CFD3] bg-[#F4E6EA] p-6 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="font-alilato text-base font-medium text-[#1A060B]">No tienes membresía activa</p>
                   <p className="font-alilato mt-1 max-w-[48ch] text-sm text-[#3B0E1A]/70">
