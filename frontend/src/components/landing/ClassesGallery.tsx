@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import { Reveal } from "@/lib/motion";
-import { CLASSES, waLink } from "./data";
+import { CLASSES } from "./data";
 import { CLASS_PHOTOS } from "./photoAssets";
 
 /**
  * Lista editorial minimal — sobre crema, separada por hairlines.
- * Cada fila es un enlace a WhatsApp; "Reservar →" aparece en hover.
+ * Cada fila lleva a reservar en el sistema; "Reservar →" aparece en hover.
  */
 export function ClassesGallery() {
   return (
@@ -20,11 +21,9 @@ export function ClassesGallery() {
         <div className="mt-14 border-t border-[#E8D7D6]">
           {CLASSES.map((c) => (
             <Reveal key={c.key}>
-              <a
-                href={waLink(c.name)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group grid grid-cols-1 gap-x-6 gap-y-5 border-b border-[#E8D7D6] py-8 sm:grid-cols-12 sm:items-center"
+              <Link
+                to="/app/classes"
+                className="group grid grid-cols-1 gap-x-6 gap-y-5 border-b border-[#E8D7D6] py-8 no-underline sm:grid-cols-12 sm:items-center"
               >
                 <div className="overflow-hidden rounded-[6px] bg-[#E8D7D6] sm:col-span-3 lg:col-span-2">
                   <img
@@ -47,7 +46,7 @@ export function ClassesGallery() {
                   Reservar
                   <span className="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
                 </span>
-              </a>
+              </Link>
             </Reveal>
           ))}
         </div>

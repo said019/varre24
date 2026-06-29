@@ -1,6 +1,5 @@
 export const STUDIO = {
   address: "Arizona 14, Piso 3, Col. Nápoles, Benito Juárez, CDMX",
-  whatsapp: "17736489987",
   instagram: "@varre.studio",
   instagramUrl: "https://www.instagram.com/varre.studio",
   mapsQuery: "Arizona+14,+Col.+Nápoles,+Benito+Juárez,+CDMX",
@@ -50,8 +49,3 @@ export const PLANS: Plan[] = [
   { name: "Membresía mensual", price: "$990", unit: "MXN", note: "Hasta 3 por semana", detail: "12 clases al mes · reserva anticipada", featured: true, tag: "Más elegida" },
   { name: "Ilimitado 6 meses", price: "$16,000", unit: "MXN", note: "Sin límites", detail: "Clases ilimitadas · vigencia 180 días" },
 ];
-
-export function waLink(clase: string): string {
-  const text = `Hola 🤍\nMe gustaría reservar una clase de ${clase}\n\n¿Me pueden compartir paquetes y horarios disponibles?\nGracias ✨`;
-  return `https://wa.me/${STUDIO.whatsapp}?text=${encodeURIComponent(text)}`;
-}

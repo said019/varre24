@@ -6,7 +6,6 @@ import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, X, Clock, User, Users, Timer, ArrowRight } from "lucide-react";
 import api from "@/lib/api";
 import { Reveal } from "@/lib/motion";
-import { waLink } from "./data";
 
 interface Slot {
   day_of_week: number;
@@ -293,21 +292,13 @@ export function Horarios() {
                 <p className="font-alilato text-sm leading-relaxed text-[#3B0E1A]/75">
                   {classDesc(slot.class_type_name)}
                 </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-6">
                   <Link
-                    to="/auth/login"
-                    className="press inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#3B0E1A] px-6 py-3 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
+                    to="/app/classes"
+                    className="press inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#3B0E1A] px-6 py-3.5 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#F3EFE9] no-underline transition-colors hover:bg-[#320C16]"
                   >
-                    Reservar <ArrowRight size={14} />
+                    Reservar clase <ArrowRight size={14} />
                   </Link>
-                  <a
-                    href={waLink(slot.class_type_name)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex flex-1 items-center justify-center rounded-full border border-[#E8D7D6] px-6 py-3 font-alilato text-[0.74rem] font-medium uppercase tracking-[0.12em] text-[#3B0E1A] no-underline transition-colors hover:bg-[#F4E6EA]"
-                  >
-                    WhatsApp
-                  </a>
                 </div>
               </div>
             </div>

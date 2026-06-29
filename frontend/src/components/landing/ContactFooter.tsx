@@ -1,5 +1,5 @@
 import { Reveal, MagneticButton } from "@/lib/motion";
-import { STUDIO, waLink } from "./data";
+import { STUDIO } from "./data";
 
 export function ContactFooter() {
   return (
@@ -12,8 +12,8 @@ export function ContactFooter() {
             <p className="font-alilato mt-4 max-w-sm text-sm leading-relaxed text-[#EADCDD]/85">{STUDIO.address}</p>
             <a href={STUDIO.instagramUrl} className="font-alilato mt-2 inline-block text-[#C9A5A8]">{STUDIO.instagram}</a>
             <div className="mt-6">
-              <MagneticButton href={waLink("una clase")} className="press inline-flex items-center rounded-full bg-[#3B0E1A] px-7 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[#F3EFE9]">
-                Reservar por WhatsApp
+              <MagneticButton href="/app/classes" className="press inline-flex items-center rounded-full bg-[#3B0E1A] px-7 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[#F3EFE9]">
+                Reservar clase
               </MagneticButton>
             </div>
           </div>
