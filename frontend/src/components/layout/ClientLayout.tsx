@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SHELL_PHOTOS } from "@/components/landing/photoAssets";
 
 /* ── Navigation groups ─────────────────────────────────────────────── */
 const NAV_GROUPS = [
@@ -369,15 +368,6 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────── */}
       <main className="relative flex-1 overflow-y-auto">
-        <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-36 overflow-hidden lg:block" aria-hidden="true">
-          <img
-            data-testid="client-photo-accent"
-            src={SHELL_PHOTOS.client.src}
-            alt=""
-            className="absolute right-10 top-6 h-24 w-44 rounded-[6px] object-cover opacity-55"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#3B0E1A]/[0.04] to-transparent" />
-        </div>
         <div className="relative z-10 mx-auto w-full max-w-7xl p-4 pb-28 lg:px-10 lg:py-8 lg:pb-12">
           {children}
         </div>

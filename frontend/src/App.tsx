@@ -25,6 +25,7 @@ import ProfileEdit from "./pages/client/ProfileEdit";
 import ProfilePreferences from "./pages/client/ProfilePreferences";
 import Notifications from "./pages/client/Notifications";
 import MyOrders from "./pages/client/MyOrders";
+import EventBooking from "./pages/client/EventBooking";
 
 import AdminDashboard from "./pages/admin/Dashboard";
 import PlansList from "./pages/admin/plans/PlansList";
@@ -101,6 +102,7 @@ const AppRoutes = () => {
         <Route path="/app/profile/edit" element={<ProfileEdit />} />
         <Route path="/app/profile/preferences" element={<ProfilePreferences />} />
         <Route path="/app/orders" element={<MyOrders />} />
+        <Route path="/app/eventos" element={<EventBooking />} />
         <Route path="/app/notifications" element={<Notifications />} />
 
         {/* Admin panel */}

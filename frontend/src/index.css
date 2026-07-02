@@ -374,17 +374,19 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .nav-link::after {
     content: "";
     position: absolute;
-    left: 50%;
+    left: 0.8rem;
+    right: 0.8rem;
     bottom: 4px;
     height: 1px;
-    width: 0;
     background: currentColor;
-    transition: width 280ms var(--ease-out-emil), left 280ms var(--ease-out-emil);
+    /* scaleX en vez de width/left: mismo reveal centro→afuera sin layout thrash */
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 280ms var(--ease-out-emil);
   }
   @media (hover: hover) and (pointer: fine) {
     .nav-link:hover::after {
-      width: calc(100% - 1.6rem);
-      left: 0.8rem;
+      transform: scaleX(1);
     }
   }
   .nav-link[data-active="true"]::after {

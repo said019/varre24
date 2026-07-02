@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Search, User, Package, CheckCircle2, CreditCard, Banknote, ArrowRight, ChevronLeft, History, Sparkles, Clock, XCircle, Eye, ImageIcon } from "lucide-react";
+import { Loader2, Search, User, Package, CheckCircle2, CreditCard, Banknote, ArrowRight, ChevronLeft, History, Sparkles, Clock, XCircle, Eye, ImageIcon, PartyPopper } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
@@ -512,6 +512,26 @@ const PendingOrders = () => {
                 </p>
               </div>
             </div>
+
+            {/* Detalles del evento privado (cumpleaños) */}
+            {(() => {
+              const ev = o.event_details ?? o.eventDetails;
+              if (!ev) return null;
+              return (
+                <div className="space-y-1 rounded-lg border border-[#C9A5A8]/40 bg-[#F4E6EA]/60 px-3 py-2.5">
+                  <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#8A5A5E]">
+                    <PartyPopper size={11} /> Evento privado — {ev.package_name}
+                  </p>
+                  <p className="text-xs text-[#1A060B]/75">
+                    {ev.event_date} · {ev.event_time} hrs · {ev.guests} invitada{ev.guests === 1 ? "" : "s"}
+                  </p>
+                  <p className="text-xs text-[#1A060B]/60">
+                    Contacto: {ev.contact_name} · {ev.contact_phone}{ev.contact_email ? ` · ${ev.contact_email}` : ""}
+                  </p>
+                  {ev.notes && <p className="text-xs italic text-[#1A060B]/55">“{ev.notes}”</p>}
+                </div>
+              );
+            })()}
 
             {/* Proof gallery (only for transfers) */}
             {(o.proofs && o.proofs.length > 0) ? (

@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import ClientLayout from "./ClientLayout";
 
 describe("ClientLayout", () => {
-  it("includes a soft studio photo accent without replacing app content", () => {
+  it("renders app content without the decorative photo accent", () => {
     render(
       <MemoryRouter>
         <ClientLayout>
@@ -12,7 +12,9 @@ describe("ClientLayout", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByTestId("client-photo-accent")).toBeInTheDocument();
+    // La banda decorativa (client-photo-accent) se retiró a pedido del studio:
+    // el contenido debe empezar limpio, sin franja de foto arriba.
+    expect(screen.queryByTestId("client-photo-accent")).not.toBeInTheDocument();
     expect(screen.getByText("Panel de clienta")).toBeInTheDocument();
   });
 });

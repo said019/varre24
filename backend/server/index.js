@@ -1158,6 +1158,45 @@ async function ensureSchema() {
     await pool.query(`ALTER TABLE orders ALTER COLUMN plan_id DROP NOT NULL`).catch(() => { });
     // Make user_id nullable (walk-in POS sales may not have a user)
     await pool.query(`ALTER TABLE orders ALTER COLUMN user_id DROP NOT NULL`).catch(() => { });
+    // ── Eventos privados (cumpleaños): la orden guarda los detalles del festejo.
+    // plan_id queda NULL → al aprobar NO se otorga membresía (guard existente).
+    await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS event_details JSONB`).catch(() => { });
+    // ── event_packages: paquetes de cumpleaños / eventos privados ─────────
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS event_packages (
+        id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name           VARCHAR(120) NOT NULL,
+        description    TEXT DEFAULT '',
+        price          NUMERIC(10,2) NOT NULL,
+        discount_price NUMERIC(10,2),
+        max_guests     INTEGER NOT NULL DEFAULT 7,
+        duration_min   INTEGER NOT NULL DEFAULT 120,
+        includes       JSONB DEFAULT '[]',
+        is_active      BOOLEAN DEFAULT true,
+        sort_order     INTEGER DEFAULT 0,
+        created_at     TIMESTAMPTZ DEFAULT NOW(),
+        updated_at     TIMESTAMPTZ DEFAULT NOW()
+      )
+    `).catch((e) => console.error("[migration event_packages]", e.message));
+    // Seed inicial solo con tabla vacía (el studio los edita después).
+    try {
+      const epCount = await pool.query("SELECT COUNT(*) FROM event_packages");
+      if (Number(epCount.rows[0].count) === 0) {
+        await pool.query(`
+          INSERT INTO event_packages (name, description, price, max_guests, duration_min, includes, sort_order) VALUES
+            ('Cumpleaños Esencial',
+             'Celebra con una clase privada de Barre o Pilates para tu grupo, con música a tu gusto y brindis al final.',
+             3500, 7, 90,
+             '["Clase privada de 60 min (Barre o Pilates)","Estudio exclusivo para tu grupo","Música personalizada","Brindis con bebidas sin alcohol","Fotos en el estudio"]'::jsonb, 1),
+            ('Cumpleaños Deluxe',
+             'La experiencia completa: clase privada temática, decoración, mesa dulce y detalle de recuerdo para cada invitada.',
+             5500, 10, 120,
+             '["Clase privada temática de 60 min","Decoración del estudio","Mesa dulce y brindis","Detalle de recuerdo para invitadas","Sesión de fotos","Playlist personalizada"]'::jsonb, 2)
+          ON CONFLICT DO NOTHING;
+        `);
+        console.log("✅ Event packages (cumpleaños) sembrados");
+      }
+    } catch (e) { console.error("[seed event_packages]", e.message); }
     // ── MercadoPago: columnas de pago en orders + tabla de idempotencia de webhooks ──
     await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_provider VARCHAR(50)`).catch(() => { });
     await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_intent_id VARCHAR(255)`).catch(() => { });
@@ -3170,6 +3209,22 @@ app.get("/api/public/schedule-slots", async (_req, res) => {
   }
 });
 
+// ─── Public: paquetes de eventos privados / cumpleaños ──────────────────────
+app.get("/api/public/event-packages", async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, name, description, price, discount_price, max_guests, duration_min, includes
+         FROM event_packages
+        WHERE is_active = true
+        ORDER BY sort_order, price`
+    );
+    res.json({ data: rows });
+  } catch (err) {
+    console.error("GET public/event-packages error:", err);
+    res.status(500).json({ message: "Error al obtener paquetes" });
+  }
+});
+
 // ─── Routes: /api/classes ───────────────────────────────────────────────────
 
 // GET /api/classes?start=YYYY-MM-DD&end=YYYY-MM-DD
@@ -4383,9 +4438,9 @@ app.post("/webhooks/mercadopago", async (req, res) => {
 app.get("/api/orders", authMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      `SELECT o.*, p.name AS plan_name, p.duration_days
+      `SELECT o.*, COALESCE(p.name, o.event_details->>'package_name') AS plan_name, p.duration_days
        FROM orders o
-       JOIN plans p ON o.plan_id = p.id
+       LEFT JOIN plans p ON o.plan_id = p.id
        WHERE o.user_id = $1
        ORDER BY o.created_at DESC`,
       [req.userId]
@@ -4405,9 +4460,9 @@ app.get("/api/notifications", authMiddleware, async (req, res) => {
     // 1) Orders — approved, rejected, pending
     const orders = await pool.query(
       `SELECT o.id, o.status, o.total, o.created_at, o.updated_at, o.order_number,
-              p.name AS plan_name
+              COALESCE(p.name, o.event_details->>'package_name') AS plan_name
        FROM orders o
-       JOIN plans p ON o.plan_id = p.id
+       LEFT JOIN plans p ON o.plan_id = p.id
        WHERE o.user_id = $1
        ORDER BY o.updated_at DESC
        LIMIT 20`,
@@ -4506,7 +4561,7 @@ app.get("/api/notifications", authMiddleware, async (req, res) => {
 app.get("/api/orders/:id", authMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      `SELECT o.*, p.name AS plan_name, p.duration_days, p.features,
+      `SELECT o.*, COALESCE(p.name, o.event_details->>'package_name') AS plan_name, p.duration_days, p.features,
               (SELECT json_agg(json_build_object(
                  'id', pp.id, 'file_url', pp.file_url, 'file_name', pp.file_name,
                  'mime_type', pp.mime_type, 'status', pp.status,
@@ -4517,7 +4572,7 @@ app.get("/api/orders/:id", authMiddleware, async (req, res) => {
               (SELECT pp.status       FROM payment_proofs pp WHERE pp.order_id = o.id ORDER BY pp.sort_order LIMIT 1) AS proof_status,
               (SELECT pp.uploaded_at  FROM payment_proofs pp WHERE pp.order_id = o.id ORDER BY pp.sort_order LIMIT 1) AS proof_uploaded_at
          FROM orders o
-         JOIN plans p ON o.plan_id = p.id
+         LEFT JOIN plans p ON o.plan_id = p.id
         WHERE o.id = $1 AND o.user_id = $2`,
       [req.params.id, req.userId]
     );
@@ -4757,6 +4812,125 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
   }
 });
 
+// ─── POST /api/orders/event — compra de paquete de cumpleaños / evento privado ──
+// Crea una orden SIN plan (plan_id NULL): al aprobarla NO se otorga membresía
+// (los guards de verify/MP ya condicionan con order.plan_id). Los detalles del
+// festejo (fecha, hora, invitadas, contacto, notas) viajan en event_details.
+app.post("/api/orders/event", authMiddleware, async (req, res) => {
+  const {
+    packageId, eventDate, eventTime, guests,
+    contactName, contactPhone, contactEmail, notes = "",
+    paymentMethod: rawPM = "transfer",
+  } = req.body;
+  const paymentMethod = normalizePaymentMethod(rawPM);
+  if (!packageId) return res.status(400).json({ message: "packageId requerido" });
+  if (!eventDate || !eventTime) return res.status(400).json({ message: "Fecha y hora del evento son requeridas" });
+  if (!contactName || !contactPhone) return res.status(400).json({ message: "Nombre y teléfono de contacto son requeridos" });
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const pkgRes = await client.query(
+      "SELECT * FROM event_packages WHERE id = $1 AND is_active = true",
+      [packageId]
+    );
+    if (!pkgRes.rows.length) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Paquete no encontrado" });
+    }
+    const pkg = pkgRes.rows[0];
+
+    // Fecha válida y no pasada (comparación por día, zona del server).
+    const evDate = new Date(`${eventDate}T00:00:00`);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (isNaN(evDate.getTime()) || evDate < today) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: "La fecha del evento debe ser futura" });
+    }
+    const guestCount = Math.max(1, parseInt(guests, 10) || 1);
+    if (guestCount > Number(pkg.max_guests)) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: `Este paquete admite hasta ${pkg.max_guests} invitadas` });
+    }
+
+    // Precio: descuento efectivo/transferencia igual que en planes.
+    const isCashOrTransfer = paymentMethod === "cash" || paymentMethod === "transfer";
+    let subtotal = parseFloat(pkg.price);
+    if (isCashOrTransfer && pkg.discount_price != null && parseFloat(pkg.discount_price) > 0) {
+      subtotal = parseFloat(pkg.discount_price);
+    }
+    const total = Math.round(subtotal * 100) / 100;
+    const bankInfo = await getConfiguredBankInfo(client);
+    const expires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48h
+    const initialStatus = paymentMethod === "cash" ? "pending_verification" : "pending_payment";
+    const eventDetails = {
+      kind: "birthday",
+      package_id: pkg.id,
+      package_name: pkg.name,
+      event_date: eventDate,
+      event_time: String(eventTime).slice(0, 5),
+      guests: guestCount,
+      contact_name: String(contactName).slice(0, 120),
+      contact_phone: String(contactPhone).slice(0, 30),
+      contact_email: contactEmail ? String(contactEmail).slice(0, 255) : null,
+      notes: String(notes || "").slice(0, 1000),
+      duration_min: pkg.duration_min,
+    };
+
+    const ins = await client.query(
+      `INSERT INTO orders (user_id, plan_id, status, payment_method, subtotal, tax_amount,
+                           total_amount, bank_info, expires_at, event_details, notes)
+       VALUES ($1, NULL, $2::order_status, $3::payment_method, $4, 0, $5, $6, $7, $8, $9)
+       RETURNING *`,
+      [req.userId, initialStatus, paymentMethod, subtotal, total, JSON.stringify(bankInfo),
+       expires, JSON.stringify(eventDetails),
+       `Evento privado: ${pkg.name} · ${eventDate} ${String(eventTime).slice(0, 5)} · ${guestCount} invitada${guestCount === 1 ? "" : "s"}`]
+    );
+    await client.query("COMMIT");
+    const order = ins.rows[0];
+
+    // Pago con tarjeta: checkout de MercadoPago (mismo flujo que planes).
+    let mp_checkout_url = null;
+    if (paymentMethod === "card" && isMercadoPagoEnabled()) {
+      try {
+        const u = await pool.query("SELECT email FROM users WHERE id = $1", [req.userId]);
+        const pref = await mpCreatePreference({
+          orderId: order.id,
+          orderNumber: order.order_number,
+          planName: pkg.name,
+          amount: Number(order.total_amount),
+          userEmail: u.rows[0]?.email || "",
+        });
+        mp_checkout_url = pref.checkout_url;
+        await pool.query(
+          `UPDATE orders SET payment_provider = 'mercadopago', payment_intent_id = $1,
+                  mp_checkout_url = $2, updated_at = NOW() WHERE id = $3`,
+          [pref.preference_id, pref.checkout_url, order.id]
+        );
+      } catch (mpErr) {
+        console.error("[orders/event] MercadoPago preference error:", mpErr.message);
+        // La orden existe; puede reintentar con /api/orders/:id/pay-with-card.
+      }
+    }
+
+    return res.status(201).json({
+      data: {
+        ...order,
+        plan_name: pkg.name,
+        mp_checkout_url,
+        bank_details: { ...bankInfo, amount: total, currency: "MXN" },
+      },
+    });
+  } catch (err) {
+    try { await client.query("ROLLBACK"); } catch (_) { }
+    console.error("POST orders/event error:", err);
+    return res.status(500).json({ message: err?.message || "Error interno" });
+  } finally {
+    client.release();
+  }
+});
+
 // POST /api/orders/:id/pay-with-card — genera (o reutiliza) el checkout de MercadoPago
 // para una orden existente. Útil si la orden se creó pero el pago no se completó,
 // o si la generación inicial de la preferencia falló.
@@ -4766,9 +4940,9 @@ app.post("/api/orders/:id/pay-with-card", authMiddleware, async (req, res) => {
       return res.status(503).json({ message: "El pago con tarjeta no está disponible por el momento." });
     }
     const orderRes = await pool.query(
-      `SELECT o.*, p.name AS plan_name, u.email AS user_email
+      `SELECT o.*, COALESCE(p.name, o.event_details->>'package_name') AS plan_name, u.email AS user_email
          FROM orders o
-         JOIN plans p ON o.plan_id = p.id
+         LEFT JOIN plans p ON o.plan_id = p.id
          JOIN users u ON o.user_id = u.id
         WHERE o.id = $1 AND o.user_id = $2`,
       [req.params.id, req.userId]
@@ -12442,7 +12616,8 @@ app.get("/api/admin/orders", adminMiddleware, async (req, res) => {
       } catch (_) { _hasComplementsTable = false; }
     }
     const hasComplements = _hasComplementsTable;
-    let q = `SELECT o.*, u.display_name AS user_name, p.name AS plan_name,
+    let q = `SELECT o.*, u.display_name AS user_name,
+                    COALESCE(p.name, o.event_details->>'package_name') AS plan_name,
                     (SELECT json_agg(json_build_object(
                        'id', pp.id, 'file_url', pp.file_url, 'file_name', pp.file_name,
                        'mime_type', pp.mime_type, 'status', pp.status,

@@ -144,6 +144,11 @@ const MyOrders = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1 min-w-0">
                         <p className="font-alilato font-medium text-sm text-[#1A060B]">{o.plan_name}</p>
+                        {o.event_details && (
+                          <p className="font-alilato text-xs text-[#8A5A5E]">
+                            Evento privado · {o.event_details.event_date} · {o.event_details.event_time} hrs · {o.event_details.guests} invitada{o.event_details.guests === 1 ? "" : "s"}
+                          </p>
+                        )}
                         <p className="text-xs text-[#320C16]">
                           ${Number(o.total_amount).toLocaleString("es-MX")} MXN
                           {" · "}
