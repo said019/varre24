@@ -4,21 +4,26 @@ import communityRitual from "@/assets/varre24/inauguracion/community-ritual.webp
 import communityDetail from "@/assets/varre24/inauguracion/community-detail.webp";
 import communityFlow from "@/assets/varre24/inauguracion/community-flow.webp";
 import barreAction from "@/assets/varre24/inauguracion/barre-action.webp";
-import pilatesFlow from "@/assets/varre24/inauguracion/pilates-flow.webp";
-import experienceWelcome from "@/assets/varre24/inauguracion/experience-welcome.webp";
 import yogaBreath from "@/assets/varre24/inauguracion/yoga-breath.webp";
 import eventosVarre from "@/assets/varre24/inauguracion/eventos-varre.jpg";
 import experienceDj from "@/assets/varre24/inauguracion/experience-dj.webp";
-import experienceDetail from "@/assets/varre24/inauguracion/experience-detail.webp";
 import experienceCandle from "@/assets/varre24/inauguracion/experience-candle.webp";
 import authStudio from "@/assets/varre24/inauguracion/auth-studio.webp";
 import clientAccent from "@/assets/varre24/inauguracion/client-accent.webp";
 import adminAccent from "@/assets/varre24/inauguracion/admin-accent.webp";
+import founderReady from "@/assets/varre24/editorial/founder-ready.webp";
+import experienceStretch from "@/assets/varre24/editorial/experience-stretch.webp";
+import pilatesDuoBall from "@/assets/varre24/editorial/pilates-duo-ball.webp";
 
 export type PhotoAsset = {
   src: string;
   alt: string;
 };
+
+export const FOUNDER_PHOTO = {
+  src: founderReady,
+  alt: "Pies con flores y letrero ready de VARRE24",
+} as const satisfies PhotoAsset;
 
 export const LANDING_PHOTOS = {
   hero: {
@@ -54,12 +59,12 @@ export const CLASS_PHOTOS = {
     alt: "Clase de barre VARRE24 frente al espejo",
   },
   pilates: {
-    src: pilatesFlow,
-    alt: "Pilates mat VARRE24 con pelota de estabilidad",
+    src: pilatesDuoBall,
+    alt: "Pilates mat VARRE24 con dos alumnas y pelota entre las piernas",
   },
   experience: {
-    src: experienceWelcome,
-    alt: "Experience Class VARRE24 con detalle de bienvenida",
+    src: experienceStretch,
+    alt: "Experience Class VARRE24 con flores y estiramiento en mat negro",
   },
   yoga: {
     src: yogaBreath,
@@ -73,12 +78,12 @@ export const CLASS_PHOTOS = {
 
 export const EXPERIENCE_PHOTOS = [
   {
-    src: experienceDj,
-    alt: "Experience Class VARRE24 con DJ en vivo",
+    src: experienceStretch,
+    alt: "Experience Class VARRE24 con flores y estiramiento en mat negro",
   },
   {
-    src: experienceDetail,
-    alt: "Clase especial VARRE24 con flores y bebida de bienvenida",
+    src: experienceDj,
+    alt: "Experience Class VARRE24 con DJ en vivo",
   },
   {
     src: experienceCandle,

@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { useRef } from "react";
 import { Reveal } from "@/lib/motion";
 import { FOUNDER } from "./data";
-import founderPhoto from "@/assets/varre24/hero-about.jpg";
+import { FOUNDER_PHOTO } from "./photoAssets";
 
 export function FounderSpread() {
   const ref = useRef<HTMLElement>(null);
@@ -13,7 +13,7 @@ export function FounderSpread() {
   return (
     <section ref={ref} className="grid items-stretch gap-0 bg-[#3B0E1A] md:grid-cols-2">
       <div className="relative h-[60vh] overflow-hidden md:h-auto md:min-h-[88vh]">
-        <motion.img src={founderPhoto} alt="Alexandra Murillo — Fundadora" style={{ y }} className="absolute inset-0 h-[120%] w-full object-cover" />
+        <motion.img src={FOUNDER_PHOTO.src} alt={FOUNDER_PHOTO.alt} style={{ y }} className="absolute inset-0 h-[120%] w-full object-cover" />
       </div>
       {/* Panel vino con acentos rosa */}
       <Reveal className="flex flex-col justify-center px-6 py-16 sm:px-10 lg:px-16">
