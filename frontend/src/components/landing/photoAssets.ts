@@ -7,7 +7,7 @@ import barreAction from "@/assets/varre24/inauguracion/barre-action.webp";
 import pilatesFlow from "@/assets/varre24/inauguracion/pilates-flow.webp";
 import experienceWelcome from "@/assets/varre24/inauguracion/experience-welcome.webp";
 import yogaBreath from "@/assets/varre24/inauguracion/yoga-breath.webp";
-import eventosGroup from "@/assets/varre24/inauguracion/eventos-group.webp";
+import eventosVarre from "@/assets/varre24/inauguracion/eventos-varre.jpg";
 import experienceDj from "@/assets/varre24/inauguracion/experience-dj.webp";
 import experienceDetail from "@/assets/varre24/inauguracion/experience-detail.webp";
 import experienceCandle from "@/assets/varre24/inauguracion/experience-candle.webp";
@@ -66,8 +66,8 @@ export const CLASS_PHOTOS = {
     alt: "Practica consciente VARRE24 con respiracion y calma",
   },
   eventos: {
-    src: eventosGroup,
-    alt: "Evento privado VARRE24 con comunidad en el estudio",
+    src: eventosVarre,
+    alt: "Evento privado de cumpleaños en el estudio VARRE24",
   },
 } as const satisfies Record<string, PhotoAsset>;
 
