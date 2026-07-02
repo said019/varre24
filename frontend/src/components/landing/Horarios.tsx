@@ -78,7 +78,7 @@ export function Horarios() {
   const rangeLabel = `${format(rangeStart, "d MMM", { locale: es })} – ${format(rangeEnd, "d MMM", { locale: es })}`;
 
   return (
-    <section id="horarios" className="bg-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
+    <section id="horarios" className="bg-gradient-to-b from-[#FFE4EE] via-[#FFE4EE]/45 to-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#9C8A8B]">Horarios</p>

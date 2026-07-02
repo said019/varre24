@@ -4,7 +4,7 @@ import { PLANS } from "./data";
 
 export function PlansTeaser() {
   return (
-    <section id="planes" className="bg-gradient-to-b from-[#FFE4EE] to-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
+    <section id="planes" className="bg-gradient-to-b from-[#FFD6E6] via-[#FFE4EE] to-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#9C8A8B]">Membresías</p>

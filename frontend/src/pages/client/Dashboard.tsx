@@ -183,12 +183,12 @@ const Dashboard = () => {
                   : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#3B0E1A]">{upcomingBookings.length}</p>}
                 <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/60">clases agendadas</p>
               </div>
-              <div className="flex flex-col justify-center rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-6 transition-transform duration-300 hover:-translate-y-0.5">
-                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">Clases tomadas</p>
+              <div className="flex flex-col justify-center rounded-[1.5rem] bg-[#3B0E1A] p-6 transition-transform duration-300 hover:-translate-y-0.5">
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#FFD6E6]/70">Clases tomadas</p>
                 {loadingBookings
-                  ? <Skeleton className="mt-3 h-9 w-12" />
-                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#1A060B]">{attended}</p>}
-                <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/55">en tu historial</p>
+                  ? <Skeleton className="mt-3 h-9 w-12 bg-[#F3EFE9]/10" />
+                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#FFD6E6]">{attended}</p>}
+                <p className="font-alilato mt-1.5 text-xs text-[#F3EFE9]/60">en tu historial</p>
               </div>
             </div>
           </section>

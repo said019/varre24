@@ -88,7 +88,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="press mt-1 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(124,1,22,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+              className="press mt-1 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
