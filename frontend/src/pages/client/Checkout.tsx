@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import api from "@/lib/api";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import {
   Check, Loader2, CreditCard, Copy, Building2,
   Tag, ChevronRight, ArrowLeft, Upload, CheckCircle, Sparkles,
+  PartyPopper, Users, Timer, ArrowRight,
 } from "lucide-react";
 import imgPilates from "@/assets/pilates-tower_1850574.png";
 
@@ -77,6 +78,8 @@ const PlanCard = ({
     .filter((f: string) => !f.toLowerCase().includes("descuento") && !f.toLowerCase().includes("costo con"));
   const planPrice = Number(plan.price ?? 0);
   const discountPrice = getPlanDiscountPrice(plan);
+  // La membresía estrella se viste de vino (espejo de la landing).
+  const featured = /mensual/i.test(plan.name ?? "");
 
   return (
     <button
@@ -84,40 +87,47 @@ const PlanCard = ({
       onClick={onSelect}
       className={cn(
         "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
-        selected
-          ? "border-[#3B0E1A]/60 bg-[#FFE4EE]"
-          : "border-[#E8D7D6] bg-[#FCF8F7] hover:border-[#3B0E1A]/30"
+        featured
+          ? cn("border-[#3B0E1A] bg-[#3B0E1A] text-[#F3EFE9]", selected && "ring-2 ring-[#FFD6E6] ring-offset-2 ring-offset-[#F3EFE9]")
+          : selected
+            ? "border-[#3B0E1A]/60 bg-[#FFE4EE]"
+            : "border-[#E8D7D6] bg-[#FCF8F7] hover:border-[#3B0E1A]/30"
       )}
     >
-      {selected && (
-        <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#3B0E1A] flex items-center justify-center">
-          <Check size={11} className="text-white" />
+      {featured && (
+        <span className="absolute top-3 right-3 rounded-full bg-[#FFD6E6] px-2.5 py-0.5 font-alilato text-[0.56rem] font-semibold uppercase tracking-[0.14em] text-[#3B0E1A]">
+          Más elegida
         </span>
       )}
-      <div className="flex items-start gap-3 pr-7">
-        <div className="h-11 w-11 rounded-xl border flex items-center justify-center shrink-0 border-[#C9A5A8]/30 bg-[#C9A5A8]/10">
+      {selected && (
+        <span className={cn("absolute w-5 h-5 rounded-full flex items-center justify-center", featured ? "top-3 left-3 bg-[#FFD6E6]" : "top-3 right-3 bg-[#3B0E1A]")}>
+          <Check size={11} className={featured ? "text-[#3B0E1A]" : "text-white"} />
+        </span>
+      )}
+      <div className={cn("flex items-start gap-3", featured ? "mt-5" : "pr-7")}>
+        <div className={cn("h-11 w-11 rounded-xl border flex items-center justify-center shrink-0", featured ? "border-[#FFD6E6]/30 bg-[#FFD6E6]" : "border-[#F5C2D6] bg-[#FFE4EE]")}>
           <img src={imgPilates} alt="" className="h-7 w-7 object-contain" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#1A060B]/85 leading-snug">{plan.name}</p>
+          <p className={cn("text-sm font-semibold leading-snug", featured ? "text-[#F3EFE9]" : "text-[#1A060B]/85")}>{plan.name}</p>
           {plan.description && (
-            <p className="text-[11px] text-[#1A060B]/45 mt-0.5 leading-snug">{plan.description}</p>
+            <p className={cn("text-[11px] mt-0.5 leading-snug", featured ? "text-[#FFD6E6]/75" : "text-[#1A060B]/45")}>{plan.description}</p>
           )}
         </div>
       </div>
       <div className="flex items-baseline gap-1 mt-2">
-        <span className="text-2xl font-bold text-[#1A060B]">${planPrice.toLocaleString("es-MX")}</span>
-        <span className="text-xs text-[#1A060B]/35">{plan.currency ?? "MXN"}</span>
+        <span className={cn("text-2xl font-bold", featured ? "text-[#F3EFE9]" : "text-[#1A060B]")}>${planPrice.toLocaleString("es-MX")}</span>
+        <span className={cn("text-xs", featured ? "text-[#FFD6E6]/60" : "text-[#1A060B]/35")}>{plan.currency ?? "MXN"}</span>
       </div>
       {discountPrice && (
-        <p className="text-[11px] text-[#1a6b0a] font-bold mt-0.5">
+        <p className={cn("text-[11px] font-bold mt-0.5", featured ? "text-[#FFD6E6]" : "text-[#1a6b0a]")}>
           Tarjeta/transferencia: ${discountPrice.toLocaleString("es-MX")}
         </p>
       )}
       {features.length > 0 && (
         <ul className="mt-2 space-y-0.5">
           {features.map((f, i) => (
-            <li key={i} className="text-[10px] text-[#1A060B]/45 flex items-start gap-1.5">
+            <li key={i} className={cn("text-[10px] flex items-start gap-1.5", featured ? "text-[#FFD6E6]/70" : "text-[#1A060B]/45")}>
               <span className="mt-0.5 shrink-0">•</span>
               {f}
             </li>
@@ -126,12 +136,12 @@ const PlanCard = ({
       )}
       <div className="flex flex-wrap gap-2 mt-2">
         {durationDays > 0 && (
-          <span className="text-[10px] text-[#4a5638] bg-[#C9A5A8]/15 border border-[#C9A5A8]/25 rounded-full px-2 py-0.5">
+          <span className={cn("text-[10px] rounded-full px-2 py-0.5 border", featured ? "border-[#FFD6E6]/25 bg-[#FFD6E6]/12 text-[#FFD6E6]" : "text-[#8A5A5E] bg-[#FFE4EE] border-[#F5C2D6]")}>
             {durationDays} días
           </span>
         )}
         {Number(classLimit) > 0 && (
-          <span className="text-[10px] text-[#260910] bg-[#3B0E1A]/12 border border-[#3B0E1A]/20 rounded-full px-2 py-0.5">
+          <span className={cn("text-[10px] rounded-full px-2 py-0.5 border", featured ? "border-[#FFD6E6]/25 bg-[#FFD6E6]/12 text-[#FFD6E6]" : "text-[#260910] bg-[#3B0E1A]/12 border-[#3B0E1A]/20")}>
             {classLimit} clases
           </span>
         )}
@@ -169,9 +179,9 @@ const StepBar = ({ current }: { current: Step }) => {
             {i > 0 && <div className={cn("h-px w-6 rounded", done ? "bg-[#3B0E1A]/60" : "bg-[#3B0E1A]/10")} />}
             <div className={cn(
               "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all",
-              active ? "border-[#3B0E1A]/40 bg-[#3B0E1A]/10 text-[#3B0E1A]"
-                : done ? "border-[#4ade80]/30 bg-[#4ade80]/5 text-[#4ade80]"
-                : "border-[#3B0E1A]/15 text-[#1A060B]/25"
+              active ? "border-[#3B0E1A] bg-[#3B0E1A] text-[#FFD6E6]"
+                : done ? "border-emerald-500/30 bg-emerald-50 text-emerald-600"
+                : "border-[#F5C2D6] bg-[#FFE4EE]/60 text-[#8A5A5E]/60"
             )}>
               {done ? <Check size={10} /> : <span>{i + 1}</span>}
               {s.label}
@@ -266,6 +276,15 @@ const Checkout = () => {
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
   });
+
+  // Paquetes de cumpleaños / eventos privados — se muestran como sección
+  // aparte con CTA a /app/eventos (la compra vive allá).
+  const { data: eventPkgData } = useQuery({
+    queryKey: ["public-event-packages"],
+    queryFn: async () => (await api.get("/public/event-packages")).data,
+    staleTime: 1000 * 60 * 10,
+  });
+  const eventPackages: any[] = Array.isArray(eventPkgData?.data) ? eventPkgData.data : [];
 
   // ── Trial restriction: "Clase prueba / muestra" is only for first-time users.
   // We detect a returning customer by checking whether the user has any approved
@@ -522,6 +541,51 @@ const Checkout = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* ── Paquetes de cumpleaños / eventos privados ── */}
+                  {eventPackages.length > 0 && (
+                    <div>
+                      <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8A5A5E]">
+                        <PartyPopper size={12} strokeWidth={1.75} />
+                        Paquetes de cumpleaños
+                      </p>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {eventPackages.map((p: any) => (
+                          <Link
+                            key={p.id}
+                            to="/app/eventos"
+                            className="group relative overflow-hidden rounded-2xl border border-[#F5C2D6] bg-[#FFE4EE] p-4 no-underline transition-all duration-200 hover:-translate-y-0.5 hover:border-[#3B0E1A]/40"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFD6E6]">
+                                <PartyPopper size={18} className="text-[#3B0E1A]" strokeWidth={1.75} />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold leading-snug text-[#1A060B]">{p.name}</p>
+                                <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-[#8A5A5E]">{p.description}</p>
+                              </div>
+                            </div>
+                            <div className="mt-2 flex items-baseline gap-1">
+                              <span className="text-2xl font-bold text-[#1A060B]">${Number(p.price).toLocaleString("es-MX")}</span>
+                              <span className="text-xs text-[#8A5A5E]/70">MXN</span>
+                            </div>
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                              <span className="flex items-center gap-1 rounded-full border border-[#F5C2D6] bg-[#FCF8F7] px-2 py-0.5 text-[10px] text-[#8A5A5E]">
+                                <Users size={9} strokeWidth={1.75} /> hasta {p.max_guests}
+                              </span>
+                              <span className="flex items-center gap-1 rounded-full border border-[#F5C2D6] bg-[#FCF8F7] px-2 py-0.5 text-[10px] text-[#8A5A5E]">
+                                <Timer size={9} strokeWidth={1.75} /> {p.duration_min} min
+                              </span>
+                            </div>
+                            <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#3B0E1A]">
+                              Reservar evento
+                              <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Complementos de bienestar: feature retirada — ya no se
                       ofrecen al cliente (precios combo hardcodeados que no
