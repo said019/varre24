@@ -4,7 +4,7 @@ import { PLANS } from "./data";
 
 export function PlansTeaser() {
   return (
-    <section id="planes" className="bg-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
+    <section id="planes" className="bg-gradient-to-b from-[#FFE4EE] to-[#F3EFE9] px-6 py-24 sm:px-10 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#9C8A8B]">Membresías</p>
@@ -35,7 +35,7 @@ export function PlansTeaser() {
                       <span
                         className={[
                           "inline-flex rounded-full px-2.5 py-0.5 font-alilato text-[0.56rem] uppercase tracking-[0.16em]",
-                          featured ? "bg-[#C9A5A8] text-[#1A060B]" : "bg-[#F4E6EA] text-[#3B0E1A]",
+                          featured ? "bg-[#FFD6E6] text-[#3B0E1A]" : "bg-[#FFD6E6] text-[#3B0E1A]",
                         ].join(" ")}
                       >
                         {p.tag}
@@ -83,7 +83,7 @@ export function PlansTeaser() {
                     className={[
                       "mt-6 inline-flex items-center justify-center rounded-full px-5 py-2.5 font-alilato text-[0.7rem] font-medium uppercase tracking-[0.14em] transition-colors",
                       featured
-                        ? "bg-[#F3EFE9] text-[#3B0E1A] hover:bg-[#EADCDD]"
+                        ? "bg-[#FFD6E6] font-semibold text-[#3B0E1A] hover:bg-[#FFE4EE]"
                         : "border border-[#3B0E1A] text-[#3B0E1A] hover:bg-[#3B0E1A] hover:text-[#F3EFE9]",
                     ].join(" ")}
                   >

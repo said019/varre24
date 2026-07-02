@@ -97,7 +97,7 @@ export function Horarios() {
             onClick={() => setWeekOffset((w) => Math.max(0, w - 1))}
             disabled={weekOffset === 0}
             aria-label="Semana anterior"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA] disabled:cursor-not-allowed disabled:opacity-35"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F5C2D6] bg-[#FFE4EE] text-[#3B0E1A] transition-colors hover:bg-[#FFD6E6] disabled:cursor-not-allowed disabled:opacity-35"
           >
             <ChevronLeft size={18} strokeWidth={1.75} />
           </button>
@@ -112,7 +112,7 @@ export function Horarios() {
             type="button"
             onClick={() => setWeekOffset((w) => w + 1)}
             aria-label="Semana siguiente"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F5C2D6] bg-[#FFE4EE] text-[#3B0E1A] transition-colors hover:bg-[#FFD6E6]"
           >
             <ChevronRight size={18} strokeWidth={1.75} />
           </button>
@@ -151,16 +151,16 @@ export function Horarios() {
                       today ? "border-[#3B0E1A]/50" : "border-[#E8D7D6]"
                     }`}
                   >
-                    {/* Banda de día + fecha */}
+                    {/* Banda de día + fecha — soft pink; hoy en burgundy */}
                     <div
                       className={`flex items-center justify-between border-b px-4 py-3 ${
                         today
-                          ? "border-[#3B0E1A]/20 bg-[#3B0E1A] text-[#F3EFE9]"
-                          : "border-[#E8D7D6] bg-gradient-to-b from-[#F4E6EA] to-[#F4E6EA]/40 text-[#3B0E1A]"
+                          ? "border-[#3B0E1A]/20 bg-[#3B0E1A] text-[#FFD6E6]"
+                          : "border-[#F5C2D6] bg-[#FFD6E6] text-[#3B0E1A]"
                       }`}
                     >
                       <span className="font-alilato text-[0.68rem] uppercase tracking-[0.18em]">{DAY_SHORT[dow]}</span>
-                      <span className={`font-bebas text-xl font-light leading-none ${today ? "text-[#F3EFE9]" : "text-[#1A060B]"}`}>
+                      <span className={`font-bebas text-xl font-light leading-none ${today ? "text-[#FFD6E6]" : "text-[#1A060B]"}`}>
                         {format(date, "d")}
                       </span>
                     </div>
@@ -201,8 +201,8 @@ export function Horarios() {
                                   {s.instructor_name}
                                 </p>
                               )}
-                              <p className="mt-2 inline-flex items-center gap-1 font-alilato text-[0.6rem] uppercase tracking-[0.1em] text-[#9C8A8B]">
-                                <Users size={10} strokeWidth={1.75} />
+                              <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#FFE4EE] px-2 py-0.5 font-alilato text-[0.58rem] uppercase tracking-[0.08em] text-[#8A5A5E]">
+                                <Users size={9} strokeWidth={1.75} />
                                 {cupo} lugares
                               </p>
                             </button>

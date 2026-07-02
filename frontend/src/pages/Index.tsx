@@ -7,6 +7,7 @@ import { ExperienceClass } from "@/components/landing/ExperienceClass";
 import { CommunityMoments } from "@/components/landing/CommunityMoments";
 import { FounderSpread } from "@/components/landing/FounderSpread";
 import { PlansTeaser } from "@/components/landing/PlansTeaser";
+import { CumpleBanner } from "@/components/landing/CumpleBanner";
 import { ContactFooter } from "@/components/landing/ContactFooter";
 
 export default function Index() {
@@ -22,6 +23,7 @@ export default function Index() {
         <CommunityMoments />
         <FounderSpread />
         <PlansTeaser />
+        <CumpleBanner />
         <ContactFooter />
       </main>
     </div>

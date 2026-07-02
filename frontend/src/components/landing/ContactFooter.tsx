@@ -7,12 +7,12 @@ export function ContactFooter() {
       <Reveal className="mx-auto max-w-6xl">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
-            <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#C9A5A8]">Contacto</p>
+            <p className="font-alilato text-xs uppercase tracking-[0.3em] text-[#FFD6E6]">Contacto</p>
             <h2 className="font-bebas mt-3 text-[clamp(2rem,4.5vw,3.2rem)] font-light leading-tight tracking-[0.02em]">Ven a VARRE24</h2>
             <p className="font-alilato mt-4 max-w-sm text-sm leading-relaxed text-[#EADCDD]/85">{STUDIO.address}</p>
-            <a href={STUDIO.instagramUrl} className="font-alilato mt-2 inline-block text-[#C9A5A8]">{STUDIO.instagram}</a>
+            <a href={STUDIO.instagramUrl} className="font-alilato mt-2 inline-block text-[#FFD6E6]">{STUDIO.instagram}</a>
             <div className="mt-6">
-              <MagneticButton href="/app/classes" className="press inline-flex items-center rounded-full bg-[#3B0E1A] px-7 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[#F3EFE9]">
+              <MagneticButton href="/app/classes" className="press inline-flex items-center rounded-full bg-[#FFD6E6] px-7 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[#3B0E1A]">
                 Reservar clase
               </MagneticButton>
             </div>

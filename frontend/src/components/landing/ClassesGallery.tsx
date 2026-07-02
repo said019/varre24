@@ -23,7 +23,7 @@ export function ClassesGallery() {
             <Reveal key={c.key}>
               <Link
                 to={c.key === "eventos" ? "/app/eventos" : "/app/classes"}
-                className="group grid grid-cols-1 gap-x-6 gap-y-5 border-b border-[#E8D7D6] py-8 no-underline sm:grid-cols-12 sm:items-center"
+                className="group grid grid-cols-1 gap-x-6 gap-y-5 rounded-2xl border-b border-[#E8D7D6] px-4 py-8 no-underline transition-colors hover:bg-[#FFE4EE] sm:-mx-4 sm:grid-cols-12 sm:items-center"
               >
                 <div className="overflow-hidden rounded-[6px] bg-[#E8D7D6] sm:col-span-3 lg:col-span-2">
                   <img

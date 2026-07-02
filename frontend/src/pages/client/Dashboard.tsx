@@ -94,7 +94,7 @@ const Dashboard = () => {
   const todayLabel = format(new Date(), "EEEE d 'de' MMMM", { locale: es });
 
   const QUICK = [
-    { to: "/app/classes", icon: Calendar, label: "Reservar clase", chip: "bg-[#F4E6EA]", ic: "text-[#3B0E1A]" },
+    { to: "/app/classes", icon: Calendar, label: "Reservar clase", chip: "bg-[#FFD6E6]", ic: "text-[#3B0E1A]" },
     { to: "/app/bookings", icon: ClipboardList, label: "Mis reservas", chip: "bg-[#C9A5A8]/25", ic: "text-[#8A5A5E]" },
     { to: "/app/checkout", icon: ShoppingBag, label: "Comprar plan", chip: "bg-[#806248]/15", ic: "text-[#806248]" },
   ];
@@ -163,7 +163,7 @@ const Dashboard = () => {
               <div className="relative mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
                 <Link
                   to={membership ? "/app/classes" : "/app/checkout"}
-                  className="press inline-flex items-center gap-2 rounded-full bg-[#F3EFE9] px-6 py-3 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#3B0E1A] no-underline transition-colors hover:bg-[#EADCDD]"
+                  className="press inline-flex items-center gap-2 rounded-full bg-[#FFD6E6] px-6 py-3 font-alilato text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-[#3B0E1A] no-underline transition-colors hover:bg-[#FFE4EE]"
                 >
                   {membership ? "Reservar clase" : "Adquirir membresía"}
                   <ArrowRight size={14} />
@@ -176,12 +176,12 @@ const Dashboard = () => {
 
             {/* Stats — columna derecha */}
             <div className="grid grid-cols-2 gap-4 lg:col-span-5 lg:grid-cols-1">
-              <div className="flex flex-col justify-center rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-6 transition-transform duration-300 hover:-translate-y-0.5">
-                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">Próximas reservas</p>
+              <div className="flex flex-col justify-center rounded-[1.5rem] bg-[#FFD6E6] p-6 transition-transform duration-300 hover:-translate-y-0.5">
+                <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#8A5A5E]">Próximas reservas</p>
                 {loadingBookings
-                  ? <Skeleton className="mt-3 h-9 w-12" />
-                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#1A060B]">{upcomingBookings.length}</p>}
-                <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/55">clases agendadas</p>
+                  ? <Skeleton className="mt-3 h-9 w-12 bg-[#FFE4EE]" />
+                  : <p className="font-bebas mt-2 text-[2.4rem] font-light leading-none text-[#3B0E1A]">{upcomingBookings.length}</p>}
+                <p className="font-alilato mt-1.5 text-xs text-[#3B0E1A]/60">clases agendadas</p>
               </div>
               <div className="flex flex-col justify-center rounded-[1.5rem] border border-[#E8D7D6] bg-[#FCF8F7] p-6 transition-transform duration-300 hover:-translate-y-0.5">
                 <p className="font-alilato text-[0.6rem] uppercase tracking-[0.2em] text-[#9C8A8B]">Clases tomadas</p>
