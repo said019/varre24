@@ -238,7 +238,7 @@ const EventBooking = () => {
                         onClick={() => setPkg(p)}
                         className={cn(
                           "relative flex h-full flex-col rounded-2xl border p-6 text-left transition-all duration-200",
-                          selected ? "border-[#3B0E1A]/60 bg-[#F4E6EA]" : "border-[#E9D9D9] bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35"
+                          selected ? "border-[#3B0E1A]/60 bg-[#FFE4EE]" : "border-[#E9D9D9] bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35"
                         )}
                       >
                         {selected && (
@@ -368,7 +368,7 @@ const EventBooking = () => {
                       className={cn(
                         "flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 font-alilato text-xs transition-all",
                         paymentMethod === id
-                          ? "border-[#3B0E1A]/50 bg-[#F4E6EA] text-[#1A060B]"
+                          ? "border-[#3B0E1A]/50 bg-[#FFE4EE] text-[#1A060B]"
                           : "border-[#E9D9D9] bg-[#FCF8F7] text-[#3B0E1A]/60 hover:border-[#3B0E1A]/30"
                       )}
                     >
@@ -440,7 +440,7 @@ const EventBooking = () => {
           {/* ── Paso 3b: pago en estudio ── */}
           {step === "cash" && (
             <div className="space-y-4">
-              <div className="space-y-3 rounded-2xl border border-[#E9D9D9] bg-[#F4E6EA] p-6 text-center">
+              <div className="space-y-3 rounded-2xl border border-[#E9D9D9] bg-[#FFE4EE] p-6 text-center">
                 <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FCF8F7]">
                   <CreditCard size={24} className="text-[#3B0E1A]" strokeWidth={1.75} />
                 </span>

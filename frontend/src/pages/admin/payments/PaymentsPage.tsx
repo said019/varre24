@@ -66,7 +66,7 @@ const StepBar = ({ step }: { step: number }) => (
           <div className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
             done && "bg-[#3B0E1A]/20 text-[#3B0E1A] border border-[#3B0E1A]/30",
-            active && "bg-gradient-to-r from-[#3B0E1A] to-[#C9A5A8] text-white shadow-[0_0_16px_rgba(131,106,93,0.4)]",
+            active && "bg-[#3B0E1A] text-[#FFD6E6]",
             !done && !active && "bg-[#3B0E1A]/[0.06] text-[#1A060B]/25 border border-[#3B0E1A]/15"
           )}>
             <span className={cn(
@@ -518,7 +518,7 @@ const PendingOrders = () => {
               const ev = o.event_details ?? o.eventDetails;
               if (!ev) return null;
               return (
-                <div className="space-y-1 rounded-lg border border-[#C9A5A8]/40 bg-[#F4E6EA]/60 px-3 py-2.5">
+                <div className="space-y-1 rounded-lg border border-[#C9A5A8]/40 bg-[#FFE4EE]/60 px-3 py-2.5">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#8A5A5E]">
                     <PartyPopper size={11} /> Evento privado — {ev.package_name}
                   </p>

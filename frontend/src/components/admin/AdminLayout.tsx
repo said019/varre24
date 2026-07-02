@@ -106,7 +106,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col transition-transform duration-300 shrink-0",
-          "border-r border-[#260910] bg-[#1A060B] text-[#EADCDD]",
+          "border-r border-[#3B0E1A]/60 bg-[#260910] text-[#EADCDD]",
           "w-[86vw] max-w-[290px] -translate-x-full lg:translate-x-0 lg:static",
           mobileOpen && "translate-x-0",
           collapsed ? "lg:w-[78px]" : "lg:w-[252px]",
@@ -115,7 +115,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Brand lockup */}
         <div
           className={cn(
-            "flex items-center border-b border-[#260910] shrink-0 h-16",
+            "flex items-center border-b border-[#3B0E1A]/60 shrink-0 h-16",
             isCompact ? "justify-center px-3" : "justify-between px-5",
           )}
         >
@@ -124,7 +124,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           ) : (
             <Link to="/admin/dashboard" className="flex items-center gap-3 min-w-0 no-underline">
               <img src="/brand/varre24-logo-cream.svg" alt="VARRE24" className="h-5 w-auto object-contain" />
-              <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-[#C9A5A8] pt-0.5">
+              <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-[#FFD6E6] pt-0.5">
                 Admin
               </span>
             </Link>
@@ -132,7 +132,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
           <button
             onClick={() => setMobileOpen(false)}
-            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-lg text-[#C9A5A8] hover:text-[#EADCDD] hover:bg-[#260910] transition-colors"
+            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-lg text-[#C9A5A8] hover:text-[#EADCDD] hover:bg-[#3B0E1A] transition-colors"
             aria-label="Cerrar menú"
           >
             <X size={16} strokeWidth={1.75} />
@@ -141,7 +141,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           {!isCompact && (
             <button
               onClick={() => setCollapsed((v) => !v)}
-              className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#260910] transition-colors"
+              className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#3B0E1A] transition-colors"
               aria-label="Contraer menú"
             >
               <ChevronLeft size={16} strokeWidth={1.75} />
@@ -152,7 +152,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {isCompact && (
           <button
             onClick={() => setCollapsed((v) => !v)}
-            className="hidden lg:flex items-center justify-center mx-auto mt-3 w-8 h-8 rounded-lg text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#260910] transition-colors"
+            className="hidden lg:flex items-center justify-center mx-auto mt-3 w-8 h-8 rounded-lg text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#3B0E1A] transition-colors"
             aria-label="Expandir menú"
           >
             <Menu size={16} strokeWidth={1.75} />
@@ -201,12 +201,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                             "relative flex items-center gap-3 rounded-lg no-underline transition-colors duration-200",
                             isCompact ? "justify-center py-3" : "px-3 py-2.5",
                             active
-                              ? "bg-[#3B0E1A]/18 text-[#F3EFE9]"
-                              : "text-[#C9A5A8] hover:text-[#EADCDD] hover:bg-[#260910]/70",
+                              ? "bg-[#3B0E1A] text-[#FFD6E6]"
+                              : "text-[#C9A5A8] hover:text-[#EADCDD] hover:bg-[#3B0E1A]/70",
                           )}
                         >
                           {active && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-[#C9A5A8]" />
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-[#FFD6E6]" />
                           )}
                           <Icon
                             size={17}
@@ -232,7 +232,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <div className="px-3 pb-3">
             <div
               data-testid="admin-photo-accent"
-              className="overflow-hidden rounded-[6px] border border-[#260910] bg-[#260910]"
+              className="overflow-hidden rounded-[6px] border border-[#3B0E1A]/50 bg-[#3B0E1A]/40"
               aria-hidden="true"
             >
               <img src={SHELL_PHOTOS.admin.src} alt="" className="h-20 w-full object-cover opacity-80" />
@@ -240,13 +240,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
         )}
 
-        <div className="border-t border-[#260910] px-3 py-3 shrink-0 space-y-0.5">
+        <div className="border-t border-[#3B0E1A]/60 px-3 py-3 shrink-0 space-y-0.5">
           <Link
             to="/"
             title={isCompact ? "Ver sitio" : undefined}
             className={cn(
               "flex items-center gap-3 rounded-lg py-2.5 no-underline transition-colors",
-              "text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#260910]/70",
+              "text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#3B0E1A]/70",
               isCompact ? "justify-center" : "px-3",
             )}
           >
@@ -258,7 +258,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             title={isCompact ? "Salir" : undefined}
             className={cn(
               "flex items-center gap-3 rounded-lg py-2.5 w-full transition-colors",
-              "text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#260910]/70",
+              "text-[#9C8A8B] hover:text-[#EADCDD] hover:bg-[#3B0E1A]/70",
               isCompact ? "justify-center" : "px-3",
             )}
           >

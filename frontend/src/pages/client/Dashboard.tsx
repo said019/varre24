@@ -199,7 +199,7 @@ const Dashboard = () => {
               <Link
                 key={to}
                 to={to}
-                className="group flex items-center justify-between px-5 py-4 no-underline transition-colors hover:bg-[#F4E6EA]/50"
+                className="group flex items-center justify-between px-5 py-4 no-underline transition-colors hover:bg-[#FFE4EE]/50"
               >
                 <span className="flex items-center gap-3">
                   <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${chip}`}>

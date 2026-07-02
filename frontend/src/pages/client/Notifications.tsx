@@ -85,7 +85,7 @@ const Notifications = () => {
             </div>
           ) : notifications.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <span className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F4E6EA]">
+              <span className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFE4EE]">
                 <Bell size={26} className="text-[#3B0E1A]" strokeWidth={1.5} />
               </span>
               <p className="text-sm">No tienes notificaciones</p>
@@ -98,9 +98,9 @@ const Notifications = () => {
                 return (
                   <div
                     key={n.id}
-                    className={`flex gap-3 rounded-2xl border p-4 transition-colors ${n.unread ? "border-[#DCC6CA] bg-[#F4E6EA]" : "border-[#E8D7D6] bg-[#FCF8F7]"}`}
+                    className={`flex gap-3 rounded-2xl border p-4 transition-colors ${n.unread ? "border-[#DCC6CA] bg-[#FFE4EE]" : "border-[#E8D7D6] bg-[#FCF8F7]"}`}
                   >
-                    <div className={`mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${n.unread ? "bg-[#FCF8F7]" : "bg-[#F4E6EA]"}`}>
+                    <div className={`mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${n.unread ? "bg-[#FCF8F7]" : "bg-[#FFE4EE]"}`}>
                       <Icon size={16} strokeWidth={1.75} className={n.unread ? color : "text-[#3B0E1A]"} />
                     </div>
                     <div className="flex-1 min-w-0 space-y-0.5">

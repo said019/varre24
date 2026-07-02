@@ -85,7 +85,7 @@ const PlanCard = ({
       className={cn(
         "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
         selected
-          ? "border-[#3B0E1A]/60 bg-[#F4E6EA]"
+          ? "border-[#3B0E1A]/60 bg-[#FFE4EE]"
           : "border-[#E8D7D6] bg-[#FCF8F7] hover:border-[#3B0E1A]/30"
       )}
     >
@@ -471,7 +471,7 @@ const Checkout = () => {
                           className={cn(
                             "relative w-full text-left rounded-2xl border p-4 transition-all duration-200 overflow-hidden",
                             selectedPlan?.id === trialPlan.id
-                              ? "border-[#3B0E1A]/60 bg-[#F4E6EA]"
+                              ? "border-[#3B0E1A]/60 bg-[#FFE4EE]"
                               : "border-[#C9A5A8]/25 bg-[#C9A5A8]/[0.04] hover:border-[#C9A5A8]/40 hover:bg-[#C9A5A8]/[0.06]"
                           )}
                         >
@@ -628,7 +628,7 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "transfer"
-                      ? "border-[#3B0E1A]/50 bg-[#F4E6EA]"
+                      ? "border-[#3B0E1A]/50 bg-[#FFE4EE]"
                       : "border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:border-[#3B0E1A]/25"
                   )}
                 >
@@ -652,7 +652,7 @@ const Checkout = () => {
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "card"
-                      ? "border-[#3B0E1A]/50 bg-[#F4E6EA]"
+                      ? "border-[#3B0E1A]/50 bg-[#FFE4EE]"
                       : "border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] hover:border-[#3B0E1A]/25"
                   )}
                 >

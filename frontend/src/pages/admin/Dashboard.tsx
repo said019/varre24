@@ -102,7 +102,7 @@ const Dashboard = () => {
                 <Button
                   size="sm"
                   onClick={() => setBroadcastOpen(true)}
-                  className="bg-[#C9A5A8] hover:bg-[#C9A5A8] text-[#1A060B] font-semibold"
+                  className="bg-[#FFD6E6] hover:bg-[#FFE4EE] text-[#3B0E1A] font-semibold"
                 >
                   <Send size={13} className="mr-1.5" />Enviar comunicado
                 </Button>

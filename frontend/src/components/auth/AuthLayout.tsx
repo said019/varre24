@@ -45,8 +45,12 @@ export function AuthLayout({ heading, children }: AuthLayoutProps) {
           alt={SHELL_PHOTOS.auth.alt}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-[#1A060B]/35" />
-        <div className="absolute inset-x-10 bottom-10 h-px bg-[#F3EFE9]/45" />
+        {/* Velo vino + firma rosa, espejo del hero de la landing */}
+        <div className="absolute inset-0 bg-[#3B0E1A]/45" />
+        <p className="absolute inset-x-10 bottom-14 font-alilato text-[0.6rem] uppercase tracking-[0.34em] text-[#FFD6E6]/90">
+          Movimiento · Intención · Elegancia
+        </p>
+        <div className="absolute inset-x-10 bottom-10 h-px bg-[#FFD6E6]/55" />
       </aside>
     </div>
   );

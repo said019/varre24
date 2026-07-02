@@ -122,7 +122,7 @@ const MyOrders = () => {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 space-y-3">
-              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F4E6EA]">
+              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFE4EE]">
                 <ShoppingBag size={26} className="text-[#3B0E1A]" strokeWidth={1.5} />
               </span>
               <p className="text-sm text-[#320C16]">No tienes órdenes aún</p>

@@ -91,8 +91,8 @@ const Register = () => {
 
   const heading = (
     <>
-      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#3B0E1A] font-semibold mb-3 flex items-center gap-2">
-        <span className="w-5 h-[1px] bg-[#3B0E1A] inline-block" />
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#8A5A5E] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[2px] rounded-full bg-[#FFD6E6] inline-block" />
         Nuevo registro
       </p>
       <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">

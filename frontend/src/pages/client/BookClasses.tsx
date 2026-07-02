@@ -229,7 +229,7 @@ const BookClasses = () => {
                 <button
                   type="button"
                   onClick={() => setWeekStart((w) => subWeeks(w, 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA]"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#FFE4EE]"
                   aria-label="Semana anterior"
                 >
                   <ChevronLeft size={18} strokeWidth={1.75} />
@@ -242,7 +242,7 @@ const BookClasses = () => {
                 <button
                   type="button"
                   onClick={() => setWeekStart((w) => addWeeks(w, 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#F4E6EA]"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8D7D6] text-[#3B0E1A] transition-colors hover:bg-[#FFE4EE]"
                   aria-label="Semana siguiente"
                 >
                   <ChevronRight size={18} strokeWidth={1.75} />
@@ -282,7 +282,7 @@ const BookClasses = () => {
                     <p className="mt-2 font-bebas text-[2.4rem] font-light leading-none text-[#1A060B]">{bookableThisWeek}</p>
                   )}
                 </div>
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F4E6EA]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFE4EE]">
                   <CalendarDays size={18} className="text-[#3B0E1A]" strokeWidth={1.75} />
                 </span>
               </div>
@@ -371,7 +371,7 @@ const BookClasses = () => {
                             className={cn(
                               "group relative w-full overflow-hidden rounded-2xl border p-4 pl-5 text-left text-xs transition-all duration-200 active:scale-[0.98]",
                               isBooked  && "border-emerald-500/30 bg-emerald-50/80",
-                              !isBooked && !disabled && "cursor-pointer border-[#E8D7D6] bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35 hover:bg-[#F4E6EA]/60",
+                              !isBooked && !disabled && "cursor-pointer border-[#E8D7D6] bg-[#FCF8F7] hover:-translate-y-0.5 hover:border-[#3B0E1A]/35 hover:bg-[#FFE4EE]/60",
                               !isBooked && disabled && "cursor-not-allowed border-[#E8D7D6] bg-[#F3EFE9]/40 opacity-50",
                             )}
                           >
