@@ -316,6 +316,34 @@ async function sendBookingCancelled(opts) {
   await sendEmail({ to, subject: `Reserva cancelada — ${className}`, html });
 }
 
+// Cancelación iniciada por el estudio (no por la alumna) — la clase entera se
+// canceló, no la reserva individual. El copy deja claro que no fue su culpa.
+async function sendClassCancelledByStudio(opts) {
+  const { to, name, className, date, startTime, creditRestored } = opts;
+
+  const content = `
+    ${h1(`Clase cancelada, ${name.split(" ")[0]}`)}
+    ${p("El estudio tuvo que cancelar la siguiente clase. Lamentamos el inconveniente:")}
+    ${infoTable([
+      infoRow("Clase", className),
+      infoRow("Fecha", fmtDate(date)),
+      infoRow("Hora", fmtTime(startTime)),
+    ])}
+    ${creditRestored
+      ? alertBox("Tu clase fue <strong>devuelta a tu paquete</strong> — no se descontó nada.", "success")
+      : ""
+    }
+    ${p("¿Quieres reservar otra clase? Hay muchos horarios disponibles.")}
+  `;
+  const html = baseLayout({
+    preheader: `Cancelamos ${className} del ${fmtDate(date)}. Tu clase fue devuelta a tu paquete.`,
+    content,
+    ctaUrl: `${SITE_URL}/app/classes`,
+    ctaText: "Ver horario",
+  });
+  await sendEmail({ to, subject: `Clase cancelada por el estudio — ${className}`, html });
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // ── 4. RECORDATORIO SEMANAL ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -535,6 +563,7 @@ export {
   sendMembershipActivated,
   sendBookingConfirmed,
   sendBookingCancelled,
+  sendClassCancelledByStudio,
   sendWeeklyReminder,
   sendRenewalReminder,
   sendPasswordResetEmail,

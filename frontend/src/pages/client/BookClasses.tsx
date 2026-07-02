@@ -388,6 +388,10 @@ const BookClasses = () => {
                                   <Clock size={13} className="text-[#9C8A8B]" strokeWidth={1.75} />
                                   {cls.start_time ? format(safeParse(cls.start_time), "HH:mm") : "—"}
                                 </p>
+                                <p className="mt-1.5 truncate font-alilato text-[0.64rem] uppercase tracking-[0.1em] text-[#9C8A8B]">
+                                  {cls.instructor_name ? `${cls.instructor_name} · ` : ""}
+                                  {Math.max(0, (cls.max_capacity ?? cls.capacity ?? 7) - (cls.current_bookings ?? 0))} lugares
+                                </p>
                               </div>
                               {isBooked && (
                                 <span className="rounded-full bg-emerald-100 p-1 text-emerald-700">

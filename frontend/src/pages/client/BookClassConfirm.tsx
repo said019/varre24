@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import api from "@/lib/api";
@@ -55,6 +55,8 @@ const BookClassConfirm = () => {
   const isUnlimited = creditsLeft === null && membership?.status === "active";
   const creditsNeeded = bringGuest ? 2 : 1;
   const notEnoughCredits = !isUnlimited && creditsLeft != null && Number(creditsLeft) < creditsNeeded;
+  const hasNoMembership = !loadingMembership && !membership;
+  const blockedByPurchase = hasNoMembership || notEnoughCredits;
 
   const used = Number(cls?.current_bookings ?? 0);
   const cap = Number(cls?.max_capacity ?? 0);
@@ -98,7 +100,8 @@ const BookClassConfirm = () => {
     bookMutation.isPending ||
     (bringGuest && !guestName.trim()) ||
     notEnoughCredits ||
-    notEnoughSpots;
+    notEnoughSpots ||
+    hasNoMembership;
 
   return (
     <ClientAuthGuard requiredRoles={["client"]}>
@@ -193,6 +196,11 @@ const BookClassConfirm = () => {
                 )}
 
                 {/* ── Avisos ── */}
+                {hasNoMembership && (
+                  <p className="text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+                    No tienes una membresía activa para reservar esta clase.
+                  </p>
+                )}
                 {notEnoughCredits && (
                   <p className="text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
                     {bringGuest
@@ -204,6 +212,15 @@ const BookClassConfirm = () => {
                   <p className="text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
                     Esta clase solo tiene {spotsLeft === 1 ? "1 lugar" : `${spotsLeft} lugares`}; no alcanza para 2.
                   </p>
+                )}
+
+                {blockedByPurchase && (
+                  <Link
+                    to="/app/checkout"
+                    className="press flex w-full items-center justify-center rounded-full bg-[#3B0E1A] px-5 py-2.5 font-alilato text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[#FFD6E6] transition-colors hover:bg-[#320C16]"
+                  >
+                    {hasNoMembership ? "Comprar plan para reservar" : "Comprar más clases"}
+                  </Link>
                 )}
 
                 <Button

@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Pencil, Save, X, Minus, Plus, MoreHorizontal, Loader2, KeyRound, Copy } from "lucide-react";
+import { Pencil, Save, X, Minus, Plus, MoreHorizontal, Loader2, KeyRound, Copy, Lock } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -291,6 +291,7 @@ const ClientDetail = () => {
       emergencyContactName: u?.emergencyContactName ?? "",
       emergencyContactPhone: u?.emergencyContactPhone ?? "",
       healthNotes: u?.healthNotes ?? "",
+      adminNotes: u?.adminNotes ?? "",
     });
     setEditing(true);
   };
@@ -385,6 +386,17 @@ const ClientDetail = () => {
                   <div className="space-y-1">
                     <Label>Notas de salud</Label>
                     <Textarea rows={3} value={form.healthNotes} onChange={(e) => setForm({ ...form, healthNotes: e.target.value })} />
+                    <p className="text-xs text-muted-foreground">La clienta puede ver y editar esta nota desde su perfil.</p>
+                  </div>
+                  <div className="space-y-1 rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                    <Label className="flex items-center gap-1.5"><Lock size={12} /> Notas internas (solo staff)</Label>
+                    <Textarea
+                      rows={3}
+                      placeholder="Deudas, incidentes, acuerdos… la clienta nunca ve esto."
+                      value={form.adminNotes}
+                      onChange={(e) => setForm({ ...form, adminNotes: e.target.value })}
+                    />
+                    <p className="text-xs text-amber-800">Solo visible para el equipo del estudio.</p>
                   </div>
                   <div className="flex gap-2 pt-2">
                     <Button size="sm" onClick={handleSave} disabled={updateMutation.isPending}>
@@ -404,6 +416,10 @@ const ClientDetail = () => {
                     <div><span className="font-medium">Fecha de nacimiento:</span> {u?.dateOfBirth ? new Date(u.dateOfBirth).toLocaleDateString("es-MX") : "—"}</div>
                     <div><span className="font-medium">Contacto de emergencia:</span> {u?.emergencyContactName ?? "—"} {u?.emergencyContactPhone ?? ""}</div>
                     <div className="col-span-2"><span className="font-medium">Notas de salud:</span> {u?.healthNotes ?? "—"}</div>
+                  </div>
+                  <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-amber-900"><Lock size={12} /> Notas internas (solo staff)</p>
+                    <p className="mt-1 text-sm text-amber-900 whitespace-pre-wrap">{u?.adminNotes || "Sin notas"}</p>
                   </div>
                   <Button size="sm" variant="outline" onClick={startEditing}>
                     <Pencil size={14} className="mr-1" /> Editar perfil

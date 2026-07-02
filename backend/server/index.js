@@ -19,6 +19,7 @@ import {
   sendMembershipActivated,
   sendBookingConfirmed,
   sendBookingCancelled,
+  sendClassCancelledByStudio,
   sendWeeklyReminder,
   sendRenewalReminder,
   sendPasswordResetEmail,
@@ -219,6 +220,10 @@ const DEFAULT_NOTIFICATION_TEMPLATES = {
   booking_cancelled: {
     subject: "Reserva cancelada",
     body: "Hola {name}, tu reserva de {class} del {date} fue cancelada. Crédito devuelto: {creditRestored}.",
+  },
+  class_cancelled_by_studio: {
+    subject: "Clase cancelada por el estudio",
+    body: "Hola {name}, tuvimos que cancelar {class} del {date} a las {time}. Crédito devuelto: {creditRestored}. Lamentamos el inconveniente.",
   },
   membership_activated: {
     subject: "Membresía activada",
@@ -515,6 +520,11 @@ async function ensureSchema() {
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS emergency_contact_name VARCHAR(255)`).catch(() => { });
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS emergency_contact_phone VARCHAR(20)`).catch(() => { });
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS health_notes TEXT`).catch(() => { });
+    // admin_notes: A DIFERENCIA de health_notes, la clienta NUNCA la ve ni la
+    // edita — es para deudas, incidentes o acuerdos que solo el staff necesita.
+    // No pasa por mapUser() (compartida con endpoints de la clienta); solo se
+    // expone en las rutas admin-only que la leen explícitamente.
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS admin_notes TEXT`).catch(() => { });
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_reminders BOOLEAN DEFAULT true`).catch(() => { });
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_promotions BOOLEAN DEFAULT false`).catch(() => { });
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_weekly_summary BOOLEAN DEFAULT false`).catch(() => { });
@@ -1082,6 +1092,10 @@ async function ensureSchema() {
       );
     `);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_loyalty_tx_user ON loyalty_transactions(user_id)`).catch(() => { });
+    // booking_id + índice único parcial: un check-in solo puede otorgar puntos
+    // una vez, aunque el endpoint se reintente (doble clic, retry de red).
+    await pool.query(`ALTER TABLE loyalty_transactions ADD COLUMN IF NOT EXISTS booking_id UUID REFERENCES bookings(id) ON DELETE SET NULL`).catch(() => { });
+    await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_loyalty_tx_booking_once ON loyalty_transactions(booking_id) WHERE booking_id IS NOT NULL`).catch(() => { });
     // ── referrals table (tracks which users were referred) ─────────────────
     await pool.query(`
       CREATE TABLE IF NOT EXISTS referrals (
@@ -2241,6 +2255,104 @@ async function logCreditChange({
     );
   } catch (err) {
     console.error("[credit-log] insert failed:", err.message);
+  }
+}
+
+// Promueve a la primera alumna elegible de la lista de espera cuando se libera
+// un lugar en la clase: descuenta su crédito y la pasa a 'confirmed'. Se salta
+// (sin sacarla de la lista) a quien ya no tenga crédito vigente, para no atorar
+// la fila con un caso que de cualquier forma no puede tomar la clase.
+// Antes de esto, cancelar liberaba el cupo pero nadie de la lista de espera se
+// enteraba ni avanzaba — se quedaban ahí indefinidamente (P0-5 de la auditoría).
+async function promoteNextWaitlisted({ classId, client, actorUserId = null }) {
+  const q = client ?? pool;
+  try {
+    const classRes = await q.query(
+      "SELECT id, max_capacity, current_bookings FROM classes WHERE id = $1 FOR UPDATE",
+      [classId]
+    );
+    const cls = classRes.rows[0];
+    if (!cls || Number(cls.current_bookings) >= Number(cls.max_capacity)) return null;
+
+    const waitlisted = await q.query(
+      `SELECT id, user_id, membership_id FROM bookings
+        WHERE class_id = $1 AND status = 'waitlist'
+        ORDER BY created_at ASC`,
+      [classId]
+    );
+
+    for (const b of waitlisted.rows) {
+      if (!b.membership_id) continue;
+      const memRes = await q.query(
+        "SELECT id, classes_remaining FROM memberships WHERE id = $1 FOR UPDATE",
+        [b.membership_id]
+      );
+      const mem = memRes.rows[0];
+      if (!mem) continue;
+      const unlimited = mem.classes_remaining === null || Number(mem.classes_remaining) >= 9999;
+      if (!unlimited && Number(mem.classes_remaining) <= 0) continue; // sin crédito — se salta, sigue en waitlist
+
+      await q.query("UPDATE bookings SET status = 'confirmed', updated_at = NOW() WHERE id = $1", [b.id]);
+      await q.query("UPDATE classes SET current_bookings = current_bookings + 1 WHERE id = $1", [classId]);
+      if (!unlimited) {
+        const oldVal = Number(mem.classes_remaining);
+        const newVal = oldVal - 1;
+        await q.query("UPDATE memberships SET classes_remaining = $1, updated_at = NOW() WHERE id = $2", [newVal, mem.id]);
+        await logCreditChange({
+          client, membershipId: mem.id, oldValue: oldVal, newValue: newVal,
+          reason: "waitlist_promoted", actorUserId, bookingId: b.id,
+        });
+      }
+      return { bookingId: b.id, userId: b.user_id };
+    }
+    return null;
+  } catch (err) {
+    console.error("[waitlist-promote] error:", err.message);
+    return null;
+  }
+}
+
+// Avisa por email/WhatsApp a la alumna promovida de lista de espera. Se llama
+// fuera de la transacción de cancelación — un fallo aquí no debe revertir la
+// promoción ya confirmada.
+async function notifyWaitlistPromoted(bookingId) {
+  try {
+    const r = await pool.query(
+      `SELECT u.email, u.display_name, u.phone, c.date, c.start_time, ct.name AS class_type_name
+         FROM bookings b
+         JOIN users u ON b.user_id = u.id
+         JOIN classes c ON b.class_id = c.id
+         JOIN class_types ct ON c.class_type_id = ct.id
+        WHERE b.id = $1`,
+      [bookingId]
+    );
+    const row = r.rows[0];
+    if (!row) return;
+    const dateDisplay = row.date ? new Date(row.date).toLocaleDateString("es-MX") : "";
+    const timeDisplay = row.start_time ? String(row.start_time).slice(0, 5) : "";
+    if (row.email && (await areEmailNotificationsEnabled().catch(() => false))) {
+      sendBookingConfirmed({
+        to: row.email,
+        name: row.display_name || "Alumna",
+        className: row.class_type_name,
+        date: row.date,
+        startTime: row.start_time,
+        instructor: null,
+        classesLeft: null,
+        isWaitlist: false,
+      }).catch((e) => console.error("[waitlist-promote] email:", e.message));
+    }
+    if (row.phone) {
+      sendConfiguredWhatsAppTemplate({
+        templateKey: "booking_confirmed",
+        phone: row.phone,
+        vars: { name: row.display_name || "Alumna", class: row.class_type_name || "Clase", date: dateDisplay, time: timeDisplay },
+        fallbackMessage: `¡Buenas noticias, ${row.display_name || "Alumna"}! Se liberó un lugar y tu reserva para ${row.class_type_name || "tu clase"} (${dateDisplay} ${timeDisplay}) ya está confirmada.`,
+      }).catch((e) => console.error("[waitlist-promote] WA:", e.message));
+    }
+    triggerWalletPassSync(row.user_id, "booking_waitlist_promoted");
+  } catch (err) {
+    console.error("[waitlist-promote] notify error:", err.message);
   }
 }
 
@@ -3723,6 +3835,7 @@ app.delete("/api/bookings/:id", authMiddleware, async (req, res) => {
       [req.params.id]
     );
 
+    let promoted = null;
     if (booking.status === "confirmed") {
       // Una reserva con invitada ocupa 2 lugares y consumió 2 créditos.
       const slotsHeld = booking.guest_name ? 2 : 1;
@@ -3732,6 +3845,9 @@ app.delete("/api/bookings/:id", authMiddleware, async (req, res) => {
         "UPDATE classes SET current_bookings = GREATEST(current_bookings - $1, 0) WHERE id = $2",
         [slotsHeld, booking.class_id]
       );
+      // Se liberó un lugar: promover a la primera alumna elegible de la
+      // lista de espera (descuenta su crédito y la confirma).
+      promoted = await promoteNextWaitlisted({ classId: booking.class_id, actorUserId: req.userId });
 
       if (shouldRefundCredit) {
         const oldVal = Number(membership.classes_remaining);
@@ -3802,6 +3918,8 @@ app.delete("/api/bookings/:id", authMiddleware, async (req, res) => {
     } catch (emailErr) {
       console.error("[Email] cancelled query:", emailErr.message);
     }
+
+    if (promoted?.bookingId) notifyWaitlistPromoted(promoted.bookingId).catch(() => {});
 
     triggerWalletPassSync(req.userId, "booking_cancelled");
     return res.json({
@@ -4356,8 +4474,10 @@ async function approveOrderFromMP(orderId, mpPaymentId, paymentInfo) {
 
 // Procesa una notificación de pago de MercadoPago: consulta el estado real,
 // persiste info del pago y, si está aprobado, activa la orden.
-async function handleMpPaymentNotification(mpPaymentId) {
-  const payment = await mpSyncPayment(mpPaymentId);
+// `preFetchedPayment` evita una segunda consulta a la API cuando el caller
+// (el webhook) ya resolvió el estado para construir la clave de idempotencia.
+async function handleMpPaymentNotification(mpPaymentId, preFetchedPayment) {
+  const payment = preFetchedPayment || (await mpSyncPayment(mpPaymentId));
   const { status, status_detail, external_reference } = payment;
   if (!external_reference) {
     console.warn("[MP webhook] payment without external_reference:", mpPaymentId);
@@ -4381,6 +4501,79 @@ async function handleMpPaymentNotification(mpPaymentId) {
   }
 }
 
+// Red de seguridad para cuando el webhook nunca llega (deploy en curso, timeout,
+// bug de red): busca en MP los pagos aprobados de órdenes que quedaron
+// "pending_payment" y las activa con el mismo camino que usaría el webhook.
+// Ventana 10min–7d: evita competir con el webhook en órdenes recién creadas y
+// evita reconsultar checkouts abandonados indefinidamente.
+async function reconcileMpPayments() {
+  if (!isMercadoPagoEnabled()) return { skipped: "MP no configurado" };
+  try {
+    const stale = await pool.query(`
+      SELECT id, order_number FROM orders
+       WHERE payment_method = 'card' AND payment_provider = 'mercadopago'
+         AND status = 'pending_payment'
+         AND created_at < NOW() - INTERVAL '10 minutes'
+         AND created_at > NOW() - INTERVAL '7 days'
+       ORDER BY created_at DESC
+       LIMIT 200`);
+    let reconciled = 0;
+    for (const order of stale.rows) {
+      try {
+        const res = await fetch(
+          `https://api.mercadopago.com/v1/payments/search?external_reference=${encodeURIComponent(order.id)}&sort=date_created&criteria=desc`,
+          { headers: { "Authorization": `Bearer ${MP_ACCESS_TOKEN}` } }
+        );
+        if (!res.ok) continue;
+        const data = await res.json();
+        const approved = (data.results || []).find((p) => p.status === "approved");
+        if (!approved) continue;
+        const eventKey = `payment:${approved.id}:approved`;
+        try {
+          await pool.query(
+            `INSERT INTO payment_webhook_events (provider, event_key, event_type, payload)
+             VALUES ('mercadopago', $1, 'payment', $2)`,
+            [eventKey, JSON.stringify({ source: "reconcileMpPayments", payment_id: approved.id })]
+          );
+        } catch (e) {
+          if (e.code === "23505") continue; // ya activado (por el webhook o una corrida previa)
+          throw e;
+        }
+        await handleMpPaymentNotification(String(approved.id), {
+          status: approved.status,
+          status_detail: approved.status_detail,
+          external_reference: approved.external_reference,
+          transaction_amount: approved.transaction_amount,
+          payer_email: approved.payer?.email || "",
+        });
+        await pool.query(
+          `UPDATE payment_webhook_events SET processed_at = NOW() WHERE provider = 'mercadopago' AND event_key = $1`,
+          [eventKey]
+        );
+        reconciled++;
+        console.log(`[reconcile-mp] orden ${order.order_number || order.id} activada por reconciliación (pago ${approved.id})`);
+      } catch (innerErr) {
+        console.error(`[reconcile-mp] orden ${order.id}:`, innerErr.message);
+      }
+    }
+    if (reconciled) console.log(`[reconcile-mp] ${reconciled}/${stale.rowCount} órdenes reconciliadas`);
+    return { checked: stale.rowCount, reconciled };
+  } catch (err) {
+    console.error("[reconcile-mp] error:", err.message);
+    return { error: err.message };
+  }
+}
+
+function scheduleMpReconciliationCron() {
+  if (!isMercadoPagoEnabled()) {
+    console.log("[reconcile-mp] disabled (MP no configurado)");
+    return;
+  }
+  reconcileMpPayments().catch(() => {});
+  setInterval(() => { reconcileMpPayments().catch(() => {}); }, 15 * 60 * 1000);
+  console.log("[reconcile-mp] scheduled every 15 minutes");
+}
+
 // POST /webhooks/mercadopago — webhook server-to-server (FUENTE DE VERDAD).
 // IMPORTANTE: la ruta NO va bajo /api, debe coincidir con notification_url.
 app.post("/webhooks/mercadopago", async (req, res) => {
@@ -4401,9 +4594,21 @@ app.post("/webhooks/mercadopago", async (req, res) => {
 
     const eventType = type || queryType || (action?.includes?.("payment") ? "payment" : null);
     if (eventType !== "payment") return; // solo nos interesan eventos de pago
-    const eventKey = `payment:${mpPaymentId}`;
 
-    // 3) Idempotencia — el INSERT falla (23505) si el evento ya se procesó.
+    // 3) Consultar el estado real ANTES de construir la clave de idempotencia.
+    // MP reenvía el mismo payment_id en cada transición (pending → approved);
+    // si la clave no incluye el status, la notificación de "approved" choca
+    // contra el 23505 dejado por "pending" y la activación nunca ocurre.
+    let payment;
+    try {
+      payment = await mpSyncPayment(mpPaymentId);
+    } catch (syncErr) {
+      console.error("[MP webhook] sync error:", syncErr.message);
+      return;
+    }
+    const eventKey = `payment:${mpPaymentId}:${payment.status}`;
+
+    // 4) Idempotencia — el INSERT falla (23505) si este status ya se procesó.
     try {
       await pool.query(
         `INSERT INTO payment_webhook_events (provider, event_key, event_type, payload)
@@ -4411,14 +4616,14 @@ app.post("/webhooks/mercadopago", async (req, res) => {
         [eventKey, JSON.stringify(req.body || {})]
       );
     } catch (e) {
-      if (e.code === "23505") return; // ya procesado
+      if (e.code === "23505") return; // este status ya se procesó
       console.error("[MP webhook] idempotency insert error:", e.message);
       return;
     }
 
-    // 4) Procesar.
+    // 5) Procesar.
     try {
-      await handleMpPaymentNotification(mpPaymentId);
+      await handleMpPaymentNotification(mpPaymentId, payment);
       await pool.query(
         `UPDATE payment_webhook_events SET processed_at = NOW() WHERE provider = 'mercadopago' AND event_key = $1`,
         [eventKey]
@@ -8068,10 +8273,13 @@ app.put("/api/users/:id", authMiddleware, async (req, res) => {
       emergencyContactName, emergencyContactPhone, healthNotes,
       receiveReminders, receivePromotions, receiveWeeklySummary,
       acceptsCommunications,
-      role,
+      role, adminNotes,
     } = req.body;
     // Non-admins cannot change role
     const newRole = isAdminCaller && role ? role : null;
+    // adminNotes es SOLO-STAFF: aunque una clienta editando su propio perfil
+    // mandara este campo en el body, se ignora si no es admin quien llama.
+    const newAdminNotes = isAdminCaller && adminNotes !== undefined ? String(adminNotes).slice(0, 4000) : null;
     const targetId = req.params.id;
     const r = await pool.query(
       `UPDATE users SET
@@ -8087,6 +8295,7 @@ app.put("/api/users/:id", authMiddleware, async (req, res) => {
          accepts_communications    = COALESCE($10, accepts_communications),
          role                      = COALESCE($11, role),
          gender                    = COALESCE($12, gender),
+         admin_notes               = COALESCE($14, admin_notes),
          updated_at                = NOW()
        WHERE id = $13
        RETURNING *`,
@@ -8098,11 +8307,14 @@ app.put("/api/users/:id", authMiddleware, async (req, res) => {
         newRole,
         gender || null,
         targetId,
+        newAdminNotes,
       ]
     );
     // Si el rol cambió, invalida el caché de role para ese usuario.
     if (newRole) invalidateRoleCache(targetId);
-    return res.json({ user: mapUser(r.rows[0]) });
+    const mapped = mapUser(r.rows[0]);
+    if (isAdminCaller) mapped.adminNotes = r.rows[0].admin_notes ?? null;
+    return res.json({ user: mapped });
   } catch (err) {
     console.error("PUT users/:id error:", err);
     return res.status(500).json({ message: "Error interno" });
@@ -8539,7 +8751,9 @@ app.get("/api/users/:id", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query("SELECT * FROM users WHERE id = $1", [req.params.id]);
     if (!r.rows.length) return res.status(404).json({ message: "Usuario no encontrado" });
-    return res.json({ data: mapUser(r.rows[0]) });
+    // Ruta admin-only: aquí sí se expone admin_notes (mapUser no la incluye
+    // porque también la usan las rutas de la propia clienta).
+    return res.json({ data: { ...mapUser(r.rows[0]), adminNotes: r.rows[0].admin_notes ?? null } });
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }
 });
 
@@ -8659,13 +8873,136 @@ app.post("/api/classes", adminMiddleware, async (req, res) => {
   } catch (err) { console.error("POST /classes error:", err); return res.status(500).json({ message: "Error interno" }); }
 });
 
-// PUT /api/classes/:id/cancel
+// PUT /api/classes/:id/cancel — cancela la clase en cascada: cada reserva
+// confirmada/en espera se cancela, se devuelve el crédito (si aplicaba) y se
+// avisa a la alumna. Sin esto la clase quedaba cancelada pero las reservas
+// seguían "confirmed" — el auto-checkin las marcaba asistidas horas después,
+// quemando créditos pagados de una clase que nunca ocurrió.
 app.put("/api/classes/:id/cancel", adminMiddleware, async (req, res) => {
+  const client = await pool.connect();
   try {
-    const r = await pool.query("UPDATE classes SET status='cancelled', updated_at=NOW() WHERE id=$1 RETURNING *", [req.params.id]);
-    if (!r.rows.length) return res.status(404).json({ message: "Clase no encontrada" });
-    return res.json({ data: r.rows[0] });
-  } catch (err) { return res.status(500).json({ message: "Error interno" }); }
+    await client.query("BEGIN");
+
+    const clsRes = await client.query(
+      `SELECT c.*, ct.name AS class_type_name
+         FROM classes c
+         JOIN class_types ct ON c.class_type_id = ct.id
+        WHERE c.id = $1 FOR UPDATE OF c`,
+      [req.params.id]
+    );
+    if (!clsRes.rows.length) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Clase no encontrada" });
+    }
+    const cls = clsRes.rows[0];
+    if (cls.status === "cancelled") {
+      await client.query("ROLLBACK");
+      return res.status(409).json({ message: "Esta clase ya estaba cancelada" });
+    }
+
+    await client.query("UPDATE classes SET status='cancelled', updated_at=NOW() WHERE id=$1", [cls.id]);
+
+    const bookingsRes = await client.query(
+      `SELECT b.id, b.user_id, b.membership_id, b.status, b.guest_name,
+              u.email, u.display_name, u.phone
+         FROM bookings b
+         LEFT JOIN users u ON b.user_id = u.id
+        WHERE b.class_id = $1 AND b.status IN ('confirmed','checked_in','waitlist')`,
+      [cls.id]
+    );
+
+    const toNotify = [];
+    for (const b of bookingsRes.rows) {
+      await client.query(
+        `UPDATE bookings SET status='cancelled', cancelled_at=NOW(), cancelled_by='admin',
+                cancellation_reason='class_cancelled_by_studio', updated_at=NOW()
+          WHERE id=$1`,
+        [b.id]
+      );
+
+      let creditRestored = false;
+      if (b.membership_id && (b.status === "confirmed" || b.status === "checked_in")) {
+        const slotsHeld = b.guest_name ? 2 : 1;
+        const memRes = await client.query(
+          "SELECT classes_remaining FROM memberships WHERE id=$1 FOR UPDATE",
+          [b.membership_id]
+        );
+        const oldVal = memRes.rows[0]?.classes_remaining;
+        if (oldVal !== null && oldVal !== undefined && Number(oldVal) < 9999) {
+          const newVal = Number(oldVal) + slotsHeld;
+          await client.query(
+            "UPDATE memberships SET classes_remaining = classes_remaining + $1, updated_at=NOW() WHERE id=$2",
+            [slotsHeld, b.membership_id]
+          );
+          await logCreditChange({
+            client,
+            membershipId: b.membership_id,
+            oldValue: Number(oldVal),
+            newValue: newVal,
+            reason: "class_cancelled_by_studio",
+            actorUserId: req.userId,
+            bookingId: b.id,
+          });
+          await syncExhaustedMembershipStatus({ client, membershipId: b.membership_id });
+          creditRestored = true;
+        }
+      }
+      if (b.user_id) toNotify.push({ ...b, creditRestored });
+    }
+
+    await client.query("COMMIT");
+
+    // Efectos secundarios post-commit (email/WhatsApp/wallet) — no deben
+    // bloquear la respuesta ni poder tumbar la transacción ya confirmada.
+    (async () => {
+      const emailsOn = await areEmailNotificationsEnabled().catch(() => false);
+      for (const b of toNotify) {
+        try {
+          if (b.email && emailsOn) {
+            await sendClassCancelledByStudio({
+              to: b.email,
+              name: b.display_name || "Alumna",
+              className: cls.class_type_name || "tu clase",
+              date: cls.date,
+              startTime: cls.start_time,
+              creditRestored: b.creditRestored,
+            });
+          }
+          if (b.phone) {
+            const dateDisplay = cls.date ? new Date(cls.date).toLocaleDateString("es-MX") : "";
+            const timeDisplay = cls.start_time ? String(cls.start_time).slice(0, 5) : "";
+            await sendConfiguredWhatsAppTemplate({
+              templateKey: "class_cancelled_by_studio",
+              phone: b.phone,
+              vars: {
+                name: b.display_name || "Alumna",
+                class: cls.class_type_name || "tu clase",
+                date: dateDisplay,
+                time: timeDisplay,
+                creditRestored: b.creditRestored ? "Sí" : "No",
+              },
+              fallbackMessage: `Hola ${b.display_name || "Alumna"}, tuvimos que cancelar ${cls.class_type_name || "tu clase"} del ${dateDisplay} ${timeDisplay}. ${b.creditRestored ? "Tu clase fue devuelta a tu paquete." : ""} Lamentamos el inconveniente.`,
+            });
+          }
+          triggerWalletPassSync(b.user_id, "class_cancelled_by_studio");
+        } catch (notifyErr) {
+          console.error("[classes/cancel] aviso a alumna:", notifyErr.message);
+        }
+      }
+    })().catch((e) => console.error("[classes/cancel] post-commit:", e.message));
+
+    return res.json({
+      data: { ...cls, status: "cancelled" },
+      cancelled_bookings: bookingsRes.rowCount,
+      refunded_bookings: toNotify.filter((b) => b.creditRestored).length,
+    });
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    console.error("PUT /classes/:id/cancel error:", err.message);
+    return res.status(500).json({ message: "Error interno" });
+  } finally {
+    client.release();
+  }
 });
 
 // DELETE /api/classes/week — clear classes in date range
@@ -10931,6 +11268,7 @@ app.get("/api/memberships", adminMiddleware, async (req, res) => {
 app.post("/api/memberships", adminMiddleware, async (req, res) => {
   try {
     const { userId, planId, paymentMethod: rawPM = "cash", startDate, complementType } = req.body;
+    const paymentReference = typeof req.body?.paymentReference === "string" ? req.body.paymentReference.trim().slice(0, 255) : "";
     const paymentMethod = normalizePaymentMethod(rawPM);
     if (!userId || !planId) return res.status(400).json({ message: "userId y planId requeridos" });
     const planRes = await pool.query("SELECT * FROM plans WHERE id = $1 AND is_active = true", [planId]);
@@ -10964,6 +11302,21 @@ app.post("/api/memberships", adminMiddleware, async (req, res) => {
        VALUES ($1,$2,'active',$3,$4,$5,$6,$7) RETURNING *`,
       [userId, planId, paymentMethod, startStr, endStr, plan.class_limit ?? null, complementNote]
     );
+
+    // ── Registro contable del pago (venta de mostrador) — antes esta ruta
+    // nunca dejaba rastro en `payments`: sin folio de transferencia ni quién
+    // lo registró, "yo pagué, checa tus mensajes" no se podía resolver con
+    // datos. `reference` y `processed_by` cierran ese hueco.
+    try {
+      await pool.query(
+        `INSERT INTO payments (user_id, membership_id, amount, currency, payment_method, reference, status, notes, processed_by)
+         VALUES ($1, $2, $3, $4, $5, $6, 'completed', $7, $8)`,
+        [userId, r.rows[0].id, plan.price ?? 0, plan.currency || "MXN", paymentMethod,
+         paymentReference || null, "Venta de mostrador — activación manual", req.userId]
+      );
+    } catch (payErr) {
+      console.error("[memberships] payments insert:", payErr.message);
+    }
 
     // ── Create consultation if complement was selected ────────────────
     if (compInfo && r.rows[0]) {
@@ -12103,15 +12456,34 @@ app.post("/api/admin/bookings/assign", adminMiddleware, async (req, res) => {
 });
 
 // PUT /api/bookings/:id/check-in
+// PUT /api/bookings/:id/check-in — exige que la reserva venga de 'confirmed':
+// evita marcar asistencia a una reserva en waitlist (crédito nunca descontado
+// → clase regalada) y hace el endpoint idempotente ante doble clic/retry.
 app.put("/api/bookings/:id/check-in", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      "UPDATE bookings SET status = 'checked_in', checked_in_at = NOW() WHERE id = $1 RETURNING *",
-      [req.params.id]
+      `UPDATE bookings SET status = 'checked_in', checkin_method = 'manual_reception',
+              checked_in_at = NOW(), checked_in_by = $2, updated_at = NOW()
+        WHERE id = $1 AND status = 'confirmed' RETURNING *`,
+      [req.params.id, req.userId]
     );
-    if (!r.rows.length) return res.status(404).json({ message: "Reserva no encontrada" });
+    if (!r.rows.length) {
+      const cur = await pool.query("SELECT status FROM bookings WHERE id = $1", [req.params.id]);
+      if (!cur.rows.length) return res.status(404).json({ message: "Reserva no encontrada" });
+      if (cur.rows[0].status === "checked_in") {
+        return res.json({ ok: true, already: true, message: "Ya tenía check-in" });
+      }
+      if (cur.rows[0].status === "waitlist") {
+        return res.status(409).json({
+          message: "Está en lista de espera: promuévela primero (descuenta crédito y cupo) antes de hacer check-in.",
+        });
+      }
+      return res.status(409).json({ message: "Reserva cancelada o no disponible para check-in" });
+    }
     const booking = r.rows[0];
-    // Award loyalty points for attending a class
+    // Award loyalty points for attending a class — idempotente por booking_id
+    // (índice único parcial idx_loyalty_tx_booking_once): un retry cae en 23505
+    // y se ignora en vez de duplicar puntos.
     if (booking.user_id) {
       try {
         const cfgRes = await pool.query("SELECT value FROM settings WHERE key='loyalty_config' LIMIT 1");
@@ -12119,15 +12491,18 @@ app.put("/api/bookings/:id/check-in", adminMiddleware, async (req, res) => {
         const pts = cfg.points_per_class ?? 10;
         if (cfg.enabled !== false && pts > 0) {
           await pool.query(
-            "INSERT INTO loyalty_transactions (user_id, type, points, description) VALUES ($1, 'earn', $2, 'Clase asistida')",
-            [booking.user_id, pts]
+            "INSERT INTO loyalty_transactions (user_id, type, points, description, booking_id) VALUES ($1, 'earn', $2, 'Clase asistida', $3)",
+            [booking.user_id, pts, booking.id]
           );
         }
-      } catch (e) { /* loyalty earn error shouldn't fail check-in */ }
+      } catch (e) {
+        if (e.code !== "23505") console.error("[check-in] loyalty earn error:", e.message);
+      }
     }
     triggerWalletPassSync(booking.user_id, "booking_checked_in");
-    return res.json({ data: r.rows[0] });
+    return res.json({ data: booking });
   } catch (err) {
+    console.error("PUT /bookings/:id/check-in error:", err.message);
     return res.status(500).json({ message: "Error interno" });
   }
 });
@@ -12185,11 +12560,13 @@ app.put("/api/admin/bookings/:id/cancel", adminMiddleware, async (req, res) => {
     );
 
     // Decrement class count if was confirmed/checked_in
+    let promoted = null;
     if (b.status === "confirmed" || b.status === "checked_in") {
       await pool.query(
         "UPDATE classes SET current_bookings = GREATEST(current_bookings - $1, 0) WHERE id = $2",
         [slotsHeld, b.class_id]
       );
+      promoted = await promoteNextWaitlisted({ classId: b.class_id, actorUserId: req.userId });
     }
 
     // Restore credit if membership has counted limit
@@ -12216,11 +12593,72 @@ app.put("/api/admin/bookings/:id/cancel", adminMiddleware, async (req, res) => {
       }
     }
 
+    if (promoted?.bookingId) notifyWaitlistPromoted(promoted.bookingId).catch(() => {});
+
     triggerWalletPassSync(b.user_id, "booking_cancelled_by_admin");
     return res.json({ data: { message: "Reserva cancelada y crédito devuelto" } });
   } catch (err) {
     console.error("PUT /admin/bookings/:id/cancel error:", err);
     return res.status(500).json({ message: "Error interno" });
+  }
+});
+
+// PUT /api/admin/bookings/:id/promote — recepción promueve manualmente a una
+// alumna específica de la lista de espera (a diferencia de la promoción
+// automática al cancelarse otra reserva, aquí el admin elige a quién).
+app.put("/api/admin/bookings/:id/promote", adminMiddleware, async (req, res) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const bRes = await client.query(
+      "SELECT id, class_id, user_id, membership_id, status FROM bookings WHERE id = $1 FOR UPDATE",
+      [req.params.id]
+    );
+    if (!bRes.rows.length) { await client.query("ROLLBACK"); return res.status(404).json({ message: "Reserva no encontrada" }); }
+    const b = bRes.rows[0];
+    if (b.status !== "waitlist") { await client.query("ROLLBACK"); return res.status(409).json({ message: "Esta reserva no está en lista de espera" }); }
+
+    const clsRes = await client.query(
+      "SELECT max_capacity, current_bookings FROM classes WHERE id = $1 FOR UPDATE",
+      [b.class_id]
+    );
+    const cls = clsRes.rows[0];
+    if (!cls || Number(cls.current_bookings) >= Number(cls.max_capacity)) {
+      await client.query("ROLLBACK");
+      return res.status(409).json({ message: "La clase ya no tiene lugares libres" });
+    }
+
+    if (!b.membership_id) { await client.query("ROLLBACK"); return res.status(409).json({ message: "Esta reserva no tiene membresía asociada" }); }
+    const memRes = await client.query("SELECT id, classes_remaining FROM memberships WHERE id = $1 FOR UPDATE", [b.membership_id]);
+    const mem = memRes.rows[0];
+    if (!mem) { await client.query("ROLLBACK"); return res.status(409).json({ message: "Membresía no encontrada" }); }
+    const unlimited = mem.classes_remaining === null || Number(mem.classes_remaining) >= 9999;
+    if (!unlimited && Number(mem.classes_remaining) <= 0) {
+      await client.query("ROLLBACK");
+      return res.status(409).json({ message: "Esta alumna ya no tiene crédito disponible en su membresía" });
+    }
+
+    await client.query("UPDATE bookings SET status = 'confirmed', updated_at = NOW() WHERE id = $1", [b.id]);
+    await client.query("UPDATE classes SET current_bookings = current_bookings + 1 WHERE id = $1", [b.class_id]);
+    if (!unlimited) {
+      const oldVal = Number(mem.classes_remaining);
+      const newVal = oldVal - 1;
+      await client.query("UPDATE memberships SET classes_remaining = $1, updated_at = NOW() WHERE id = $2", [newVal, mem.id]);
+      await logCreditChange({
+        client, membershipId: mem.id, oldValue: oldVal, newValue: newVal,
+        reason: "waitlist_promoted_manual", actorUserId: req.userId, bookingId: b.id,
+      });
+    }
+    await client.query("COMMIT");
+
+    notifyWaitlistPromoted(b.id).catch(() => {});
+    return res.json({ data: { message: "Alumna promovida y crédito descontado" } });
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    console.error("PUT /admin/bookings/:id/promote error:", err.message);
+    return res.status(500).json({ message: "Error interno" });
+  } finally {
+    client.release();
   }
 });
 
@@ -14957,6 +15395,7 @@ async function runAutoCheckin() {
         LEFT JOIN class_types ct ON c.class_type_id = ct.id
        WHERE b.class_id = c.id
          AND b.status = 'confirmed'
+         AND c.status != 'cancelled'
          AND (c.date + c.start_time::time) AT TIME ZONE 'America/Mexico_City'
              + (COALESCE(ct.duration_min, 50)::text || ' minutes')::interval
            <= NOW()
@@ -15467,6 +15906,7 @@ async function bootServer() {
   scheduleAutoCheckinCron();
   scheduleAutoRevertCron();
   scheduleMembershipExpiryCron();
+  scheduleMpReconciliationCron();
   // Initialize Google Wallet loyalty class if configured
   ensureGoogleWalletClass().catch(() => { });
   app.listen(PORT, () => {

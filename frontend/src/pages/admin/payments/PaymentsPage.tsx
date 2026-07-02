@@ -101,6 +101,8 @@ const CashAssignment = () => {
   const [selectedUser, setSelectedUser] = useState<{ id: string; displayName: string; email?: string; phone?: string | null } | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<{ id: string; name: string; price: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+  const [paymentReference, setPaymentReference] = useState("");
 
   const { data: usersData, isLoading: usersLoading } = useQuery<{ data: { id: string; displayName: string; email: string; phone?: string | null }[] }>({
     queryKey: ["users-search", debouncedSearch],
@@ -122,12 +124,14 @@ const CashAssignment = () => {
       userId: selectedUser?.id,
       planId: selectedPlan?.id,
       paymentMethod,
-      startDate: new Date().toISOString().split("T")[0],
+      startDate,
+      paymentReference: paymentReference.trim() || undefined,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["memberships"] });
       toast({ title: "✅ Membresía activada correctamente" });
       setStep(1); setSelectedUser(null); setSelectedPlan(null); setSearch("");
+      setStartDate(new Date().toISOString().split("T")[0]); setPaymentReference("");
     },
     onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al asignar", variant: "destructive" }),
   });
@@ -333,12 +337,40 @@ const CashAssignment = () => {
             </div>
           </div>
 
+          {/* Fecha de inicio + referencia — si la alumna pagó antes de registrarse
+              (ej. transferencia del lunes, capturada el jueves), la vigencia debe
+              contarse desde que pagó, no desde hoy. */}
+          <div className="rounded-2xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/[0.04] p-5 space-y-4">
+            <div>
+              <Label className="text-xs font-semibold uppercase tracking-wider text-[#1A060B]/40 mb-2 block">
+                Fecha de inicio de la membresía
+              </Label>
+              <DatePicker value={startDate} onChange={setStartDate} />
+              <p className="text-[11px] text-[#1A060B]/35 mt-1.5">
+                Si la alumna ya pagó antes (ej. transferencia de días atrás), ajusta la fecha para no quitarle días de vigencia.
+              </p>
+            </div>
+            {paymentMethod === "transfer" && (
+              <div>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-[#1A060B]/40 mb-2 block">
+                  Referencia / folio de transferencia (opcional)
+                </Label>
+                <Input
+                  className="bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 focus:border-[#3B0E1A]/50 focus:ring-[#3B0E1A]/20 text-[#1A060B] placeholder:text-[#3B0E1A]/40 rounded-xl"
+                  value={paymentReference}
+                  onChange={(e) => setPaymentReference(e.target.value)}
+                  placeholder="Folio SPEI, últimos 4 dígitos, etc."
+                />
+              </div>
+            )}
+          </div>
+
           <div className="flex gap-3">
             <Button variant="outline" className="border-[#3B0E1A]/15 text-[#1A060B]/50 hover:text-[#1A060B] hover:border-[#3B0E1A]/25" onClick={() => setStep(2)}>
               <ChevronLeft size={14} className="mr-1" /> Volver
             </Button>
             <Button
-              className="flex-1 bg-gradient-to-r from-[#3B0E1A] to-[#C9A5A8] hover:opacity-90 text-white font-bold shadow-[0_0_24px_rgba(131,106,93,0.35)] h-11"
+              className="flex-1 bg-[#3B0E1A] hover:bg-[#320C16] text-[#FFD6E6] font-bold h-11"
               onClick={() => assignMutation.mutate()}
               disabled={assignMutation.isPending}
             >

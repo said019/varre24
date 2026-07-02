@@ -94,6 +94,15 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
     onError: () => toast({ title: "Error al hacer check-in", variant: "destructive" }),
   });
 
+  const promoteMutation = useMutation({
+    mutationFn: (id: string) => api.put(`/admin/bookings/${id}/promote`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["roster", classId] });
+      toast({ title: "✅ Promovida de lista de espera — crédito descontado" });
+    },
+    onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al promover", variant: "destructive" }),
+  });
+
   const cancelMutation = useMutation({
     mutationFn: (id: string) => api.put(`/admin/bookings/${id}/cancel`),
     onSuccess: () => {
@@ -270,7 +279,8 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
             )
             : roster.map((entry) => {
               const sc = statusConfig[entry.status] ?? statusConfig.confirmed;
-              const canCheckin = entry.status === "confirmed" || entry.status === "waitlist";
+              const canCheckin = entry.status === "confirmed";
+              const canPromote = entry.status === "waitlist";
               const canNoShow  = entry.status === "confirmed";
               const canCancel  = entry.status === "confirmed" || entry.status === "waitlist";
               const canRevertToNoShow = entry.status === "checked_in";
@@ -384,6 +394,20 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
                         className="w-8 h-8 rounded-lg bg-[#4ade80]/10 border border-[#4ade80]/25 text-[#4ade80] hover:bg-[#4ade80]/20 flex items-center justify-center transition-all disabled:opacity-40"
                       >
                         <CheckCircle2 size={14} />
+                      </button>
+                    )}
+                    {canPromote && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`¿Promover a ${entry.displayName} de lista de espera? Se descuenta 1 crédito de su membresía.`)) {
+                            promoteMutation.mutate(entry.bookingId);
+                          }
+                        }}
+                        disabled={promoteMutation.isPending}
+                        title="Promover de lista de espera"
+                        className="w-8 h-8 rounded-lg bg-[#C9A5A8]/15 border border-[#C9A5A8]/40 text-[#8A5A5E] hover:bg-[#C9A5A8]/25 flex items-center justify-center transition-all disabled:opacity-40"
+                      >
+                        <UserPlus size={14} />
                       </button>
                     )}
                     {canNoShow && (
