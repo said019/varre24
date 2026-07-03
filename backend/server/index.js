@@ -12011,6 +12011,28 @@ app.delete("/api/plans/:id", adminMiddleware, async (req, res) => {
       await client.query("DELETE FROM discount_codes WHERE plan_id = $1", [req.params.id]).catch(() => { });
       await client.query("DELETE FROM memberships WHERE plan_id = $1", [req.params.id]).catch(() => { });
       await client.query("DELETE FROM orders WHERE plan_id = $1", [req.params.id]).catch(() => { });
+    } else {
+      // `orders.plan_id` y `memberships.plan_id` son RESTRICT: si hay algún
+      // registro dependiente, el DELETE de abajo truena. En vez de depender
+      // de interpretar el código de error de Postgres (frágil — un plan con
+      // una sola orden histórica ya lo disparaba), lo revisamos primero y
+      // desactivamos el plan directo cuando aplica.
+      const dependents = await client.query(
+        `SELECT
+           (SELECT COUNT(*) FROM orders WHERE plan_id = $1)::int AS orders_count,
+           (SELECT COUNT(*) FROM memberships WHERE plan_id = $1)::int AS memberships_count`,
+        [req.params.id]
+      );
+      const { orders_count, memberships_count } = dependents.rows[0];
+      if (orders_count > 0 || memberships_count > 0) {
+        await client.query("ROLLBACK");
+        const upd = await pool.query(
+          "UPDATE plans SET is_active = false, updated_at = NOW() WHERE id = $1 RETURNING id",
+          [req.params.id]
+        );
+        if (!upd.rows.length) return res.status(404).json({ message: "Plan no encontrado" });
+        return res.json({ message: "Plan desactivado (tiene órdenes o membresías asociadas)" });
+      }
     }
 
     const del = await client.query("DELETE FROM plans WHERE id = $1 RETURNING id", [req.params.id]);
