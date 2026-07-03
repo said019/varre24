@@ -12102,11 +12102,13 @@ app.post("/api/plans", adminMiddleware, async (req, res) => {
 app.get("/api/bookings", adminMiddleware, async (req, res) => {
   try {
     const { status, classId, userId, limit = 100 } = req.query;
-    let q = `SELECT b.*, u.display_name AS user_name, (c.date || 'T' || c.start_time) AS start_time, ct.name AS class_name
+    let q = `SELECT b.*, u.display_name AS user_name, (c.date || 'T' || c.start_time) AS start_time, ct.name AS class_name,
+                    i.display_name AS instructor_name
              FROM bookings b
              LEFT JOIN users u ON b.user_id = u.id
              LEFT JOIN classes c ON b.class_id = c.id
              LEFT JOIN class_types ct ON c.class_type_id = ct.id
+             LEFT JOIN instructors i ON c.instructor_id = i.id
              WHERE 1=1`;
     const params = [];
     if (userId) { params.push(userId); q += ` AND b.user_id = $${params.length}`; }
@@ -12114,7 +12116,10 @@ app.get("/api/bookings", adminMiddleware, async (req, res) => {
     if (classId) { params.push(classId); q += ` AND b.class_id = $${params.length}`; }
     params.push(parseInt(limit)); q += ` ORDER BY b.created_at DESC LIMIT $${params.length}`;
     const r = await pool.query(q, params);
-    return res.json({ data: r.rows.map(b => ({ ...b, userName: b.user_name, className: b.class_name, startTime: b.start_time })) });
+    return res.json({ data: r.rows.map(b => ({
+      ...b, userName: b.user_name, className: b.class_name, startTime: b.start_time,
+      instructorName: b.instructor_name,
+    })) });
   } catch (err) {
     console.error("GET /bookings error:", err);
     return res.status(500).json({ message: "Error interno" });
@@ -13489,12 +13494,15 @@ app.get("/api/payments", adminMiddleware, async (req, res) => {
         o.id,
         o.user_id,
         COALESCE(u.display_name, o.guest_name) AS user_name,
-        COALESCE(p.name, 'Clase suelta') AS plan_name,
+        COALESCE(p.name, o.event_details->>'package_name', 'Clase suelta') AS plan_name,
         o.total_amount,
         o.payment_method AS method,
         o.status::text AS status,
         o.created_at,
-        CASE WHEN o.user_id IS NULL THEN 'walkin' ELSE 'order' END AS source
+        CASE WHEN o.user_id IS NULL THEN 'walkin' ELSE 'order' END AS source,
+        o.order_number,
+        o.mp_payment_id AS reference,
+        (o.event_details IS NOT NULL) AS is_event
       FROM orders o
       LEFT JOIN users u ON o.user_id = u.id
       LEFT JOIN plans p ON o.plan_id = p.id
@@ -13519,10 +13527,14 @@ app.get("/api/payments", adminMiddleware, async (req, res) => {
         m.payment_method AS method,
         'approved'::text AS status,
         m.created_at,
-        'membership' AS source
+        'membership' AS source,
+        NULL::text AS order_number,
+        pay.reference AS reference,
+        false AS is_event
       FROM memberships m
       LEFT JOIN users u ON m.user_id = u.id
       LEFT JOIN plans p ON m.plan_id = p.id
+      LEFT JOIN payments pay ON pay.membership_id = m.id
       WHERE m.order_id IS NULL
         AND m.status IN ('active','expired','paused')
         AND NOT EXISTS (

@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import type { User } from "@/types/auth";
 import {
   LayoutDashboard, Package, CreditCard, Users, CalendarDays,
-  BookOpen, DollarSign, BarChart3, History, Tag,
+  BookOpen, DollarSign, BarChart3, Tag,
   Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut, Globe, Menu, X,
 } from "lucide-react";
 import { AdminPendingBell } from "./AdminPendingBell";
@@ -38,7 +38,6 @@ const NAV_GROUPS = [
     label: "Sistema",
     collapsible: false,
     items: [
-      { path: "/admin/audit", label: "Auditoría", icon: History },
       { path: "/admin/settings", label: "Configuración", icon: Settings },
     ],
   },

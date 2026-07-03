@@ -40,7 +40,6 @@ import Waitlist from "./pages/admin/bookings/Waitlist";
 import PaymentsPage from "./pages/admin/payments/PaymentsPage";
 import SettingsPage from "./pages/admin/settings/SettingsPage";
 import ReportsPage from "./pages/admin/reports/ReportsPage";
-import AuditLogPage from "./pages/admin/audit/AuditLogPage";
 import DiscountCodesPage from "./pages/admin/discount-codes/DiscountCodesPage";
 // Legal pages
 import Privacidad from "./pages/legal/Privacidad";
@@ -122,7 +121,6 @@ const AppRoutes = () => {
         <Route path="/admin/orders" element={<Navigate to="/admin/payments" replace />} />
         <Route path="/admin/reports" element={<ReportsPage />} />
         <Route path="/admin/settings" element={<SettingsPage />} />
-        <Route path="/admin/audit" element={<AuditLogPage />} />
         <Route path="/admin/discount-codes" element={<DiscountCodesPage />} />
 
         {/* 404 */}
