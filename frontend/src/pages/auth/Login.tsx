@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff, ArrowRight, Share, Plus, MoreVertical, Smartphone, RefreshCw } from "lucide-react";
 import { hardResetSession } from "@/lib/session";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
 
 const schema = z.object({
   email: z.string().email("Email inválido"),
@@ -90,7 +91,7 @@ const Login = () => {
   );
 
   return (
-    <AuthLayout heading={heading}>
+    <AuthLayout heading={heading} photo={AUTH_PHOTOS.login}>
       {/* error global */}
       {error && (
         <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 rounded-xl mb-6 font-alilato">
@@ -98,23 +99,23 @@ const Login = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
         {/* email */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Email</label>
           <input
             type="email"
             autoComplete="email"
             placeholder="tu@email.com"
             {...register("email")}
-            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
           />
           {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
         </div>
 
         {/* password */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Contraseña</label>
             <Link to="/auth/forgot-password" className="text-xs text-[#3B0E1A] hover:text-[#3B0E1A]/80 transition-colors no-underline">
@@ -127,7 +128,7 @@ const Login = () => {
               autoComplete="current-password"
               placeholder="••••••••"
               {...register("password")}
-              className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 pr-12 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+              className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 pr-12 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             <button
               type="button"
@@ -144,7 +145,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="press mt-2 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+          className="press mt-1 bg-[#3B0E1A] text-[#F3EFE9] py-3.5 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
         >
           {isLoading ? (
             <Loader2 size={16} className="animate-spin" />
@@ -158,7 +159,7 @@ const Login = () => {
       </form>
 
       {/* crear cuenta — inline, minimal */}
-      <p className="mt-7 text-center text-sm text-muted-foreground font-alilato">
+      <p className="mt-5 text-center text-sm text-muted-foreground font-alilato">
         ¿Primera vez?{" "}
         <Link to="/auth/register" className="text-[#3B0E1A] font-medium underline-offset-4 hover:underline">
           Crea tu cuenta
@@ -166,7 +167,7 @@ const Login = () => {
       </p>
 
       {/* Recuperación — link discreto para sesiones atoradas */}
-      <div className="mt-8 text-center">
+      <div className="mt-4 text-center">
         <button
           type="button"
           onClick={async () => {
@@ -184,7 +185,7 @@ const Login = () => {
 
       {/* PWA Install — colapsado por defecto para mantener la vista limpia */}
       {!isStandalone && (
-        <details className="group mt-10 rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] px-5 py-4">
+        <details className="group mt-5 rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] px-4 py-3">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-alilato text-[#260910]">
             <span className="inline-flex items-center gap-2">
               <Smartphone size={14} className="text-[#3B0E1A]" />

@@ -7,6 +7,7 @@ import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowRight, CheckCircle, ArrowLeft } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
 
 const schema = z.object({ email: z.string().email("Email inválido") });
 type FormValues = { email: string };
@@ -45,7 +46,7 @@ const ForgotPassword = () => {
   );
 
   return (
-    <AuthLayout heading={heading}>
+    <AuthLayout heading={heading} photo={AUTH_PHOTOS.forgot}>
       {sent ? (
         <div className="rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] p-7 text-center">
           <CheckCircle className="mx-auto text-[#3B0E1A]" size={44} />

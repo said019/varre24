@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff, Check, ArrowRight } from "lucide-react";
 import { COUNTRIES } from "@/components/ui/phone-input";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
 
 const schema = z.object({
   displayName: z.string().min(2, "Mínimo 2 caracteres"),
@@ -91,7 +92,7 @@ const Register = () => {
 
   const heading = (
     <>
-      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#8A5A5E] font-semibold mb-3 flex items-center gap-2">
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#8A5A5E] font-semibold mb-2 flex items-center gap-2">
         <span className="w-5 h-[2px] rounded-full bg-[#FFD6E6] inline-block" />
         Nuevo registro
       </p>
@@ -102,7 +103,7 @@ const Register = () => {
   );
 
   return (
-    <AuthLayout heading={heading}>
+    <AuthLayout heading={heading} photo={AUTH_PHOTOS.register}>
       {/* global error */}
       {error && (
         <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 rounded-xl mb-5 font-alilato">
@@ -110,26 +111,26 @@ const Register = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
 
         {/* 2-col: name + phone */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Nombre</label>
             <input
               placeholder="Tu nombre"
               {...register("displayName")}
-              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             {errors.displayName && <span className="text-xs text-destructive">{errors.displayName.message}</span>}
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Teléfono</label>
             <div className="flex gap-2">
               <select
                 value={dialCode}
                 onChange={(e) => setDialCode(e.target.value)}
-                className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-2 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all w-[95px]"
+                className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-2 py-2 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all w-[95px]"
               >
                 {COUNTRIES.map((c) => (
                   <option key={`${c.code}-${c.dial}`} value={c.dial}>{c.flag} +{c.dial}</option>
@@ -139,20 +140,22 @@ const Register = () => {
                 placeholder="4271234567"
                 inputMode="numeric"
                 {...register("phone")}
-                className="font-alilato flex-1 bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+                className="font-alilato flex-1 bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
             </div>
             {errors.phone && <span className="text-xs text-destructive">{errors.phone.message}</span>}
           </div>
         </div>
 
-        {/* gender + date of birth */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+        {/* gender + date of birth — 2 columnas incluso en móvil: son controles
+            compactos (select + date), no texto libre, y ahorran una fila entera
+            de alto en pantallas chicas */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Sexo</label>
             <select
               {...register("gender")}
-              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
               defaultValue=""
             >
               <option value="" disabled>Selecciona…</option>
@@ -162,41 +165,41 @@ const Register = () => {
             </select>
             {errors.gender && <span className="text-xs text-destructive">{errors.gender.message}</span>}
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Fecha de nacimiento</label>
             <input
               type="date"
               {...register("dateOfBirth")}
               max={new Date().toISOString().slice(0, 10)}
-              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
+              className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             {errors.dateOfBirth && <span className="text-xs text-destructive">{errors.dateOfBirth.message}</span>}
           </div>
         </div>
 
         {/* email */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Email</label>
           <input
             type="email"
             autoComplete="email"
             placeholder="tu@email.com"
             {...register("email")}
-            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+            className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
           />
           {errors.email && <span className="text-xs text-destructive">{errors.email.message}</span>}
         </div>
 
         {/* 2-col: password + confirm */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Contraseña</label>
             <div className="relative">
               <input
                 type={showPass ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("password")}
-                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
               <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                 {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -204,14 +207,14 @@ const Register = () => {
             </div>
             {errors.password && <span className="text-xs text-destructive">{errors.password.message}</span>}
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Confirmar</label>
             <div className="relative">
               <input
                 type={showConfirm ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("confirmPassword")}
-                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+                className="font-alilato w-full bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 pr-11 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
               />
               <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                 {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -222,18 +225,18 @@ const Register = () => {
         </div>
 
         {/* checkboxes */}
-        <div className="flex flex-col gap-3 pt-1">
+        <div className="flex flex-col gap-1">
           {/* terms */}
-          <label className="flex items-start gap-3 cursor-pointer group">
+          <label className="flex items-start gap-2.5 cursor-pointer group">
             <button
               type="button"
               onClick={() => setValue("acceptsTerms", !acceptsTerms)}
-              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsTerms ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
+              className={`mt-0.5 w-4 h-4 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsTerms ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
                 }`}
             >
-              {acceptsTerms && <Check size={12} className="text-[#F3EFE9]" />}
+              {acceptsTerms && <Check size={10} className="text-[#F3EFE9]" />}
             </button>
-            <span className="text-sm text-muted-foreground leading-snug font-alilato">
+            <span className="text-xs text-muted-foreground leading-snug font-alilato">
               Acepto los{" "}
               <a href="#" className="text-[#3B0E1A] hover:underline">términos y condiciones</a>
             </span>
@@ -241,16 +244,16 @@ const Register = () => {
           {errors.acceptsTerms && <span className="text-xs text-destructive -mt-1">{errors.acceptsTerms.message}</span>}
 
           {/* communications */}
-          <label className="flex items-start gap-3 cursor-pointer group">
+          <label className="flex items-start gap-2.5 cursor-pointer group">
             <button
               type="button"
               onClick={() => setValue("acceptsCommunications", !acceptsCommunications)}
-              className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsCommunications ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
+              className={`mt-0.5 w-4 h-4 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${acceptsCommunications ? "bg-[#3B0E1A] border-[#3B0E1A]" : "border-[#E9D9D9] group-hover:border-[#3B0E1A]/50"
                 }`}
             >
-              {acceptsCommunications && <Check size={12} className="text-[#F3EFE9]" />}
+              {acceptsCommunications && <Check size={10} className="text-[#F3EFE9]" />}
             </button>
-            <span className="text-sm text-muted-foreground leading-snug font-alilato">
+            <span className="text-xs text-muted-foreground leading-snug font-alilato">
               Quiero recibir promociones y noticias
             </span>
           </label>
@@ -260,7 +263,7 @@ const Register = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="press mt-3 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+          className="press mt-1 bg-[#3B0E1A] text-[#F3EFE9] py-3.5 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
         >
           {isLoading ? (
             <Loader2 size={16} className="animate-spin" />
@@ -274,7 +277,7 @@ const Register = () => {
       </form>
 
       {/* divider */}
-      <div className="flex items-center gap-4 my-6">
+      <div className="flex items-center gap-4 my-3">
         <div className="flex-1 h-[1px] bg-border" />
         <span className="text-xs text-muted-foreground font-alilato">¿Ya tienes cuenta?</span>
         <div className="flex-1 h-[1px] bg-border" />
@@ -282,14 +285,10 @@ const Register = () => {
 
       <Link
         to="/auth/login"
-        className="press flex items-center justify-center gap-2 w-full py-3.5 rounded-full border border-[#E9D9D9] text-[#3B0E1A] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#3B0E1A] hover:bg-[#FCF8F7] transition-all no-underline"
+        className="press flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#E9D9D9] text-[#3B0E1A] text-sm font-semibold tracking-[0.12em] uppercase hover:border-[#3B0E1A] hover:bg-[#FCF8F7] transition-all no-underline"
       >
         Iniciar sesión
       </Link>
-
-      <p className="text-center text-xs text-muted-foreground/50 mt-6 font-alilato">
-        © {new Date().getFullYear()} VARRE24 · Nápoles, CDMX
-      </p>
     </AuthLayout>
   );
 };

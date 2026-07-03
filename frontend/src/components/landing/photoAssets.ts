@@ -14,6 +14,10 @@ import adminAccent from "@/assets/varre24/inauguracion/admin-accent.webp";
 import founderReady from "@/assets/varre24/editorial/founder-ready.webp";
 import experienceStretch from "@/assets/varre24/editorial/experience-stretch.webp";
 import pilatesDuoBall from "@/assets/varre24/editorial/pilates-duo-ball.webp";
+import authLoginStretch from "@/assets/varre24/editorial/auth-login-stretch.webp";
+import authRegisterLegs from "@/assets/varre24/editorial/auth-register-legs.webp";
+import authForgotMat from "@/assets/varre24/editorial/auth-forgot-mat.webp";
+import authResetRing from "@/assets/varre24/editorial/auth-reset-ring.webp";
 
 export type PhotoAsset = {
   src: string;
@@ -103,5 +107,26 @@ export const SHELL_PHOTOS = {
   admin: {
     src: adminAccent,
     alt: "Equipo de estudio VARRE24",
+  },
+} as const satisfies Record<string, PhotoAsset>;
+
+// Una foto distinta por pantalla del flujo de autenticación — login, registro,
+// recuperar y restablecer contraseña ya no comparten la misma imagen.
+export const AUTH_PHOTOS = {
+  login: {
+    src: authLoginStretch,
+    alt: "Alumna VARRE24 estirando con aro de pilates",
+  },
+  register: {
+    src: authRegisterLegs,
+    alt: "Alumna VARRE24 en ejercicio de piernas con aro de pilates",
+  },
+  forgot: {
+    src: authForgotMat,
+    alt: "Detalle de alumna VARRE24 enrollando el mat",
+  },
+  reset: {
+    src: authResetRing,
+    alt: "Alumna VARRE24 sentada con aro de pilates",
   },
 } as const satisfies Record<string, PhotoAsset>;

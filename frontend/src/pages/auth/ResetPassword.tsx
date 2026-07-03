@@ -4,13 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle } from "lucide-react";
-import pilatesRoomLogo from "@/assets/pilates-room-logo.png";
-import authPhoto from "@/assets/pilates-room-images/auth-team.webp";
+import { Loader2, CheckCircle, ArrowRight } from "lucide-react";
+import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
 
 const schema = z.object({
   password: z
@@ -52,83 +49,88 @@ const ResetPassword = () => {
     }
   };
 
+  const heading = (
+    <>
+      <p className="font-alilato text-[0.72rem] tracking-[0.18em] uppercase text-[#8A5A5E] font-semibold mb-3 flex items-center gap-2">
+        <span className="w-5 h-[2px] rounded-full bg-[#FFD6E6] inline-block" />
+        Un nuevo comienzo
+      </p>
+      <h1 className="font-editorial text-[2.4rem] sm:text-[2.7rem] leading-[1.05] tracking-[-0.015em] text-foreground">
+        Nueva <span className="italic font-light">contraseña</span>
+      </h1>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-background flex">
-
-      {/* ── LEFT PANEL — foto ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#1A060B]">
-        <img
-          src={authPhoto}
-          alt="Equipo de instructoras de VARRE24"
-          className="absolute inset-x-0 top-0 w-full object-contain object-top"
-          style={{ height: 'auto', aspectRatio: '1600/1067' }}
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(74,51,41,0.55)_0%,rgba(74,51,41,0.20)_30%,rgba(74,51,41,0.85)_72%,rgba(74,51,41,0.97)_100%)]" />
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[radial-gradient(circle,#C9A5A8_0%,transparent_70%)] opacity-20 animate-mesh pointer-events-none" />
-        <div className="relative z-10 flex flex-col justify-between p-12 w-full">
-          <Link to="/" className="block">
-            <img src={pilatesRoomLogo} alt="VARRE24" className="h-20 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
-          </Link>
-          <div>
-            <div className="inline-flex items-center gap-2 border border-white/40 px-4 py-[7px] rounded-full text-xs tracking-[0.18em] uppercase text-white/90 mb-6">
-              <span className="w-[6px] h-[6px] rounded-full bg-white animate-pulse" />
-              Barre &amp; Pilates · CDMX
-            </div>
-            <h2 className="font-bebas text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] text-white tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
-              UN NUEVO
-              <span className="block font-editorial italic font-light text-[#E9D9D9] normal-case">
-                comienzo.
-              </span>
-            </h2>
-          </div>
+    <AuthLayout heading={heading} photo={AUTH_PHOTOS.reset}>
+      {done ? (
+        <div className="rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] p-7 text-center">
+          <CheckCircle className="mx-auto text-[#3B0E1A]" size={44} />
+          <h2 className="font-bebas text-[1.85rem] leading-none text-foreground tracking-tight mt-4">
+            Contraseña
+            <span className="font-editorial italic font-light text-[#3B0E1A] normal-case text-[1.3rem] ml-1.5">
+              actualizada.
+            </span>
+          </h2>
+          <p className="text-sm text-muted-foreground mt-3 leading-relaxed font-alilato">
+            Redirigiendo al inicio de sesión…
+          </p>
         </div>
-      </div>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground -mt-4 mb-7 leading-relaxed font-alilato">
+            Ingresa tu nueva contraseña para recuperar el acceso.
+          </p>
 
-      {/* ── RIGHT PANEL — form ── */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-sm space-y-6">
-        {/* Logo */}
-        <div className="flex justify-center mb-2">
-          <Link to="/">
-            <img src={pilatesRoomLogo} alt="VARRE24" className="h-16 w-auto" />
-          </Link>
-        </div>
-        {done ? (
-          <div className="text-center space-y-3">
-            <CheckCircle className="mx-auto text-green-500" size={48} />
-            <h2 className="text-xl font-bold">¡Contraseña actualizada!</h2>
-            <p className="text-sm text-muted-foreground">Redirigiendo al inicio de sesión...</p>
-          </div>
-        ) : (
-          <>
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Nueva contraseña</h1>
-              <p className="text-sm text-muted-foreground mt-1">Ingresa tu nueva contraseña</p>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Nueva contraseña</label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                placeholder="••••••••"
+                {...register("password")}
+                className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+              />
+              {errors.password && <span className="text-xs text-destructive">{errors.password.message}</span>}
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1">
-                <Label>Nueva contraseña</Label>
-                <Input type="password" placeholder="••••••••" {...register("password")} />
-                {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>Confirmar contraseña</Label>
-                <Input type="password" placeholder="••••••••" {...register("confirmPassword")} />
-                {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
-              </div>
-              <Button type="submit" className="w-full" disabled={loading || !token}>
-                {loading ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
-                Cambiar contraseña
-              </Button>
-            </form>
-            <p className="text-center text-sm">
-              <Link to="/auth/login" className="text-primary hover:underline">Volver al inicio</Link>
-            </p>
-          </>
-        )}
-      </div>
-      </div>
-    </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Confirmar contraseña</label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                placeholder="••••••••"
+                {...register("confirmPassword")}
+                className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-3.5 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#3B0E1A] transition-all"
+              />
+              {errors.confirmPassword && <span className="text-xs text-destructive">{errors.confirmPassword.message}</span>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !token}
+              className="press mt-2 bg-[#3B0E1A] text-[#F3EFE9] py-4 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
+            >
+              {loading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <>
+                  Cambiar contraseña
+                  <ArrowRight size={15} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-7 text-center text-sm text-muted-foreground font-alilato">
+            <Link to="/auth/login" className="text-[#3B0E1A] font-medium underline-offset-4 hover:underline">
+              Volver al inicio
+            </Link>
+          </p>
+        </>
+      )}
+    </AuthLayout>
   );
 };
 
