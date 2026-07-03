@@ -80,14 +80,17 @@ export const CLASS_PHOTOS = {
   },
 } as const satisfies Record<string, PhotoAsset>;
 
+// Orden 1:1 con EXPERIENCES en data.ts (DJ en vivo, Puppy class, Candle class).
+// La foto de flores + mat negro se quitó de aquí: ya la usa CLASS_PHOTOS.experience
+// en ClassesGallery, y repetida en esta sección se veía duplicada en la misma página.
 export const EXPERIENCE_PHOTOS = [
-  {
-    src: experienceStretch,
-    alt: "Experience Class VARRE24 con flores y estiramiento en mat negro",
-  },
   {
     src: experienceDj,
     alt: "Experience Class VARRE24 con DJ en vivo",
+  },
+  {
+    src: authRegisterLegs,
+    alt: "Movimiento en grupo VARRE24 — Puppy class",
   },
   {
     src: experienceCandle,

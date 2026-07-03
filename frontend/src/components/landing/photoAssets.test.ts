@@ -9,7 +9,7 @@ describe("photoAssets", () => {
     expect(CLASS_PHOTOS.pilates.alt).toMatch(/dos alumnas|pelota/i);
     expect(CLASS_PHOTOS.experience.alt).toMatch(/mat negro/i);
     expect(EXPERIENCE_PHOTOS).toHaveLength(3);
-    expect(EXPERIENCE_PHOTOS[0].alt).toMatch(/mat negro/i);
+    expect(EXPERIENCE_PHOTOS[0].alt).toMatch(/dj/i);
     expect(SHELL_PHOTOS.auth.alt).toMatch(/espejos/i);
   });
 });
