@@ -14,31 +14,37 @@ if (process.env.RESEND_API_KEY) {
 }
 
 const FROM_EMAIL = process.env.EMAIL_FROM || "VARRE24 <onboarding@resend.dev>";
-const SITE_URL = String(process.env.SITE_URL || process.env.APP_URL || "https://varre24.com").replace(/\/+$/, "");
+const SITE_URL = String(process.env.SITE_URL || process.env.APP_URL || "https://varre24-web-production.up.railway.app").replace(/\/+$/, "");
 const LOGO_URL = `${SITE_URL}/pr-logo-email.png`;
 
-// ─── Brand palette (matches website — placeholder warm/feminine) ─────────────
+// ─── Brand palette (MODDO — vino/rosa, la misma del sitio y el admin) ────────
 const B = {
-  bg:      "#F6F2EB",   // page background — sunlit-veil
-  card:    "#FBF8F4",   // card background — warm white
-  border:  "#E8DDD5",   // subtle border — warm
-  brown:   "#5B4A3E",   // primary accent — urban-espresso
-  green:   "#B5A593",   // secondary accent — oat taupe (nombre legacy)
-  dark:    "#2A211B",   // main text — espresso-900
-  body:    "#5B4A3E",   // body text — espresso
-  muted:   "#8A8077",   // muted/secondary text — pavement
-  cream:   "#E8DED4",   // ivory-silk
-  sage10:  "#F6F2EB",   // very light cream for backgrounds (nombre legacy)
-  amber:   "#b45309",   // warning/alert
+  bg:        "#F3EFE9",   // ivory — fondo de página
+  card:      "#FCF8F7",   // surface — fondo de la tarjeta
+  border:    "#E8D7D6",   // hairline
+  brand:     "#3B0E1A",   // burgundy — acento primario (botones, links, barra superior)
+  brandDark: "#320C16",   // burgundy hover/deep
+  rose:      "#C9A5A8",   // dusty rose — acento secundario
+  pink:      "#FFD6E6",   // soft pink — chips, divisores, highlights
+  dark:      "#1A060B",   // ink — encabezados
+  body:      "#4A2530",   // texto de párrafo — burgundy suavizado, legible en bloques largos
+  muted:     "#9C8A8B",   // texto secundario/discreto
+  amber:     "#b45309",   // advertencia (semántico, no de marca)
 };
+
+// ─── Tipografía ───────────────────────────────────────────────────────────────
+// Poppins vía @import con la misma pila web-safe como fallback: Outlook desktop
+// ignora @import y cae directo a Helvetica; Gmail/Apple Mail/Yahoo sí la cargan.
+const FONT = "'Poppins','Helvetica Neue',Helvetica,Arial,sans-serif";
+const DISPLAY_URL = SITE_URL.replace(/^https?:\/\//, "");
 
 // ─── Base layout ──────────────────────────────────────────────────────────────
 function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } = {}) {
   const ctaBlock = ctaUrl
     ? `<tr><td align="center" style="padding:28px 0 12px;">
          <a href="${ctaUrl}"
-            style="display:inline-block;background:${B.brown};
-                   color:#ffffff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+            style="display:inline-block;background:${B.brand};
+                   color:${B.pink};font-family:${FONT};
                    font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
                    text-decoration:none;border-radius:50px;padding:14px 40px;">
            ${ctaText}
@@ -53,6 +59,9 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>VARRE24</title>
   <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+  </style>
 </head>
 <body style="margin:0;padding:0;background-color:${B.bg};">
   <!-- preheader -->
@@ -68,10 +77,10 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
       <table role="presentation" cellpadding="0" cellspacing="0" width="560"
              style="max-width:560px;width:100%;background-color:${B.card};
                     border:1px solid ${B.border};border-radius:16px;
-                    box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+                    box-shadow:0 4px 24px rgba(59,14,26,0.08);">
 
         <!-- Top accent bar -->
-        <tr><td style="height:4px;background:linear-gradient(90deg,${B.brown},${B.green});
+        <tr><td style="height:4px;background:linear-gradient(90deg,${B.brand},${B.pink});
                         border-radius:16px 16px 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
 
         <!-- Logo -->
@@ -84,8 +93,8 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
 
         <!-- Tagline -->
         <tr><td align="center" style="padding:0 40px 20px;">
-          <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;
-                    letter-spacing:2.5px;text-transform:uppercase;color:${B.muted};margin:0;">
+          <p style="font-family:${FONT};font-size:10px;font-weight:500;
+                    letter-spacing:2.5px;text-transform:uppercase;color:${B.rose};margin:0;">
             Barre &middot; Pilates &middot; Bienestar
           </p>
         </td></tr>
@@ -105,10 +114,10 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
 
         <!-- Footer -->
         <tr><td align="center" style="padding:20px 40px 28px;">
-          <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;
+          <p style="font-family:${FONT};font-size:11px;
                     color:${B.muted};margin:0;line-height:1.7;">
             © ${new Date().getFullYear()} VARRE24 · Nápoles, CDMX<br>
-            <a href="${SITE_URL}" style="color:${B.brown};text-decoration:none;">varre24.com</a>
+            <a href="${SITE_URL}" style="color:${B.brand};text-decoration:none;">${DISPLAY_URL}</a>
           </p>
         </td></tr>
 
@@ -121,27 +130,27 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function h1(text) {
-  return `<h1 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;
-                      font-weight:700;color:${B.dark};margin:16px 0 8px;line-height:1.3;">${text}</h1>`;
+  return `<h1 style="font-family:${FONT};font-size:24px;font-weight:300;
+                      color:${B.dark};margin:16px 0 8px;line-height:1.3;">${text}</h1>`;
 }
 function h2(text) {
-  return `<h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;
-                      font-weight:700;color:${B.brown};margin:20px 0 6px;text-transform:uppercase;
+  return `<h2 style="font-family:${FONT};font-size:16px;
+                      font-weight:600;color:${B.brand};margin:20px 0 6px;text-transform:uppercase;
                       letter-spacing:0.5px;">${text}</h2>`;
 }
 function p(text) {
-  return `<p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;
+  return `<p style="font-family:${FONT};font-size:15px;
                      color:${B.body};line-height:1.7;margin:0 0 12px;">${text}</p>`;
 }
 function small(text) {
-  return `<p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;
+  return `<p style="font-family:${FONT};font-size:13px;
                      color:${B.muted};line-height:1.6;margin:0 0 10px;">${text}</p>`;
 }
 function infoRow(label, value) {
   return `<tr>
-    <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;
+    <td style="font-family:${FONT};font-size:13px;
                color:${B.muted};padding:10px 0;border-bottom:1px solid ${B.border};">${label}</td>
-    <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;
+    <td style="font-family:${FONT};font-size:13px;
                color:${B.dark};font-weight:600;padding:10px 0 10px 12px;
                border-bottom:1px solid ${B.border};text-align:right;">${value}</td>
   </tr>`;
@@ -153,22 +162,26 @@ function infoTable(rows) {
   </table>`;
 }
 function pill(text, color) {
-  return `<span style="display:inline-block;background:${color}15;border:1px solid ${color}40;
+  return `<span style="display:inline-block;background:${color}1a;border:1px solid ${color}66;
                         color:${color};border-radius:50px;font-size:11px;font-weight:700;
-                        padding:4px 14px;letter-spacing:0.5px;text-transform:uppercase;">${text}</span>`;
+                        padding:4px 14px;letter-spacing:0.5px;text-transform:uppercase;
+                        font-family:${FONT};">${text}</span>`;
 }
+// Info/success/warning/error se mantienen semánticos (verde=bien, ámbar=ojo,
+// rojo=mal) — el morado/rosa de marca queda para "info" neutral, no para
+// success/error, así una alumna reconoce el color sin leer el texto.
 function alertBox(text, type = "info") {
   const colors = {
-    info:    { bg: `${B.green}15`, border: B.green, text: "#4A3D32" },
-    success: { bg: `${B.green}15`, border: B.green, text: "#4A3D32" },
+    info:    { bg: `${B.pink}40`,  border: B.rose,    text: B.brand },
+    success: { bg: "#ecfdf5",      border: "#10b981", text: "#065f46" },
     warning: { bg: "#fef3c7",      border: "#f59e0b", text: "#92400e" },
-    error:   { bg: "#fef2f2",      border: "#ef4444", text: "#991b1b" },
+    error:   { bg: "#fdf1f0",      border: "#9B5B53", text: "#7a3f3a" },
   };
   const c = colors[type] || colors.info;
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%"
                   style="background:${c.bg};border-left:4px solid ${c.border};
                          border-radius:0 8px 8px 0;margin:12px 0 20px;">
-    <tr><td style="padding:14px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    <tr><td style="padding:14px 16px;font-family:${FONT};
                     font-size:14px;color:${c.text};line-height:1.6;">${text}</td></tr>
   </table>`;
 }
@@ -242,7 +255,7 @@ async function sendBookingConfirmed(opts) {
 
   const statusPill = isWaitlist
     ? pill("Lista de espera", B.amber)
-    : pill("Confirmada", B.green);
+    : pill("Confirmada", B.rose);
 
   const classesLeftText = classesLeft === null
     ? "Ilimitadas"
@@ -430,7 +443,7 @@ async function sendPasswordResetEmail(opts) {
     ${p("Recibimos una solicitud para cambiar la contraseña de tu cuenta en VARRE24.")}
     ${p("Si fuiste tú, haz clic en el botón de abajo para crear una contraseña nueva. Este enlace expira en <strong>2 horas</strong>.")}
     ${alertBox("Si no solicitaste este cambio, puedes ignorar este correo. Tu cuenta seguirá segura.", "info")}
-    ${small(`Si el botón no funciona, copia y pega este enlace en tu navegador:<br><a href="${resolvedResetUrl}" style="color:${B.brown};word-break:break-all;">${resolvedResetUrl}</a>`)}
+    ${small(`Si el botón no funciona, copia y pega este enlace en tu navegador:<br><a href="${resolvedResetUrl}" style="color:${B.brand};word-break:break-all;">${resolvedResetUrl}</a>`)}
   `;
   const html = baseLayout({
     preheader: "Recupera el acceso a tu cuenta de VARRE24",
@@ -489,13 +502,13 @@ async function sendBirthdayGreeting({ to, name, message, ctaUrl, ctaText }) {
   const heroBlock = `
     <tr><td align="center" style="padding:8px 0 24px;">
       <div style="display:inline-block;font-size:48px;line-height:1;letter-spacing:0.18em;">🎂 🌸 🎂</div>
-      <div style="margin-top:14px;font-family:Georgia,serif;font-style:italic;font-size:13px;letter-spacing:0.32em;text-transform:uppercase;color:${B.brown};">
+      <div style="margin-top:14px;font-family:Georgia,serif;font-style:italic;font-size:13px;letter-spacing:0.32em;text-transform:uppercase;color:${B.brand};">
         Feliz cumpleaños
       </div>
-      <h1 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:36px;line-height:1.1;font-weight:700;color:${B.dark};margin:14px 0 0;letter-spacing:-0.01em;">
+      <h1 style="font-family:${FONT};font-size:36px;line-height:1.1;font-weight:300;color:${B.dark};margin:14px 0 0;letter-spacing:-0.01em;">
         ${escapeHtml(firstName)}
       </h1>
-      <div style="width:48px;height:2px;background:${B.brown};margin:18px auto 0;"></div>
+      <div style="width:48px;height:2px;background:${B.pink};margin:18px auto 0;"></div>
     </td></tr>`;
 
   const content = `

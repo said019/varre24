@@ -35,7 +35,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "varre24_dev_only_change_me";
 if (!process.env.JWT_SECRET) {
   console.warn("[seguridad] JWT_SECRET no definido — usando un default SOLO para desarrollo. Define JWT_SECRET en producción.");
 }
-const APP_PUBLIC_URL = String(process.env.APP_URL || process.env.SITE_URL || "https://varre24fit.com").replace(/\/+$/, "");
+const APP_PUBLIC_URL = String(process.env.APP_URL || process.env.SITE_URL || "https://varre24-web-production.up.railway.app").replace(/\/+$/, "");
 
 // ─── MercadoPago (Checkout Pro) config ──────────────────────────────────────
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || "";
@@ -1849,7 +1849,7 @@ async function ensureSchema() {
 // ─── Middleware ──────────────────────────────────────────────────────────────
 const CORS_ALLOWED_ORIGINS = String(
   process.env.CORS_ALLOWED_ORIGINS ||
-  "https://varre24fit.com,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080",
+  "https://www.varre24fit.com,https://varre24-web-production.up.railway.app,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080",
 )
   .split(",")
   .map((origin) => origin.trim())
@@ -5568,7 +5568,7 @@ app.post("/api/loyalty/redeem", authMiddleware, async (req, res) => {
 
 // ─── Google Wallet helpers ──────────────────────────────────────────────────
 
-const SITE_URL = process.env.SITE_URL || "https://varre24.com";
+const SITE_URL = process.env.SITE_URL || "https://varre24-web-production.up.railway.app";
 const GW_ISSUER_ID = process.env.GOOGLE_ISSUER_ID || "";
 const GW_ISSUER_NAME = process.env.GOOGLE_ISSUER_NAME || "VARRE24";
 const GW_PROGRAM_NAME = process.env.GOOGLE_PROGRAM_NAME || "VARRE24 Club";
