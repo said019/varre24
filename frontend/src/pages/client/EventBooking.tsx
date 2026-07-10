@@ -410,6 +410,7 @@ const EventBooking = () => {
                   { label: "CLABE", value: bankDetails.clabe },
                   { label: "Banco", value: bankDetails.bank },
                   { label: "Titular", value: bankDetails.account_holder ?? bankDetails.accountHolder },
+                  { label: "Tarjeta", value: bankDetails.card_number },
                   { label: "Monto", value: `$${Number(bankDetails.amount).toLocaleString("es-MX")} MXN` },
                 ].map(({ label, value }) => value && (
                   <div key={label} className="flex items-center justify-between border-b border-[#EADCDD] py-3 last:border-0">

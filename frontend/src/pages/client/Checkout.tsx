@@ -759,6 +759,7 @@ const Checkout = () => {
                   { label: "CLABE", value: bankDetails.clabe },
                   { label: "Banco", value: bankDetails.bank },
                   { label: "Titular", value: bankDetails.account_holder ?? bankDetails.accountHolder },
+                  { label: "Tarjeta", value: bankDetails.card_number },
                   { label: "Monto", value: `$${bankDetails.amount?.toLocaleString("es-MX")} MXN` },
                 ].map(({ label, value }) => value && (
                   <div key={label} className="flex items-center justify-between py-3 border-b border-[#EADCDD] last:border-0">

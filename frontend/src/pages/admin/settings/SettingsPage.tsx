@@ -297,13 +297,21 @@ const SettingsSection = ({ settingKey, fields }: { settingKey: string; fields: {
   }, [data, loaded]);
 
   const updateMutation = useMutation({
-    mutationFn: () => api.put(`/settings/${settingKey}`, { value: values }),
+    // Enviamos SOLO las llaves que este componente maneja (no todo `values`). El
+    // backend hace read-modify-write, así que mandar un parcial evita pisar llaves
+    // que administra otro componente sobre el mismo setting (p.ej. la media del
+    // venue dentro de general_settings).
+    mutationFn: () => {
+      const partial: Record<string, any> = {};
+      for (const f of fields) partial[f.key] = values[f.key];
+      return api.put(`/settings/${settingKey}`, { value: partial });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["settings", settingKey] });
       setLoaded(false); // allow re-sync after save
       toast({ title: "✅ Configuración guardada" });
     },
-    onError: () => toast({ title: "Error al guardar", variant: "destructive" }),
+    onError: (err: any) => toast({ title: err?.response?.data?.message ?? "Error al guardar", variant: "destructive" }),
   });
 
   return (
@@ -450,15 +458,19 @@ const WhatsAppSettings = () => {
 };
 
 // ── Notification Templates Section ─────────────────────────────────────────
+// Solo las plantillas que REALMENTE se envían por WhatsApp (sendConfiguredWhatsAppTemplate).
+// Los correos usan un diseño fijo de la marca (emailService.js), así que aquí no
+// hay "asunto de email". Antes la lista incluía 'welcome' y 'password_reset', que
+// no se mandan por ningún canal editable — se quitaron para no aparentar que hacen algo.
 const NOTIFICATION_TEMPLATES = [
-  { key: "booking_confirmed",     label: "✅ Reserva confirmada",         icon: "📅", hint: "Se envía al confirmar una reserva. Vars: {name}, {class}, {date}, {time}" },
-  { key: "booking_cancelled",     label: "❌ Reserva cancelada",          icon: "🚫", hint: "Se envía al cancelar. Vars: {name}, {class}, {date}, {creditRestored}" },
-  { key: "membership_activated",  label: "🎉 Membresía activada",         icon: "🏋️", hint: "Se envía al activar membresía. Vars: {name}, {plan}, {startDate}, {endDate}" },
-  { key: "transfer_rejected",     label: "⚠️ Transferencia rechazada",    icon: "💳", hint: "Se envía cuando se rechaza un comprobante. Vars: {name}, {reason}" },
-  { key: "class_reminder",        label: "⏰ Recordatorio de clase",       icon: "🔔", hint: "Se envía horas antes de la clase. Vars: {name}, {class}, {time}" },
-  { key: "renewal_reminder",      label: "🔄 Recordatorio de renovación", icon: "📆", hint: "Se envía cuando la membresía está por vencer. Vars: {name}, {plan}, {expiresAt}" },
-  { key: "welcome",               label: "👋 Bienvenida",                 icon: "🌟", hint: "Se envía al registrarse. Vars: {name}" },
-  { key: "password_reset",        label: "🔐 Recuperación de contraseña", icon: "🔑", hint: "Se envía para restablecer contraseña. Vars: {name}, {link}" },
+  { key: "booking_confirmed",         label: "Reserva confirmada",            hint: "Al confirmar una reserva. Vars: {name}, {class}, {date}, {time}" },
+  { key: "booking_cancelled",         label: "Reserva cancelada",             hint: "Al cancelar. Vars: {name}, {class}, {date}, {creditRestored}" },
+  { key: "class_cancelled_by_studio", label: "Clase cancelada por el estudio", hint: "Cuando el estudio cancela una clase. Vars: {name}, {class}, {date}, {time}, {creditRestored}" },
+  { key: "membership_activated",      label: "Membresía activada",            hint: "Al activar una membresía. Vars: {name}, {plan}, {startDate}, {endDate}" },
+  { key: "transfer_rejected",         label: "Transferencia rechazada",       hint: "Cuando se rechaza un comprobante. Vars: {name}, {reason}" },
+  { key: "class_reminder",            label: "Recordatorio de clase",         hint: "Horas antes de la clase. Vars: {name}, {class}, {time}" },
+  { key: "instructor_changed",        label: "Cambio de instructora",         hint: "Al cambiar la instructora de una clase. Vars: {name}, {class}, {date}, {time}, {newInstructor}, {oldInstructor}" },
+  { key: "renewal_reminder",          label: "Recordatorio de renovación",    hint: "Cuando la membresía está por vencer. Vars: {name}, {plan}, {expiresAt}" },
 ];
 
 const NotificationTemplates = () => {
@@ -466,7 +478,6 @@ const NotificationTemplates = () => {
   const qc = useQueryClient();
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  const [editSubject, setEditSubject] = useState("");
 
   const { data: tplData } = useQuery({
     queryKey: ["settings", "notification_templates"],
@@ -498,8 +509,9 @@ const NotificationTemplates = () => {
   const walletLogs: any[] = walletLogsData?.data ?? [];
 
   const saveTplMutation = useMutation({
-    mutationFn: ({ key, subject, body }: { key: string; subject: string; body: string }) => {
-      const updated = { ...templates, [key]: { subject, body } };
+    mutationFn: ({ key, body }: { key: string; body: string }) => {
+      // Preservamos cualquier `subject` existente aunque ya no se edite aquí.
+      const updated = { ...templates, [key]: { ...templates[key], body } };
       return api.put("/settings/notification_templates", { value: updated });
     },
     onSuccess: () => {
@@ -523,7 +535,6 @@ const NotificationTemplates = () => {
   const openEdit = (key: string) => {
     const tpl = templates[key];
     setEditText(tpl?.body ?? "");
-    setEditSubject(tpl?.subject ?? "");
     setEditingKey(key);
   };
 
@@ -543,10 +554,9 @@ const NotificationTemplates = () => {
             <Label>{f.label}</Label>
           </div>
         ))}
-        <div className="space-y-1 pt-1">
-          <Label>Horas antes del recordatorio</Label>
-          <Input type="number" className="w-28" value={config.reminder_hours_before ?? 2} onChange={(e) => setConfig((p) => ({ ...p, reminder_hours_before: Number(e.target.value) }))} />
-        </div>
+        <p className="text-xs text-muted-foreground pt-1">
+          Los recordatorios de clase se envían automáticamente el día previo y la mañana de la clase.
+        </p>
         <Button size="sm" onClick={() => saveConfigMutation.mutate()} disabled={saveConfigMutation.isPending}>
           {saveConfigMutation.isPending ? <Loader2 className="animate-spin mr-1" size={12} /> : null}Guardar
         </Button>
@@ -598,7 +608,10 @@ const NotificationTemplates = () => {
 
       {/* Templates list */}
       <div className="space-y-2">
-        <h3 className="font-semibold text-sm mb-3">Plantillas de mensajes</h3>
+        <h3 className="font-semibold text-sm">Plantillas de WhatsApp</h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          Estos mensajes se envían por WhatsApp. Los correos usan un diseño fijo de la marca.
+        </p>
         {NOTIFICATION_TEMPLATES.map((t) => {
           const tpl = templates[t.key];
           return (
@@ -626,11 +639,7 @@ const NotificationTemplates = () => {
           <div className="space-y-4 py-2">
             <p className="text-xs text-muted-foreground bg-muted rounded-lg px-3 py-2">{currentTpl?.hint}</p>
             <div className="space-y-1">
-              <Label>Asunto (email)</Label>
-              <Input value={editSubject} onChange={(e) => setEditSubject(e.target.value)} placeholder="Asunto del email..." />
-            </div>
-            <div className="space-y-1">
-              <Label>Cuerpo del mensaje (WhatsApp / Email)</Label>
+              <Label>Mensaje de WhatsApp</Label>
               <Textarea rows={6} value={editText} onChange={(e) => setEditText(e.target.value)} placeholder="Escribe el mensaje aquí..." />
               <p className="text-xs text-muted-foreground">{editText.length} caracteres</p>
             </div>
@@ -638,7 +647,7 @@ const NotificationTemplates = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingKey(null)}>Cancelar</Button>
             <Button
-              onClick={() => editingKey && saveTplMutation.mutate({ key: editingKey, subject: editSubject, body: editText })}
+              onClick={() => editingKey && saveTplMutation.mutate({ key: editingKey, body: editText })}
               disabled={saveTplMutation.isPending}
             >
               {saveTplMutation.isPending ? <Loader2 className="animate-spin mr-1" size={12} /> : null}Guardar plantilla
@@ -680,13 +689,12 @@ const VenueMediaSettings = () => {
 
   const handleRemoveMedia = () => {
     if (!mediaUrl) return;
+    // Solo mandamos las llaves de la media (backend hace read-modify-write); así no
+    // pisamos el resto de general_settings.
     saveGeneralMutation.mutate({
-      ...generalSettings,
       venue_media_url: "",
       venue_media_type: "",
-      venue_media_drive_id: "",
       venue_media_name: "",
-      venue_media_updated_at: "",
     });
   };
 
@@ -748,14 +756,13 @@ const VenueMediaSettings = () => {
 
       const nextMediaType = isVideo ? "video" : "image";
       const nextMediaUrl = nextMediaType === "video" ? `/api/drive/video/${driveFileId}` : `/api/drive/image/${driveFileId}`;
+      // Solo las llaves de media (el driveFileId ya va embebido en la URL). Backend
+      // hace read-modify-write, así que no reenviamos todo generalSettings.
       await api.put("/settings/general_settings", {
         value: {
-          ...generalSettings,
           venue_media_url: nextMediaUrl,
           venue_media_type: nextMediaType,
-          venue_media_drive_id: driveFileId,
           venue_media_name: file.name,
-          venue_media_updated_at: new Date().toISOString(),
         },
       });
 
@@ -869,9 +876,7 @@ const SettingsPage = () => (
                   { key: "phone", label: "Teléfono de contacto" },
                   { key: "instagram", label: "Instagram (@usuario)" },
                   { key: "facebook", label: "Facebook (URL o usuario)" },
-                  { key: "timezone", label: "Zona horaria (ej: America/Mexico_City)" },
-                  { key: "currency", label: "Moneda (ej: MXN)" },
-                  { key: "maintenance_mode", label: "Modo mantenimiento", type: "boolean" },
+                  { key: "maintenance_mode", label: "Modo mantenimiento (pausa reservas y compras)", type: "boolean" },
                 ]}
               />
               <VenueMediaSettings />

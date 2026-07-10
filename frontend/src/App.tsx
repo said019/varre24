@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { AnimatedRoutes } from "@/lib/motion";
+import { MaintenanceGate } from "@/components/MaintenanceGate";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -137,7 +138,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AppInit />
-        <AppRoutes />
+        <MaintenanceGate>
+          <AppRoutes />
+        </MaintenanceGate>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

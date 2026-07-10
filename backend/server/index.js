@@ -82,9 +82,7 @@ const DEFAULT_GENERAL_SETTINGS = {
   maintenance_mode: false,
   venue_media_url: "",
   venue_media_type: "",
-  venue_media_drive_id: "",
   venue_media_name: "",
-  venue_media_updated_at: "",
 };
 
 const DEFAULT_BANK_INFO = Object.freeze({
@@ -126,6 +124,28 @@ function formatAccountNumber(value) {
   return String(value || "").trim();
 }
 
+// CLABEs semilla de una migración vieja que pertenecen a OTRO negocio
+// ("Balance Studio SA de CV"). NO son del estudio y no deben mostrarse jamás.
+const BANK_SEED_CLABES = new Set([
+  "012180001234567890",
+  "012180012345678901",
+  "710180000068980",
+]);
+
+// ¿Están los datos bancarios realmente configurados por el admin? Requiere banco
+// + titular + al menos UN destino válido (CLABE de 18 dígitos, cuenta de 10, o
+// tarjeta). Si NO, mostramos los valores TEST evidentes para que el cliente no
+// transfiera a datos incompletos. Detecta y descarta el seed de "Balance Studio".
+function bankInfoConfigured(candidate) {
+  const clabeDigits = digitsOnly(candidate.clabe);
+  const accountDigits = digitsOnly(candidate.account_number);
+  const cardDigits = digitsOnly(candidate.card_number);
+  if (BANK_SEED_CLABES.has(clabeDigits)) return false;
+  if (candidate.account_holder.toLowerCase().includes("balance studio")) return false;
+  if (!candidate.bank || !candidate.account_holder) return false;
+  return clabeDigits.length === 18 || accountDigits.length === 10 || cardDigits.length >= 15;
+}
+
 function normalizeBankInfo(rawValue) {
   const raw = rawValue && typeof rawValue === "object" ? rawValue : {};
   const candidate = {
@@ -133,49 +153,59 @@ function normalizeBankInfo(rawValue) {
     account_holder: String(raw.account_holder || raw.accountHolder || raw.titular || raw.holder || "").trim(),
     account_number: String(raw.account_number || raw.accountNumber || raw.cuenta || raw.account || "").trim(),
     clabe: String(raw.clabe || raw.clabe_interbancaria || "").trim(),
+    card_number: String(raw.card_number || raw.cardNumber || raw.tarjeta || "").trim(),
   };
 
-  const holderLower = candidate.account_holder.toLowerCase();
+  // Sin configurar (o seed ajeno) → mostramos TEST completo, no una cuenta a medias.
+  if (!bankInfoConfigured(candidate)) {
+    const d = DEFAULT_BANK_INFO;
+    const acc = formatAccountNumber(d.account_number);
+    return {
+      bank: d.bank, bank_name: d.bank,
+      account_holder: d.account_holder, accountHolder: d.account_holder,
+      account_number: acc, accountNumber: acc,
+      clabe: formatClabe(d.clabe),
+      card_number: d.card_number,
+    };
+  }
+
+  // Configurado → cada campo se muestra por sí solo. Un campo opcional malformado
+  // (p.ej. una referencia corta en "cuenta") NO borra el banco/titular/CLABE
+  // válidos: antes un solo dato malo revertía TODO el registro a datos de prueba
+  // y el cliente podía transferir a una cuenta falsa sin que el admin se enterara.
   const clabeDigits = digitsOnly(candidate.clabe);
   const accountDigits = digitsOnly(candidate.account_number);
-  // Caemos a los valores TEST si:
-  //  - los datos están estructuralmente incompletos (sin banco/titular,
-  //    CLABE ≠ 18 dígitos, cuenta < 10 dígitos), O
-  //  - son los datos de SEED de la migración (`system_settings`) que pertenecen
-  //    a OTRO negocio ("Balance Studio SA de CV", CLABE 012180001234567890).
-  //    Ese seed NO es del estudio y NO debe mostrarse al cliente; mejor mostrar
-  //    los valores TEST evidentes hasta que el admin guarde sus datos reales.
-  const shouldUseDefault =
-    !candidate.bank ||
-    !candidate.account_holder ||
-    clabeDigits.length !== 18 ||
-    (accountDigits && accountDigits.length < 10) ||
-    clabeDigits === "012180001234567890" ||
-    clabeDigits === "012180012345678901" ||
-    clabeDigits === "710180000068980" ||
-    holderLower.includes("balance studio");
-
-  const base = shouldUseDefault ? DEFAULT_BANK_INFO : candidate;
-  // El número de cuenta es opcional para SPEI (basta el CLABE). Si el admin no
-  // lo configuró y los datos NO son los TEST, dejarlo vacío en vez de mostrar
-  // "000 000 0000" al cliente. Solo se rellena con el default cuando estamos
-  // mostrando los valores TEST completos (datos sin configurar).
-  const formattedAccount = shouldUseDefault
-    ? formatAccountNumber(DEFAULT_BANK_INFO.account_number)
-    : (base.account_number ? formatAccountNumber(base.account_number) : "");
-  const formattedClabe = formatClabe(base.clabe || DEFAULT_BANK_INFO.clabe);
-  const holder = String(base.account_holder || DEFAULT_BANK_INFO.account_holder).trim();
-  const bank = String(base.bank || DEFAULT_BANK_INFO.bank).trim();
-
+  const account = accountDigits.length === 10 ? formatAccountNumber(candidate.account_number) : (candidate.account_number || "");
+  const clabe = clabeDigits.length === 18 ? formatClabe(candidate.clabe) : (candidate.clabe || "");
+  const bank = candidate.bank;
+  const holder = candidate.account_holder;
   return {
     bank,
     bank_name: bank,
     account_holder: holder,
     accountHolder: holder,
-    account_number: formattedAccount,
-    accountNumber: formattedAccount,
-    clabe: formattedClabe,
+    account_number: account,
+    accountNumber: account,
+    clabe,
+    card_number: candidate.card_number || "",
   };
+}
+
+// Valida datos bancarios antes de guardarlos: la CLABE (si viene) debe tener
+// exactamente 18 dígitos y la cuenta (si viene) 10 dígitos. Devuelve un mensaje
+// de error o null. Así el admin recibe feedback inmediato en vez de "guardar"
+// datos que el cliente vería como TEST.
+function validateBankInfo(value) {
+  if (!value || typeof value !== "object") return null;
+  const clabeDigits = digitsOnly(value.clabe ?? value.clabe_interbancaria);
+  if (clabeDigits && clabeDigits.length !== 18) {
+    return "La CLABE debe tener exactamente 18 dígitos.";
+  }
+  const accountDigits = digitsOnly(value.account_number ?? value.accountNumber ?? value.cuenta);
+  if (accountDigits && accountDigits.length !== 10) {
+    return "El número de cuenta debe tener 10 dígitos (o déjalo vacío y usa solo la CLABE).";
+  }
+  return null;
 }
 
 async function getConfiguredBankInfo(dbClient = pool) {
@@ -312,14 +342,11 @@ function mergeSettingsWithDefaults(key, rawValue) {
   if (!defaults) return rawValue ?? null;
   if (!isPlainObject(rawValue)) return JSON.parse(JSON.stringify(defaults));
   const merged = deepMerge(defaults, rawValue);
-  if (key === "policies_settings") {
-    for (const [fieldKey, defaultValue] of Object.entries(defaults)) {
-      const current = merged[fieldKey];
-      if (typeof defaultValue === "string" && (!current || !String(current).trim())) {
-        merged[fieldKey] = defaultValue;
-      }
-    }
-  }
+  // (Antes: para policies_settings se re-rellenaba con el default cualquier campo
+  // vacío, así que la dueña NO podía dejar una política en blanco — se veía un
+  // "guardado" falso que volvía al texto por defecto. Se quitó: ahora un campo
+  // presente pero vacío se respeta. deepMerge sigue poniendo el default solo para
+  // llaves AUSENTES, así que la primera carga sí trae los textos iniciales.)
   return merged;
 }
 
@@ -1503,7 +1530,9 @@ async function ensureSchema() {
     //   - asegura `free_cancellations_per_membership` (copia del valor legacy
     //     `free_cancellations_per_month` si existía, o default 2)
     //   - mantiene `free_cancellations_per_month` como alias (mismo valor)
-    //   - baja min_hours de 12→5 solo si seguía con el viejo default.
+    // NOTA: ya NO tocamos min_hours en el arranque. Antes un `CASE WHEN min_hours=12
+    // THEN 5` hacía que si la dueña ponía exactamente 12 horas, al reiniciar el
+    // servidor volviera sola a 5. Ahora se respeta el valor guardado siempre.
     await pool.query(
       `INSERT INTO settings (key, value)
        VALUES ('cancellation_window', $1::jsonb)
@@ -1518,10 +1547,7 @@ async function ensureSchema() {
                        COALESCE(
                          settings.value->'free_cancellations_per_membership',
                          settings.value->'free_cancellations_per_month',
-                         '2'::jsonb))
-                  || CASE WHEN (settings.value->>'min_hours')::int = 12
-                          THEN jsonb_build_object('min_hours', 5)
-                          ELSE '{}'::jsonb END`,
+                         '2'::jsonb))`,
       [JSON.stringify(DEFAULT_CANCELLATION_WINDOW)]
     ).catch((e) => console.error("[migration cancellation_window seed]", e.message));
     // ── Loyalty rewards table ──────────────────────────────────────────────
@@ -1954,6 +1980,36 @@ app.use((req, res, next) => {
 // dispara en res.on("finish") así que no bloquea la respuesta al cliente.
 // La función se define más abajo (declarada con function → hoisted).
 app.use((req, res, next) => adminAuditMiddleware(req, res, next));
+
+// ─── Modo mantenimiento ─────────────────────────────────────────────────────
+// Cuando general_settings.maintenance_mode = true, bloqueamos el API público
+// (booking/checkout/planes/etc.) con 503, pero dejamos pasar login, admin,
+// settings y la lectura pública de settings para que la dueña pueda entrar y
+// apagarlo. Fail-open: cualquier error en el gate deja pasar (nunca tumba el
+// sitio por sí mismo). El staff autenticado nunca se bloquea.
+const MAINTENANCE_ALLOW_PREFIXES = [
+  "/api/auth/", "/api/admin", "/api/settings", "/api/evolution",
+  "/api/public/settings", "/api/health", "/api/drive",
+];
+async function requestIsStaff(req) {
+  try {
+    const header = req.headers.authorization;
+    if (!header?.startsWith("Bearer ")) return false;
+    const payload = jwt.verify(header.slice(7), JWT_SECRET);
+    const role = await getRoleCached(payload.sub);
+    return ["admin", "super_admin", "instructor", "reception"].includes(role);
+  } catch { return false; }
+}
+app.use(async (req, res, next) => {
+  try {
+    if (!req.path.startsWith("/api/")) return next();
+    if (MAINTENANCE_ALLOW_PREFIXES.some((p) => req.path.startsWith(p))) return next();
+    const gs = await getSettingValueWithDefaults("general_settings");
+    if (!gs?.maintenance_mode) return next();
+    if (await requestIsStaff(req)) return next();
+    return res.status(503).json({ message: "El estudio está en mantenimiento. Volvemos en un momento.", maintenance: true });
+  } catch { return next(); }
+});
 
 // ─── Helper: snake_case → camelCase row mapper ──────────────────────────────
 function camelRow(row) {
@@ -5305,6 +5361,7 @@ app.post("/api/orders/:id/proof", authMiddleware, upload.any(), async (req, res)
             await sendConfiguredWhatsAppTemplate({
               templateKey: "admin_payment_to_verify",
               phone: notifyPhone,
+              critical: true, // aviso a la dueña: no lo silencia el toggle de recordatorios a clientas
               vars: { alumna: order.user_name || "Una alumna", plan: planName, monto: amount, folio: order.order_number || order.id },
               fallbackMessage: `🔔 VARRE24 — Pago por validar\n${order.user_name || "Una alumna"} subió comprobante de transferencia.\nPlan: ${planName} · ${amount}\nFolio: ${order.order_number || order.id}\nEntra a Pagos para aprobar y activar su membresía.`,
             }).catch(() => {});
@@ -9706,6 +9763,9 @@ app.delete("/api/review-tags/:id", adminMiddleware, async (req, res) => {
 const PUBLIC_SETTINGS_KEYS = new Set([
   "policies_settings",
   "cancellation_window",
+  // Datos públicos del estudio (nombre, dirección, redes, moneda) + bandera de
+  // mantenimiento. Los consume la landing y el gate de mantenimiento del cliente.
+  "general_settings",
 ]);
 
 // ─── Settings cache (in-memory, TTL-based, invalidated on write) ────────────
@@ -9817,7 +9877,18 @@ app.put("/api/settings/:key", adminMiddleware, async (req, res) => {
     if (value === undefined) {
       return res.status(400).json({ message: "Falta `value` en el body" });
     }
-    const merged = mergeSettingsWithDefaults(req.params.key, value);
+    if (req.params.key === "bank_info") {
+      const bankErr = validateBankInfo(value);
+      if (bankErr) return res.status(400).json({ message: bankErr });
+    }
+    // Read-modify-write: mezclamos el `value` entrante sobre la fila existente.
+    // Así un componente que solo maneja PARTE de las llaves de un mismo setting
+    // (p.ej. datos del estudio vs. media del venue, ambos en general_settings) no
+    // borra lo que escribió el otro. El valor entrante gana llave por llave.
+    const existingRes = await pool.query("SELECT value FROM settings WHERE key=$1", [req.params.key]);
+    const existing = existingRes.rows[0]?.value;
+    const base = isPlainObject(existing) && isPlainObject(value) ? deepMerge(existing, value) : value;
+    const merged = mergeSettingsWithDefaults(req.params.key, base);
     await pool.query(
       "INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=NOW()",
       [req.params.key, JSON.stringify(merged)]
@@ -9923,11 +9994,16 @@ function renderTemplateVars(template, vars = {}) {
   });
 }
 
-async function sendConfiguredWhatsAppTemplate({ templateKey, phone, vars = {}, fallbackMessage = "" }) {
+async function sendConfiguredWhatsAppTemplate({ templateKey, phone, vars = {}, fallbackMessage = "", critical = false }) {
   if (!phone) return { sent: false, reason: "no_phone" };
-  const notificationSettings = await getSettingsValue("notification_settings", DEFAULT_NOTIFICATION_SETTINGS);
-  if (notificationSettings?.whatsapp_reminders === false) {
-    return { sent: false, reason: "whatsapp_disabled" };
+  // `critical` = aviso operativo a la dueña (p.ej. transferencia por validar). NO
+  // debe silenciarse con el toggle de recordatorios a clientas: son cosas
+  // distintas. Solo los mensajes a clientas respetan whatsapp_reminders.
+  if (!critical) {
+    const notificationSettings = await getSettingsValue("notification_settings", DEFAULT_NOTIFICATION_SETTINGS);
+    if (notificationSettings?.whatsapp_reminders === false) {
+      return { sent: false, reason: "whatsapp_disabled" };
+    }
   }
   const templates = await getSettingsValue("notification_templates", DEFAULT_NOTIFICATION_TEMPLATES);
   const templateBody = templates?.[templateKey]?.body || "";
