@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
+import type { AxiosError } from "axios";
 import api from "@/lib/api";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
@@ -10,8 +11,12 @@ import { cn } from "@/lib/utils";
 import {
   Check, Loader2, CreditCard, Copy, Building2,
   Tag, ChevronRight, ArrowLeft, Upload, CheckCircle, Sparkles,
-  PartyPopper, Users, Timer, ArrowRight,
+  PartyPopper, Users, Timer, ArrowRight, XCircle,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import imgPilates from "@/assets/pilates-tower_1850574.png";
 
 type Step = "select" | "method" | "bank" | "cash" | "upload" | "done";
@@ -209,6 +214,7 @@ const Checkout = () => {
   const [orderUuid, setOrderUuid] = useState<string | null>(null);
   const [bankDetails, setBankDetails] = useState<any>(null);
   const [loadingBankAgain, setLoadingBankAgain] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const MAX_PROOFS = 3;
   const [files, setFiles] = useState<File[]>([]);
 
@@ -345,7 +351,7 @@ const Checkout = () => {
       setDiscountResult(data);
       toast({ title: "Código de descuento aplicado" });
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       const msg = err?.response?.data?.message ?? "Código inválido";
       toast({ title: msg, variant: "destructive" });
     },
@@ -422,6 +428,28 @@ const Checkout = () => {
     },
     onError: (err: any) =>
       toast({ title: "No se pudo subir", description: err?.message || err?.response?.data?.message, variant: "destructive" }),
+  });
+
+  const cancelOrderMutation = useMutation({
+    mutationFn: async () => {
+      if (!orderUuid) throw new Error("No se encontró la orden.");
+      return api.post(`/orders/${orderUuid}/cancel`);
+    },
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["my-orders"] });
+      toast({
+        title: "Orden cancelada",
+        description: "La orden quedó cancelada y ya puedes iniciar otra compra si lo deseas.",
+      });
+      window.location.replace("/app/orders");
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast({
+        title: "No se pudo cancelar",
+        description: err?.response?.data?.message ?? "Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    },
   });
 
   return (
@@ -780,6 +808,15 @@ const Checkout = () => {
               <button onClick={() => setStep("upload")} className="w-full py-3.5 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors text-sm tracking-wide uppercase">
                 Ya realicé la transferencia →
               </button>
+              <button
+                type="button"
+                onClick={() => setCancelDialogOpen(true)}
+                disabled={cancelOrderMutation.isPending}
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#9B3B46]/25 py-3 text-sm font-semibold text-[#9B3B46] transition-all hover:bg-[#9B3B46]/[0.05] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <XCircle size={15} />
+                Cancelar orden
+              </button>
             </div>
           )}
 
@@ -881,6 +918,34 @@ const Checkout = () => {
             </div>
           )}
         </div>
+
+        <AlertDialog
+          open={cancelDialogOpen}
+          onOpenChange={(open) => !cancelOrderMutation.isPending && setCancelDialogOpen(open)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cancelar orden</AlertDialogTitle>
+              <AlertDialogDescription>
+                ¿Seguro que quieres cancelar esta orden? Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={cancelOrderMutation.isPending}>Volver</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(event) => {
+                  event.preventDefault();
+                  cancelOrderMutation.mutate();
+                }}
+                disabled={cancelOrderMutation.isPending}
+                className="bg-[#9B3B46] hover:bg-[#82313B]"
+              >
+                {cancelOrderMutation.isPending && <Loader2 size={14} className="mr-2 animate-spin" />}
+                Sí, cancelar orden
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </ClientLayout>
     </ClientAuthGuard>
   );
