@@ -39,7 +39,7 @@ const GenerateClasses = () => {
   const { toast } = useToast();
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
 
-  const { data: typesData } = useQuery<{ data: { id: string; name: string }[] }>({
+  const { data: typesData } = useQuery<{ data: { id: string; name: string; maxCapacity?: number; capacity?: number }[] }>({
     queryKey: ["class-types"],
     queryFn: async () => (await api.get("/class-types")).data,
   });
@@ -86,7 +86,15 @@ const GenerateClasses = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label className="text-[#1A060B]/60 text-xs">Tipo de clase</Label>
-                  <Select onValueChange={(v) => form.setValue("classTypeId", v)}>
+                  <Select onValueChange={(v) => {
+                    form.setValue("classTypeId", v);
+                    // Autollenar la capacidad con la del tipo de clase elegido
+                    // (para eso sirve tener capacidad por tipo). El admin puede
+                    // sobrescribirla si esta clase es distinta.
+                    const t = (Array.isArray(typesData?.data) ? typesData.data : []).find((x) => x.id === v);
+                    const cap = Number(t?.maxCapacity ?? t?.capacity ?? 0);
+                    if (cap > 0) form.setValue("maxCapacity", cap, { shouldValidate: true });
+                  }}>
                     <SelectTrigger className="bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B]">
                       <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>

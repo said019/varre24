@@ -25,7 +25,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Plus, CalendarDays, Palette, Zap, MoreHorizontal, Loader2, UserCheck, Sparkles, Calendar, Users, X, UserPlus, UserMinus, CheckCircle2, UserX } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, CalendarDays, Palette, Zap, MoreHorizontal, Loader2, UserCheck, Sparkles, Calendar, Users, X, UserPlus, UserMinus, CheckCircle2, UserX, Copy } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { ClassCategoryBadge } from "@/components/ClassCategoryBadge";
 
@@ -724,7 +724,7 @@ function CalendarTab({
 
   // Duplicar la semana actual hacia N semanas adelante.
   const [duplicateOpen, setDuplicateOpen] = useState(false);
-  const [duplicateWeeks, setDuplicateWeeks] = useState(4);
+  const [duplicateWeeks, setDuplicateWeeks] = useState(1);
   const duplicateWeekMutation = useMutation({
     mutationFn: (weeksAhead: number) =>
       api.post("/admin/classes/duplicate-week", { sourceWeekStart: start, weeksAhead }),
@@ -834,10 +834,12 @@ function CalendarTab({
             type="button"
             onClick={() => setDuplicateOpen(true)}
             disabled={duplicateWeekMutation.isPending || classes.length === 0}
-            className="text-xs text-[#260910] hover:text-[#3B0E1A] underline-offset-2 hover:underline transition-colors disabled:opacity-30 disabled:hover:no-underline disabled:hover:text-[#260910]"
-            title="Replicar la semana actual a N semanas adelante"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#3B0E1A] px-3.5 py-1.5 text-xs font-medium text-[#EADCDD] hover:bg-[#320C16] transition-colors disabled:opacity-30 disabled:hover:bg-[#3B0E1A]"
+            title="Copiar todas las clases de esta semana a las siguientes"
           >
-            {duplicateWeekMutation.isPending ? "Duplicando…" : "Duplicar adelante"}
+            {duplicateWeekMutation.isPending
+              ? <><Loader2 size={13} className="animate-spin" /> Copiando…</>
+              : <><Copy size={13} /> Copiar semana</>}
           </button>
           <button
             type="button"
@@ -854,11 +856,11 @@ function CalendarTab({
       <Dialog open={duplicateOpen} onOpenChange={setDuplicateOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Duplicar semana adelante</DialogTitle>
+            <DialogTitle>Copiar semana</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 text-sm">
             <p className="text-[#260910]/75 leading-relaxed">
-              Se replicarán las <strong>{classes.length} clases</strong> de la semana <strong>{weekLabel}</strong> hacia las próximas semanas, manteniendo tipo, instructora, hora y capacidad. Si una clase idéntica ya existe en la semana destino, se salta.
+              Se copiarán las <strong>{classes.length} clases</strong> de la semana <strong>{weekLabel}</strong> a las siguientes, manteniendo tipo, instructora, hora y capacidad. Si una clase idéntica ya existe en la semana destino, se salta.
             </p>
             <div className="space-y-1.5">
               <Label className="text-xs uppercase tracking-wide text-[#260910]/70">¿Cuántas semanas adelante?</Label>
@@ -903,8 +905,8 @@ function CalendarTab({
               className="bg-gradient-to-r from-[#C9A5A8] to-[#3B0E1A] text-white"
             >
               {duplicateWeekMutation.isPending
-                ? "Duplicando…"
-                : `Duplicar ${duplicateWeeks} semana${duplicateWeeks === 1 ? "" : "s"}`}
+                ? "Copiando…"
+                : `Copiar a ${duplicateWeeks} semana${duplicateWeeks === 1 ? "" : "s"}`}
             </Button>
           </DialogFooter>
         </DialogContent>
