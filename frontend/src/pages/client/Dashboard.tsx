@@ -7,7 +7,7 @@ import api from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
-import { safeParse } from "@/lib/utils";
+import { safeParse, studioNow } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, ClipboardList, Stethoscope, Clock, CalendarCheck, ShoppingBag, ArrowRight, Upload, CreditCard } from "lucide-react";
@@ -43,7 +43,7 @@ const Dashboard = () => {
 
   // Prefetch de las clases de la semana en curso para que "Reservar" abra al instante.
   useEffect(() => {
-    const today = new Date();
+    const today = studioNow();
     const start = format(startOfWeek(today, { weekStartsOn: 0 }), "yyyy-MM-dd");
     const end = format(endOfWeek(today, { weekStartsOn: 0 }), "yyyy-MM-dd");
     qc.prefetchQuery({
@@ -91,7 +91,7 @@ const Dashboard = () => {
       ? "Ilimitadas"
       : `${classesRemaining ?? 0} clases`
     : "Sin plan activo";
-  const todayLabel = format(new Date(), "EEEE d 'de' MMMM", { locale: es });
+  const todayLabel = format(studioNow(), "EEEE d 'de' MMMM", { locale: es });
 
   const QUICK = [
     { to: "/app/classes", icon: Calendar, label: "Reservar clase", chip: "bg-[#FFD6E6]", ic: "text-[#3B0E1A]" },

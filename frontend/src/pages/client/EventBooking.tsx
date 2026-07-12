@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 import {
   Check, Copy, Upload, ArrowLeft, ArrowRight, Loader2, CheckCircle,
   Users, Timer, PartyPopper, CreditCard, Building2,
@@ -124,7 +124,7 @@ const EventBooking = () => {
   });
   const packages: EventPackage[] = Array.isArray(data?.data) ? data.data : [];
 
-  const minDate = format(addDays(new Date(), 1), "yyyy-MM-dd");
+  const minDate = format(addDays(studioNow(), 1), "yyyy-MM-dd");
 
   const createMutation = useMutation({
     mutationFn: () =>

@@ -4,10 +4,9 @@
  */
 
 import { useMemo } from "react";
-import { format, differenceInCalendarDays } from "date-fns";
-import { es } from "date-fns/locale";
+import { differenceInCalendarDays } from "date-fns";
 import { Infinity as InfinityIcon, CalendarDays } from "lucide-react";
-import { safeParse } from "@/lib/utils";
+import { formatStudioDate, safeParse, studioNow } from "@/lib/utils";
 import type { ClientMembership } from "@/types/membership";
 import imgPilates    from "@/assets/pilates-tower_1850574.png";
 
@@ -233,7 +232,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
   const used          = classLimit !== null && classesRemaining !== null ? classLimit - classesRemaining : 0;
   const hasStampIcons = !isUnlimited && classLimit !== null && classLimit <= 20;
   const daysRemaining = endDate
-    ? Math.max(differenceInCalendarDays(safeParse(endDate), new Date()), 0)
+    ? Math.max(differenceInCalendarDays(safeParse(endDate), studioNow()), 0)
     : null;
 
   return (
@@ -370,7 +369,7 @@ export function MembershipCard({ membership }: MembershipCardProps) {
               <span className="font-alilato text-[11px] text-[#1A060B]/40">
                 Vence el{" "}
                 <span className="text-[#1A060B]/65 font-medium">
-                  {format(safeParse(endDate), "d 'de' MMMM yyyy", { locale: es })}
+                  {formatStudioDate(endDate, { day: "numeric", month: "long", year: "numeric" })}
                 </span>
                 {daysRemaining !== null && (
                   <span

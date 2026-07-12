@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Plus, CalendarDays, Palette, Zap, MoreHorizontal, Loader2, UserCheck, Sparkles, Calendar, Users, X, UserPlus, UserMinus, CheckCircle2, UserX, Copy } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { ClassCategoryBadge } from "@/components/ClassCategoryBadge";
@@ -625,12 +625,12 @@ function CalendarTab({
   qc: any;
 }) {
   const isMobile = useIsMobile();
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(studioNow(), { weekStartsOn: 1 }));
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedClass, setSelectedClass] = useState<ClassInstance | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [mobileDay, setMobileDay] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  const [mobileDay, setMobileDay] = useState(() => format(studioNow(), "yyyy-MM-dd"));
 
   const start = format(weekStart, "yyyy-MM-dd");
   const end = format(addDays(weekStart, 6), "yyyy-MM-dd");
@@ -1013,7 +1013,7 @@ function CalendarTab({
           <div className="grid min-w-[980px] grid-cols-7 gap-2">
             {days.map((day, i) => {
               const dayClasses = classesForDay(day);
-              const isToday = isSameDay(day, new Date());
+              const isToday = isSameDay(day, studioNow());
               return (
                 <div key={i} className="min-h-[320px]">
                   <div

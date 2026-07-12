@@ -489,11 +489,61 @@ const pool = new Pool({
   keepAlive: true,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+  // Parámetro de arranque de PostgreSQL: queda activo antes de la primera
+  // consulta de CADA conexión (sin depender de un SET asíncrono del pool).
+  options: "-c timezone=America/Mexico_City",
+});
+
+const STUDIO_TIME_ZONE = "America/Mexico_City";
+
+// Fecha operativa del estudio, independiente de la zona UTC del contenedor.
+// No usar toISOString() para "hoy": después de las 18:00 en CDMX ya es el día
+// siguiente en UTC y eso adelantaba altas, reportes y vigencias.
+function mexicoDateKey(value = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: STUDIO_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
+  const pick = (type) => parts.find((part) => part.type === type)?.value;
+  return `${pick("year")}-${pick("month")}-${pick("day")}`;
+}
+
+function mexicoMonthStartKey(value = new Date()) {
+  return `${mexicoDateKey(value).slice(0, 8)}01`;
+}
+
+// Las columnas DATE de PostgreSQL llegan como Date a medianoche UTC. Al
+// comunicarlas a personas se reconstruyen a mediodía de CDMX para conservar su
+// día civil exacto (sin el desfase de un día).
+function formatMexicoDate(value, options = {}) {
+  if (!value) return "";
+  const raw = typeof value === "string" ? value : null;
+  const date = raw && /^\d{4}-\d{2}-\d{2}$/.test(raw)
+    ? new Date(`${raw}T12:00:00Z`)
+    : value instanceof Date
+      ? new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate(), 12))
+      : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("es-MX", { timeZone: STUDIO_TIME_ZONE, ...options });
+}
+
+// Las consultas usan CURRENT_DATE/NOW(); el pool debe evaluarlos en CDMX y no
+// en la zona por defecto de Railway (UTC). Se aplica por conexión, incluidos
+// clientes transaccionales obtenidos con pool.connect().
+pool.on("connect", (client) => {
+  client.query(`SET TIME ZONE '${STUDIO_TIME_ZONE}'`).catch((err) => {
+    console.error("[timezone] No se pudo configurar la zona horaria de PostgreSQL:", err.message);
+  });
 });
 
 // Ensure users table has password_hash column (idempotent migration)
 async function ensureSchema() {
   try {
+    // Fuerza la sesión inicial antes de cualquier migración/consulta que use
+    // CURRENT_DATE. Las siguientes conexiones quedan cubiertas por pool.on.
+    await pool.query(`SET TIME ZONE '${STUDIO_TIME_ZONE}'`);
     // ── Ensure required Postgres extensions (idempotente) ─────────────────
     // uuid-ossp para uuid_generate_v4(), pgcrypto para gen_random_uuid().
     await pool.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`).catch((e) => console.error("[ext uuid-ossp]", e.message));
@@ -1795,7 +1845,7 @@ async function ensureSchema() {
           for (const dayOffset of DAYS) {
             const date = new Date(monday);
             date.setDate(monday.getDate() + week * 7 + dayOffset);
-            const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
+            const dateStr = toDbDateString(date); // YYYY-MM-DD en CDMX
 
             // Not every slot on every day — skip some to feel realistic
             const slotsToday = SLOTS.filter((_, si) => {
@@ -2483,7 +2533,7 @@ async function notifyWaitlistPromoted(bookingId) {
     );
     const row = r.rows[0];
     if (!row) return;
-    const dateDisplay = row.date ? new Date(row.date).toLocaleDateString("es-MX") : "";
+    const dateDisplay = formatMexicoDate(row.date);
     const timeDisplay = row.start_time ? String(row.start_time).slice(0, 5) : "";
     if (row.email && (await areEmailNotificationsEnabled().catch(() => false))) {
       sendBookingConfirmed({
@@ -3866,7 +3916,7 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
           vars: {
             name: u.display_name || "Alumna",
             class: cl.class_type_name || "Clase",
-            date: cl.date ? new Date(cl.date).toLocaleDateString("es-MX") : "",
+            date: formatMexicoDate(cl.date),
             time: cl.start_time ? String(cl.start_time).slice(0, 5) : "",
           },
           fallbackMessage: isWaitlist
@@ -4073,7 +4123,7 @@ app.delete("/api/bookings/:id", authMiddleware, async (req, res) => {
           vars: {
             name: u.display_name || "Alumna",
             class: booking.class_type_name || "tu clase",
-            date: booking.date ? new Date(booking.date).toLocaleDateString("es-MX") : "",
+            date: formatMexicoDate(booking.date),
             time: booking.start_time ? String(booking.start_time).slice(0, 5) : "",
             creditRestored: shouldRefundCredit ? "Sí" : "No",
           },
@@ -4519,7 +4569,7 @@ async function approveOrderFromMP(orderId, mpPaymentId, paymentInfo) {
 
     // ── Activar membresía ──
     if (order.plan_id && plan && order.user_id) {
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayStr = mexicoDateKey();
       const endStr = calcMembershipEndDate(todayStr, plan);
       const existingMem = await client.query("SELECT id FROM memberships WHERE order_id = $1", [order.id]);
       if (existingMem.rows.length) {
@@ -4609,10 +4659,10 @@ async function approveOrderFromMP(orderId, mpPaymentId, paymentInfo) {
       const uRes = await pool.query("SELECT email, display_name, phone FROM users WHERE id = $1", [order.user_id]).catch(() => null);
       const u = uRes?.rows?.[0];
       if (u) {
-        const startStr = new Date().toISOString().slice(0, 10);
+        const startStr = mexicoDateKey();
         const endStr = calcMembershipEndDate(startStr, plan);
-        const startDisplay = new Date(startStr).toLocaleDateString("es-MX");
-        const endDisplay = endStr ? new Date(endStr).toLocaleDateString("es-MX") : "";
+        const startDisplay = formatMexicoDate(startStr);
+        const endDisplay = formatMexicoDate(endStr);
         if (u.email && (await areEmailNotificationsEnabled().catch(() => false))) {
           sendMembershipActivated({
             to: u.email,
@@ -7662,12 +7712,12 @@ app.get("/api/wallet/apple/pkpass", authMiddleware, async (req, res) => {
     // Fallback: generate a beautiful standalone HTML pass page
     const nextBookingHtml = nextBooking
       ? `<div class="field"><span class="label">Próxima clase</span><span class="value">${nextBooking.class_name || ""}</span></div>
-         <div class="field"><span class="label">Fecha</span><span class="value">${nextBooking.date ? new Date(nextBooking.date).toLocaleDateString("es-MX", { day: "numeric", month: "short" }) : ""} ${nextBooking.start_time || ""}</span></div>`
+         <div class="field"><span class="label">Fecha</span><span class="value">${formatMexicoDate(nextBooking.date, { day: "numeric", month: "short" })} ${nextBooking.start_time || ""}</span></div>`
       : "";
     const membershipHtml = membership
       ? `<div class="field"><span class="label">Plan</span><span class="value">${membership.plan_name}</span></div>
          <div class="field"><span class="label">Clases restantes</span><span class="value">${membership.classes_remaining ?? "∞"} / ${membership.class_limit ?? "∞"}</span></div>
-         <div class="field"><span class="label">Vigencia</span><span class="value">${membership.end_date ? new Date(membership.end_date).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span></div>`
+         <div class="field"><span class="label">Vigencia</span><span class="value">${formatMexicoDate(membership.end_date, { day: "numeric", month: "short", year: "numeric" }) || "—"}</span></div>`
       : `<div class="field"><span class="label">Plan</span><span class="value">Sin membresía activa</span></div>`;
 
     const html = `<!DOCTYPE html>
@@ -9136,7 +9186,7 @@ app.put("/api/classes/:id/cancel", adminMiddleware, async (req, res) => {
             });
           }
           if (b.phone) {
-            const dateDisplay = cls.date ? new Date(cls.date).toLocaleDateString("es-MX") : "";
+            const dateDisplay = formatMexicoDate(cls.date);
             const timeDisplay = cls.start_time ? String(cls.start_time).slice(0, 5) : "";
             await sendConfiguredWhatsAppTemplate({
               templateKey: "class_cancelled_by_studio",
@@ -9254,7 +9304,7 @@ app.post("/api/admin/classes/duplicate-week", adminMiddleware, async (req, res) 
   }
   const sourceEndDate = new Date(sourceStart + "T00:00:00");
   sourceEndDate.setDate(sourceEndDate.getDate() + 6);
-  const sourceEnd = sourceEndDate.toISOString().slice(0, 10);
+  const sourceEnd = toDbDateString(sourceEndDate);
 
   const client = await pool.connect();
   try {
@@ -9279,12 +9329,14 @@ app.post("/api/admin/classes/duplicate-week", adminMiddleware, async (req, res) 
       let weekCreated = 0;
       let weekSkipped = 0;
       for (const row of sourceRes.rows) {
-        const srcDate = row.date instanceof Date
-          ? row.date
-          : new Date(String(row.date).slice(0, 10) + "T00:00:00");
-        const newDate = new Date(srcDate);
-        newDate.setDate(srcDate.getDate() + 7 * k);
-        const newDateStr = newDate.toISOString().slice(0, 10);
+        // PostgreSQL entrega DATE como medianoche UTC. Convertir primero al
+        // texto civil evita que una zona negativa lo corra al día anterior.
+        const srcDateStr = row.date instanceof Date
+          ? row.date.toISOString().slice(0, 10)
+          : String(row.date).slice(0, 10);
+        const newDate = new Date(`${srcDateStr}T12:00:00`);
+        newDate.setDate(newDate.getDate() + 7 * k);
+        const newDateStr = toDbDateString(newDate);
         // Verifica duplicado: misma clase ya existe en el target
         const dupCheck = await client.query(
           `SELECT 1 FROM classes
@@ -9610,7 +9662,7 @@ app.get("/api/loyalty/points/:userId", adminMiddleware, async (req, res) => {
 app.get("/api/reports/overview", adminMiddleware, async (req, res) => {
   try {
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+    const monthStart = mexicoMonthStartKey(now);
     const REAL_BOOKING = "b.status IN ('confirmed','checked_in','no_show')";
     const CLASS_DONE = "(c.status = 'completed' OR (c.status = 'scheduled' AND c.date < CURRENT_DATE))";
     // Lugares/personas por reserva: alumna con invitada = 2, walk-in/normal = 1.
@@ -10018,7 +10070,7 @@ function addMonths(dateStr, months) {
   d.setMonth(d.getMonth() + months);
   // If the day overflowed (e.g. Jan 31 → Mar 3), clamp to last day of target month
   if (d.getDate() !== day) d.setDate(0);
-  return d.toISOString().slice(0, 10);
+  return toDbDateString(d);
 }
 
 // Calculates membership end date: plans with duration_days <= 7 use days, otherwise 1 calendar month
@@ -10027,7 +10079,7 @@ function calcMembershipEndDate(startStr, plan) {
   if (days <= 7) {
     const d = new Date(startStr + "T12:00:00");
     d.setDate(d.getDate() + days);
-    return d.toISOString().slice(0, 10);
+    return toDbDateString(d);
   }
   // Calendar month: 30 days = 1 month, 60 = 2, etc.
   const months = Math.max(1, Math.round(days / 30));
@@ -11242,8 +11294,8 @@ app.get("/api/admin/health/memory", adminMiddleware, async (req, res) => {
 // GET /api/admin/stats
 app.get("/api/admin/stats", adminMiddleware, async (req, res) => {
   try {
-    const today = new Date().toISOString().slice(0, 10);
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+    const today = mexicoDateKey();
+    const monthStart = mexicoMonthStartKey();
 
     const [classesToday, activeMembers, monthlyRevenue, pendingAlerts] = await Promise.all([
       pool.query("SELECT COUNT(*) FROM classes WHERE date = $1", [today]),
@@ -11479,7 +11531,7 @@ app.post("/api/memberships", adminMiddleware, async (req, res) => {
     if (nonRepeatableConflict) {
       return res.status(409).json({ message: nonRepeatableConflict.message });
     }
-    const startStr = startDate ? String(startDate).slice(0, 10) : new Date().toISOString().slice(0, 10);
+    const startStr = startDate ? String(startDate).slice(0, 10) : mexicoDateKey();
     const endStr = calcMembershipEndDate(startStr, plan);
     const compInfo = complementType ? COMPLEMENT_MAP[complementType] : null;
     const complementNote = compInfo ? `Complemento: ${compInfo.name} — ${compInfo.specialist}` : null;
@@ -11522,8 +11574,8 @@ app.post("/api/memberships", adminMiddleware, async (req, res) => {
       const uRes = await pool.query("SELECT email, display_name, phone FROM users WHERE id = $1", [userId]);
       if (uRes.rows[0]) {
         const u = uRes.rows[0];
-        const startDisplay = startStr ? new Date(startStr).toLocaleDateString("es-MX") : "";
-        const endDisplay = endStr ? new Date(endStr).toLocaleDateString("es-MX") : "";
+        const startDisplay = formatMexicoDate(startStr);
+        const endDisplay = formatMexicoDate(endStr);
         if (await areEmailNotificationsEnabled()) {
           sendMembershipActivated({
             to: u.email,
@@ -11603,10 +11655,10 @@ app.post("/api/admin/memberships/courtesy", adminMiddleware, async (req, res) =>
       planId = ins.rows[0].id;
     }
 
-    const startStr = new Date().toISOString().slice(0, 10);
+    const startStr = mexicoDateKey();
     const end = new Date(startStr + "T00:00:00");
     end.setDate(end.getDate() + days);
-    const endStr = end.toISOString().slice(0, 10);
+    const endStr = toDbDateString(end);
     const notes = note ? `Cortesía otorgada por admin — ${note}` : "Cortesía otorgada por admin";
 
     const m = await pool.query(
@@ -11633,8 +11685,8 @@ app.post("/api/admin/memberships/courtesy", adminMiddleware, async (req, res) =>
     // Avisar a la alumna (email + WhatsApp), best-effort.
     try {
       const usr = u.rows[0];
-      const startDisplay = new Date(startStr).toLocaleDateString("es-MX");
-      const endDisplay = new Date(endStr).toLocaleDateString("es-MX");
+      const startDisplay = formatMexicoDate(startStr);
+      const endDisplay = formatMexicoDate(endStr);
       if (await areEmailNotificationsEnabled()) {
         sendMembershipActivated({
           to: usr.email,
@@ -11699,8 +11751,8 @@ app.put("/api/memberships/:id/activate", adminMiddleware, async (req, res) => {
           vars: {
             name: u.display_name || "Alumna",
             plan: mem.plan_name || mem.plan_name_override || "tu plan",
-            startDate: mem.start_date ? new Date(mem.start_date).toLocaleDateString("es-MX") : "",
-            endDate: mem.end_date ? new Date(mem.end_date).toLocaleDateString("es-MX") : "",
+            startDate: formatMexicoDate(mem.start_date),
+            endDate: formatMexicoDate(mem.end_date),
           },
           fallbackMessage: `Hola ${u.display_name || "Alumna"}, tu membresía ${mem.plan_name || mem.plan_name_override || ""} ya está activa.`,
         }).catch((e) => console.error("[WA] membership activate:", e.message));
@@ -12642,7 +12694,7 @@ app.post("/api/admin/bookings/assign", adminMiddleware, async (req, res) => {
           vars: {
             name: u.display_name || "Alumna",
             class: cl.class_type_name || "Clase",
-            date: cl.date ? new Date(cl.date).toLocaleDateString("es-MX") : "",
+            date: formatMexicoDate(cl.date),
             time: cl.start_time ? String(cl.start_time).slice(0, 5) : "",
           },
           fallbackMessage: isWaitlist
@@ -13154,7 +13206,7 @@ app.post("/api/admin/clients/manual", adminMiddleware, async (req, res) => {
         await client.query("ROLLBACK");
         return res.status(409).json({ message: nonRepeatableConflict.message });
       }
-      const startStr = startDate ? String(startDate).slice(0, 10) : new Date().toISOString().slice(0, 10);
+      const startStr = startDate ? String(startDate).slice(0, 10) : mexicoDateKey();
       const endStr = calcMembershipEndDate(startStr, plan);
       const memRes = await client.query(
         `INSERT INTO memberships (user_id, plan_id, status, payment_method, start_date, end_date,
@@ -13205,8 +13257,8 @@ app.post("/api/admin/clients/manual", adminMiddleware, async (req, res) => {
     // ── WhatsApp + email: membership activated (alta manual con plan) ─────
     if (membership && notifyPlan) {
       try {
-        const startDisplay = notifyStartStr ? new Date(notifyStartStr).toLocaleDateString("es-MX") : "";
-        const endDisplay = notifyEndStr ? new Date(notifyEndStr).toLocaleDateString("es-MX") : "";
+        const startDisplay = formatMexicoDate(notifyStartStr);
+        const endDisplay = formatMexicoDate(notifyEndStr);
         const uName = user.display_name || "Alumna";
         if (await areEmailNotificationsEnabled()) {
           sendMembershipActivated({
@@ -13375,7 +13427,7 @@ app.put("/api/admin/orders/:id/verify", adminMiddleware, async (req, res) => {
 
       // Activate membership if this order is for a plan
       if (order.plan_id && plan && order.user_id) {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = mexicoDateKey();
         const endStr = calcMembershipEndDate(todayStr, plan);
         // Check if membership already exists for this order
         const existingMem = await client.query(
@@ -13437,10 +13489,10 @@ app.put("/api/admin/orders/:id/verify", adminMiddleware, async (req, res) => {
     // Email: membership activated
     if (justApproved && order.user_id && plan) {
       try {
-        const emailStartStr = new Date().toISOString().slice(0, 10);
+        const emailStartStr = mexicoDateKey();
         const emailEndStr = calcMembershipEndDate(emailStartStr, plan);
-        const startDisplay = new Date(emailStartStr).toLocaleDateString("es-MX");
-        const endDisplay = emailEndStr ? new Date(emailEndStr).toLocaleDateString("es-MX") : "";
+        const startDisplay = formatMexicoDate(emailStartStr);
+        const endDisplay = formatMexicoDate(emailEndStr);
         const uRes = await pool.query("SELECT email, display_name, phone FROM users WHERE id = $1", [order.user_id]);
         if (uRes.rows[0]) {
           const u = uRes.rows[0];
@@ -14303,8 +14355,8 @@ app.post("/api/instructors/:id/magic-link", adminMiddleware, async (req, res) =>
 app.get("/api/admin/reports", adminMiddleware, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-    const start = startDate || new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
-    const end = endDate || new Date().toISOString().slice(0, 10);
+    const start = startDate || mexicoMonthStartKey();
+    const end = endDate || mexicoDateKey();
 
     const [revenue, newClients, bookings, topPlans] = await Promise.all([
       pool.query(
@@ -15633,7 +15685,7 @@ async function autoApproveTransferOrder(order) {
 
     // Membresía
     if (o.plan_id && plan && o.user_id) {
-      const todayStr = new Date().toISOString().slice(0,10);
+      const todayStr = mexicoDateKey();
       const endStr = calcMembershipEndDate(todayStr, plan);
       const existing = await client.query("SELECT id FROM memberships WHERE order_id=$1", [o.id]);
       if (existing.rows.length) {
@@ -15687,7 +15739,7 @@ async function autoApproveTransferOrder(order) {
     try {
       const u = await pool.query("SELECT email, display_name, phone FROM users WHERE id=$1", [order.user_id]);
       if (u.rows[0] && plan) {
-        const startStr = new Date().toISOString().slice(0,10);
+        const startStr = mexicoDateKey();
         const endStr = calcMembershipEndDate(startStr, plan);
         if (await areEmailNotificationsEnabled().catch(()=>false)) {
           sendMembershipActivated({
@@ -15787,7 +15839,7 @@ async function runRenewalReminderCron() {
         vars: {
           name: row.name,
           plan: row.plan_name,
-          expiresAt: row.end_date ? new Date(row.end_date).toLocaleDateString("es-MX") : "",
+          expiresAt: formatMexicoDate(row.end_date),
           classesRemaining: row.classes_remaining ?? "",
         },
         fallbackMessage: row.classes_remaining === 1
@@ -15891,7 +15943,7 @@ async function runClassReminderCron(mode = "morning") {
       if (i > 0) await sleep(CLASS_REMINDER_STAGGER_MS);
 
       const timeKey = String(row.start_time).slice(0, 5);
-      const dateStr = row.date ? new Date(row.date).toLocaleDateString("es-MX") : "";
+      const dateStr = formatMexicoDate(row.date);
 
       await sendConfiguredWhatsAppTemplate({
         templateKey: "class_reminder",

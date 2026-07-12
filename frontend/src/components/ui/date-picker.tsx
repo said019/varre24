@@ -7,12 +7,12 @@ import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  addMonths, subMonths, isSameDay, isSameMonth, isToday, parseISO,
+  addMonths, subMonths, isSameDay, isSameMonth, parseISO,
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 
 interface DatePickerProps {
   value?: string;           // "YYYY-MM-DD"
@@ -36,7 +36,7 @@ export const DatePicker = ({
 }: DatePickerProps) => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
-  const [viewMonth, setViewMonth] = useState<Date>(safeParseISO(value) ?? new Date());
+  const [viewMonth, setViewMonth] = useState<Date>(safeParseISO(value) ?? studioNow());
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export const DatePicker = ({
   const minDate  = safeParseISO(min);
 
   useEffect(() => {
-    if (value) setViewMonth(safeParseISO(value) ?? new Date());
+    if (value) setViewMonth(safeParseISO(value) ?? studioNow());
   }, [value]);
 
   // Click fuera del trigger y el popover → cerrar
@@ -191,7 +191,7 @@ export const DatePicker = ({
             {days.map((d) => {
               const isSelected   = selected && isSameDay(d, selected);
               const isThisMonth  = isSameMonth(d, viewMonth);
-              const isCurrentDay = isToday(d);
+              const isCurrentDay = isSameDay(d, studioNow());
               const isDisabled   = minDate ? d < minDate : false;
 
               return (
@@ -222,7 +222,7 @@ export const DatePicker = ({
           <div className="mt-3 pt-2 border-t border-[#3B0E1A]/10 flex justify-center">
             <button
               type="button"
-              onClick={() => select(new Date())}
+              onClick={() => select(studioNow())}
               className="text-[11px] text-[#3B0E1A] hover:text-[#1A060B] transition-colors font-medium"
             >
               Hoy

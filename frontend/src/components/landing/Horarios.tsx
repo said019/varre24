@@ -5,6 +5,7 @@ import { startOfWeek, addWeeks, addDays, format, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, X, Clock, User, Users, Timer, ArrowRight } from "lucide-react";
 import api from "@/lib/api";
+import { studioNow } from "@/lib/utils";
 import { Reveal } from "@/lib/motion";
 
 interface Slot {
@@ -71,7 +72,7 @@ export function Horarios() {
   for (const list of byDay.values()) list.sort((a, b) => toMinutes(a.time_slot) - toMinutes(b.time_slot));
 
   // Semana mostrada (lunes) según offset; el horario es recurrente.
-  const monday = addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), weekOffset);
+  const monday = addWeeks(startOfWeek(studioNow(), { weekStartsOn: 1 }), weekOffset);
   const columns = WEEKDAYS.map((dow, i) => ({ dow, date: addDays(monday, i) }));
   const rangeStart = columns[0].date;
   const rangeEnd = columns[columns.length - 1].date;
@@ -143,7 +144,7 @@ export function Horarios() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {columns.map(({ dow, date }) => {
                 const daySlots = byDay.get(dow) ?? [];
-                const today = isSameDay(date, new Date());
+                const today = isSameDay(date, studioNow());
                 return (
                   <div
                     key={dow}

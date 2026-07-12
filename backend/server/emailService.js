@@ -187,10 +187,23 @@ function alertBox(text, type = "info") {
 }
 
 // ─── Format helpers ───────────────────────────────────────────────────────────
+const STUDIO_TIME_ZONE = "America/Mexico_City";
+
 function fmtDate(dateStr) {
   if (!dateStr) return "—";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const raw = String(dateStr);
+  // DATE no representa una hora: lo anclamos a mediodía para que nunca se
+  // convierta al día anterior al formatearlo en CDMX.
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(raw)
+    ? new Date(`${raw}T12:00:00Z`)
+    : new Date(dateStr);
+  return d.toLocaleDateString("es-MX", {
+    timeZone: STUDIO_TIME_ZONE,
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 function fmtTime(timeStr) {
   if (!timeStr) return "—";
@@ -547,7 +560,7 @@ async function sendCustomBroadcast({ to, name, subject, body, ctaUrl, ctaText, h
 // ═════════════════════════════════════════════════════════════════════════════
 async function sendAdminNewOrderToVerify({ to, orderNumber, orderId, planName, alumnaName, amount, expiresAt }) {
   const expiresDisplay = expiresAt
-    ? new Date(expiresAt).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" })
+    ? new Date(expiresAt).toLocaleString("es-MX", { timeZone: STUDIO_TIME_ZONE, dateStyle: "medium", timeStyle: "short" })
     : "24 horas";
   const content = `
     ${h1("Nueva orden por verificar")}

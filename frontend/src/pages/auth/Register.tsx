@@ -10,6 +10,7 @@ import { COUNTRIES } from "@/components/ui/phone-input";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
 import api from "@/lib/api";
+import { studioTodayKey } from "@/lib/utils";
 import {
   clampSquareCrop,
   cropImageToSquare,
@@ -389,7 +390,7 @@ const Register = () => {
             <input
               type="date"
               {...register("dateOfBirth")}
-              max={new Date().toISOString().slice(0, 10)}
+              max={studioTodayKey()}
               className="font-alilato bg-[#FCF8F7] border border-[#E9D9D9] rounded-xl px-4 py-2 text-foreground text-sm focus:outline-none focus:border-[#3B0E1A] transition-all"
             />
             {errors.dateOfBirth && <span className="text-xs text-destructive">{errors.dateOfBirth.message}</span>}

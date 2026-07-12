@@ -7,16 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TrendingUp, TrendingDown, Minus, Loader2 } from "lucide-react";
+import { studioNow, studioTodayKey } from "@/lib/utils";
 
-// Rango por defecto: del día 1 del mes actual a hoy (hora local del navegador).
-const todayStr = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
-const monthStartStr = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
-};
+// Rango por defecto: del día 1 del mes actual a hoy en CDMX.
+const todayStr = () => studioTodayKey();
+const monthStartStr = () => `${studioTodayKey().slice(0, 8)}01`;
 
 /* ───────────────────────── tipos ───────────────────────── */
 type OverviewData = {
@@ -162,7 +157,7 @@ const ReportsPage = () => {
   const classRows = safeArray<ClassRow>(classesRes?.data ?? classesRes);
   const instructorRows = safeArray<InstructorRow>(instructorsRes?.data ?? instructorsRes);
 
-  const currentMonthLabel = current ? current.label : fmtMonthLong(new Date());
+  const currentMonthLabel = current ? current.label : fmtMonthLong(studioNow());
   const previousShort = previous ? previous.short : "—";
 
   /* ───── bricks ───── */

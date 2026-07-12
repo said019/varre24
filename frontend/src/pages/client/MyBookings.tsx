@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import api from "@/lib/api";
-import { safeParse } from "@/lib/utils";
+import { safeParse, studioNow } from "@/lib/utils";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,7 @@ const BookingCard = ({
   policy: CancellationPolicy;
 }) => {
   const start = new Date(booking.start_time);
-  const now = new Date();
+  const now = studioNow();
   const isPast = start < now;
   const hoursUntilStart = (start.getTime() - now.getTime()) / 3_600_000;
   const insideWindow = hoursUntilStart >= policy.min_hours;
@@ -192,7 +192,7 @@ const MyBookings = () => {
   const reviewTags: { id: string; name: string; color: string }[] = Array.isArray(tagsData?.data) ? tagsData.data : [];
 
   const bookings: BookingClient[] = Array.isArray(bookingsData?.data) ? bookingsData.data : Array.isArray(bookingsData) ? bookingsData : [];
-  const now = new Date();
+  const now = studioNow();
 
   const upcoming = bookings.filter((b) =>
     (b.status === "confirmed" || b.status === "waitlist") && new Date(b.start_time) >= now
@@ -352,7 +352,7 @@ const MyBookings = () => {
         {/* Cancel confirm — 3 variantes según ventana + cupo gratis */}
         {(() => {
           const targetBooking = cancelId ? bookings.find((b) => b.id === cancelId) : null;
-          const minutesUntil = targetBooking ? (new Date(targetBooking.start_time).getTime() - Date.now()) / 60_000 : 0;
+          const minutesUntil = targetBooking ? (safeParse(targetBooking.start_time).getTime() - studioNow().getTime()) / 60_000 : 0;
           const insideWindow = minutesUntil >= policy.min_hours * 60;
           const variant: "free" | "penalty" | "blocked" =
             !insideWindow ? "blocked" : quota.remaining > 0 ? "free" : "penalty";

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, formatStudioDate } from "@/lib/utils";
 
 const methodLabel: Record<string, string> = {
   cash: "Tarjeta",
@@ -208,7 +208,7 @@ const MembershipsTab = ({ userId }: { userId: string }) => {
                           : `${m.classesRemaining} clases`}
                     </span>
                     {m.endDate && (
-                      <span className="text-xs text-[#1A060B]/45">· Vence {new Date(m.endDate).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                      <span className="text-xs text-[#1A060B]/45">· Vence {formatStudioDate(m.endDate, { day: "2-digit", month: "short", year: "numeric" })}</span>
                     )}
                   </div>
                 </div>

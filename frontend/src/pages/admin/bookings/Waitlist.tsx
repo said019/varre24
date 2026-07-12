@@ -7,7 +7,7 @@ import { AuthGuard } from "@/components/admin/AuthGuard";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Users, Calendar, Clock } from "lucide-react";
 
 interface WaitlistEntry {
@@ -21,7 +21,7 @@ interface WaitlistEntry {
 }
 
 const Waitlist = () => {
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(studioNow(), { weekStartsOn: 1 }));
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
 
@@ -43,7 +43,7 @@ const Waitlist = () => {
   );
   const classInfo = rosterData?.data?.class ?? null;
 
-  const todayStr = format(new Date(), "yyyy-MM-dd");
+  const todayStr = format(studioNow(), "yyyy-MM-dd");
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + i);
@@ -163,7 +163,7 @@ const Waitlist = () => {
                   <ChevronRight size={14} />
                 </button>
                 <button
-                  onClick={() => setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}
+                  onClick={() => setWeekStart(startOfWeek(studioNow(), { weekStartsOn: 1 }))}
                   className="ml-2 text-xs text-[#3B0E1A]/60 hover:text-[#3B0E1A] transition-colors"
                 >
                   Hoy

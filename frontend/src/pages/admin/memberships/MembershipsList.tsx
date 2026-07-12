@@ -21,6 +21,7 @@ import { CourtesyButton } from "@/components/admin/CourtesyButton";
 import { MoreHorizontal, Plus, Search, X, Heart } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useDebounce } from "@/hooks/use-debounce";
+import { formatStudioDate, studioTodayKey } from "@/lib/utils";
 
 const STATUS_OPTIONS = ["active", "pending_payment", "pending_activation", "expired", "cancelled"] as const;
 type MembershipStatus = (typeof STATUS_OPTIONS)[number];
@@ -137,7 +138,7 @@ const MembershipTable = ({ status, title }: { status?: string; title: string }) 
                       <Badge variant={STATUS_VARIANTS[m.status]}>{STATUS_LABELS[m.status]}</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
-                      {m.endDate ? new Date(m.endDate).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+                      {formatStudioDate(m.endDate, { day: "2-digit", month: "short", year: "numeric" }) || "—"}
                     </TableCell>
                     <TableCell>
                       {m.classesRemaining === null || m.classesRemaining === undefined
@@ -205,7 +206,7 @@ const MembershipsList = () => {
 
   const form = useForm<MembershipFormData>({
     resolver: zodResolver(membershipSchema),
-    defaultValues: { userId: "", startDate: new Date().toISOString().split("T")[0] },
+    defaultValues: { userId: "", startDate: studioTodayKey() },
   });
 
   const createMutation = useMutation({
@@ -217,7 +218,7 @@ const MembershipsList = () => {
       setSelectedUser(null);
       setUserSearch("");
       setComplementType(null);
-      form.reset({ userId: "", startDate: new Date().toISOString().split("T")[0] });
+      form.reset({ userId: "", startDate: studioTodayKey() });
     },
   });
 
@@ -268,7 +269,7 @@ const MembershipsList = () => {
             if (!next) {
               setSelectedUser(null);
               setUserSearch("");
-              form.reset({ userId: "", startDate: new Date().toISOString().split("T")[0] });
+              form.reset({ userId: "", startDate: studioTodayKey() });
             }
           }}
         >

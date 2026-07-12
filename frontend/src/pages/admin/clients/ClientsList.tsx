@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
 import api from "@/lib/api";
 import { AuthGuard } from "@/components/admin/AuthGuard";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -20,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { MoreHorizontal, Plus, Search, UserPlus, CreditCard, Building2, Heart } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+import { cn, studioTodayKey } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
@@ -135,7 +134,7 @@ const ClientsList = () => {
   // ── Manual registration form ───────────────────────────────────────────────
   const manualForm = useForm<ManualFormData>({
     resolver: zodResolver(manualSchema),
-    defaultValues: { startDate: format(new Date(), "yyyy-MM-dd") },
+    defaultValues: { startDate: studioTodayKey() },
   });
   const selectedPlanId = manualForm.watch("planId");
   const selectedPlan   = plans.find((p) => p.id === selectedPlanId);
@@ -151,7 +150,7 @@ const ClientsList = () => {
       toast({ title: msg });
       setManualOpen(false);
       setComplementType(null);
-      manualForm.reset({ startDate: format(new Date(), "yyyy-MM-dd") });
+      manualForm.reset({ startDate: studioTodayKey() });
     },
     onError: (err: any) => {
       toast({
@@ -312,7 +311,7 @@ const ClientsList = () => {
         </Dialog>
 
         {/* ── Manual registration dialog ───────────────────────────────────── */}
-        <Dialog open={manualOpen} onOpenChange={(v) => { setManualOpen(v); if (!v) manualForm.reset({ startDate: format(new Date(), "yyyy-MM-dd") }); }}>
+        <Dialog open={manualOpen} onOpenChange={(v) => { setManualOpen(v); if (!v) manualForm.reset({ startDate: studioTodayKey() }); }}>
           <DialogContent className="max-w-xl bg-[#E9D9D9] border-[#3B0E1A]/15 text-[#1A060B] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-[#1A060B] flex items-center gap-2">

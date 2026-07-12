@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import api from "@/lib/api";
+import { STUDIO_TIME_ZONE } from "@/lib/utils";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
 import { Badge } from "@/components/ui/badge";
@@ -156,7 +157,7 @@ const MyOrders = () => {
                         </p>
                         <p className="text-[11px] text-[#3B0E1A]">
                           {o.order_number && <span className="font-mono">{o.order_number} · </span>}
-                          {o.created_at && format(new Date(o.created_at), "d MMM yyyy · HH:mm", { locale: es })}
+                          {o.created_at && new Date(o.created_at).toLocaleString("es-MX", { timeZone: STUDIO_TIME_ZONE, day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </p>
                       </div>
                       <Badge variant="outline" className={cfg.className}>

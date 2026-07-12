@@ -13,7 +13,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Search, User, Package, CheckCircle2, CreditCard, Banknote, ArrowRight, ChevronLeft, History, Sparkles, Clock, XCircle, Eye, ImageIcon, PartyPopper } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+import { cn, STUDIO_TIME_ZONE, studioTodayKey } from "@/lib/utils";
 
 // ── Helpers ──────────────────────────────────────────────
 // Métodos disponibles para el admin al registrar una venta manual.
@@ -101,7 +101,7 @@ const CashAssignment = () => {
   const [selectedUser, setSelectedUser] = useState<{ id: string; displayName: string; email?: string; phone?: string | null } | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<{ id: string; name: string; price: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+  const [startDate, setStartDate] = useState(studioTodayKey());
   const [paymentReference, setPaymentReference] = useState("");
 
   const { data: usersData, isLoading: usersLoading } = useQuery<{ data: { id: string; displayName: string; email: string; phone?: string | null }[] }>({
@@ -131,7 +131,7 @@ const CashAssignment = () => {
       qc.invalidateQueries({ queryKey: ["memberships"] });
       toast({ title: "✅ Membresía activada correctamente" });
       setStep(1); setSelectedUser(null); setSelectedPlan(null); setSearch("");
-      setStartDate(new Date().toISOString().split("T")[0]); setPaymentReference("");
+      setStartDate(studioTodayKey()); setPaymentReference("");
     },
     onError: (e: any) => toast({ title: e?.response?.data?.message ?? "Error al asignar", variant: "destructive" }),
   });
@@ -540,7 +540,7 @@ const PendingOrders = () => {
                   ${Number(o.totalAmount ?? o.total_amount ?? 0).toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
                 </p>
                 <p className="text-[10px] text-[#1A060B]/35">
-                  {o.createdAt ? new Date(o.createdAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                  {o.createdAt ? new Date(o.createdAt).toLocaleString("es-MX", { timeZone: STUDIO_TIME_ZONE, day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                 </p>
               </div>
             </div>
@@ -683,7 +683,7 @@ const PaymentsHistory = () => {
     const d = new Date(raw);
     return Number.isNaN(d.getTime())
       ? "—"
-      : d.toLocaleString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+      : d.toLocaleString("es-MX", { timeZone: STUDIO_TIME_ZONE, day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
   };
 
   const clearFilters = () => { setStart(""); setEnd(""); setVisible(PAGE_SIZE); };

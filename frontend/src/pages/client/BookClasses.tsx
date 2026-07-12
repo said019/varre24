@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import { es } from "date-fns/locale";
 import api from "@/lib/api";
-import { safeParse } from "@/lib/utils";
+import { cn, formatStudioDate, safeParse, studioNow } from "@/lib/utils";
 import { ClientAuthGuard } from "@/components/layout/ClientAuthGuard";
 import ClientLayout from "@/components/layout/ClientLayout";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,6 @@ import {
   CalendarDays,
   Sparkles,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { BookingClient } from "@/types/booking";
 import { ClassCategoryBadge } from "@/components/ClassCategoryBadge";
 
@@ -118,7 +117,7 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
           {endDate && (
             <div className="rounded-2xl border border-[#E8D7D6] bg-[#F3EFE9]/70 px-4 py-3 text-right">
               <div className="font-alilato text-sm font-medium text-[#1A060B]">
-                {new Date(endDate).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}
+                {formatStudioDate(endDate, { day: "2-digit", month: "short" })}
               </div>
               <div className="mt-1 font-alilato text-[0.62rem] uppercase tracking-[0.16em] text-[#9C8A8B]">
                 Vence
@@ -134,7 +133,7 @@ const MembershipBanner = ({ membership }: { membership: any }) => {
 // ── Main ──────────────────────────────────────────────────────────────────────
 const BookClasses = () => {
   const [weekStart, setWeekStart] = useState(() =>
-    startOfWeek(new Date(), { weekStartsOn: 0 })
+    startOfWeek(studioNow(), { weekStartsOn: 0 })
   );
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 0 });
   const navigate = useNavigate();
@@ -190,7 +189,7 @@ const BookClasses = () => {
       })
       .sort((a, b) => (a.start_time ?? "").localeCompare(b.start_time ?? ""));
 
-  const now = new Date();
+  const now = studioNow();
   const classesThisWeek = classes.filter((cls) => {
     if (!cls.start_time) return false;
     const dt = safeParse(cls.start_time);

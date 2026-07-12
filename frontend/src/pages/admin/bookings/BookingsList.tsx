@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 import {
   ChevronLeft, ChevronRight, Users, CheckCircle2,
   Clock, ArrowLeft, UserCheck, UserX, Calendar, Plus, Search, Ban, UserPlus, UserMinus,
@@ -630,7 +630,7 @@ const ClassRoster = ({ classId, onBack }: { classId: string; onBack: () => void 
 
 // ── Weekly class picker ────────────────────────────────────────────────────────
 const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void }) => {
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(studioNow(), { weekStartsOn: 1 }));
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
 
   const { data, isLoading } = useQuery({
@@ -646,7 +646,7 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
     return d;
   });
 
-  const todayStr = format(new Date(), "yyyy-MM-dd");
+  const todayStr = format(studioNow(), "yyyy-MM-dd");
 
   return (
     <div className="space-y-5">
@@ -668,7 +668,7 @@ const ClassPicker = ({ onSelectClass }: { onSelectClass: (id: string) => void })
           <ChevronRight size={14} />
         </button>
         <button
-          onClick={() => setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}
+          onClick={() => setWeekStart(startOfWeek(studioNow(), { weekStartsOn: 1 }))}
           className="ml-2 text-xs text-[#3B0E1A]/60 hover:text-[#3B0E1A] transition-colors"
         >
           Hoy

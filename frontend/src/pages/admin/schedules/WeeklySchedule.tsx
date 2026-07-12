@@ -17,7 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { TimePicker } from "@/components/ui/time-picker";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { cn, studioNow } from "@/lib/utils";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 const scheduleSchema = z.object({
@@ -41,7 +41,7 @@ const WeeklySchedule = () => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Schedule | null>(null);
-  const [mobileDay, setMobileDay] = useState(new Date().getDay());
+  const [mobileDay, setMobileDay] = useState(studioNow().getDay());
 
   const { data } = useQuery<{ data: Schedule[] }>({
     queryKey: ["schedules"],
@@ -122,7 +122,7 @@ const WeeklySchedule = () => {
               <p className="text-sm text-[#1A060B]/35">Plantilla semanal para crear clases más rápido.</p>
             </div>
             <button
-              onClick={() => openCreate(isMobile ? mobileDay : new Date().getDay())}
+              onClick={() => openCreate(isMobile ? mobileDay : studioNow().getDay())}
               className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#3B0E1A] to-[#C9A5A8] px-4 py-2 text-sm font-semibold text-[#1A060B] transition-opacity hover:opacity-90"
             >
               <Plus size={14} /> Nuevo horario

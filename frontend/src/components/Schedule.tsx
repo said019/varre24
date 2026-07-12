@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
   format, addDays, startOfWeek, isSameDay, parseISO,
-  isToday, addWeeks, subWeeks, differenceInMinutes,
+  addWeeks, subWeeks, differenceInMinutes,
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { Loader2, ChevronLeft, ChevronRight, Clock, ArrowUpRight } from "lucide-react";
 import api from "@/lib/api";
+import { studioNow } from "@/lib/utils";
 import { BookingDialog, type ClassItem } from "@/components/BookingDialog";
 import { ClassCategoryBadge } from "@/components/ClassCategoryBadge";
 
@@ -119,17 +120,17 @@ function generateMockClasses(weekStart: Date, weeks: number = 2): ApiClass[] {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Schedule() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(studioNow());
   const [weekStart, setWeekStart] = useState<Date>(
-    startOfWeek(new Date(), { weekStartsOn: 1 })
+    startOfWeek(studioNow(), { weekStartsOn: 1 })
   );
   const [filter, setFilter] = useState("all");
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(studioNow());
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 30_000);
+    const id = setInterval(() => setNow(studioNow()), 30_000);
     return () => clearInterval(id);
   }, []);
 
@@ -215,7 +216,7 @@ export default function Schedule() {
   const getTimeStatus = (cls: ScheduleClass) => {
     try {
       const classStart = parseISO(cls.time);
-      if (!isToday(classStart)) return null;
+      if (!isSameDay(classStart, studioNow())) return null;
 
       const dateStr     = cls.time.split("T")[0];
       const endDateTime = cls.endTime
@@ -305,7 +306,7 @@ export default function Schedule() {
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8" style={{ scrollbarWidth: "none" }}>
           {weekDays.map((day) => {
             const selected = isSameDay(day, selectedDate);
-            const todayDay = isToday(day);
+            const todayDay = isSameDay(day, studioNow());
             const dayKey   = format(day, "yyyy-MM-dd");
             const count    = classCountByDay[dayKey] ?? 0;
             const dotCount = Math.min(count, 4);
