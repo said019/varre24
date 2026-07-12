@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type PointerEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,6 +9,15 @@ import { Loader2, Eye, EyeOff, Check, ArrowRight } from "lucide-react";
 import { COUNTRIES } from "@/components/ui/phone-input";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AUTH_PHOTOS } from "@/components/landing/photoAssets";
+import api from "@/lib/api";
+import {
+  clampSquareCrop,
+  cropImageToSquare,
+  DEFAULT_SQUARE_CROP,
+  getImageDimensions,
+  type ImageDimensions,
+  type SquareCrop,
+} from "@/lib/imageOptimization";
 
 const schema = z.object({
   displayName: z.string().min(2, "Mínimo 2 caracteres"),
@@ -52,13 +61,28 @@ type FormValues = {
   acceptsCommunications: boolean;
 };
 
+type ApiError = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
+
 const Register = () => {
-  const { register: registerUser, isLoading, error, clearError } = useAuthStore();
+  const { register: registerUser, isLoading, error, clearError, updateUser } = useAuthStore();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [dialCode, setDialCode] = useState("52");
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoDimensions, setPhotoDimensions] = useState<ImageDimensions | null>(null);
+  const [photoCrop, setPhotoCrop] = useState<SquareCrop>(DEFAULT_SQUARE_CROP);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const photoDragStartRef = useRef<{ x: number; y: number; crop: SquareCrop } | null>(null);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -67,6 +91,97 @@ const Register = () => {
 
   const acceptsTerms = watch("acceptsTerms");
   const acceptsCommunications = watch("acceptsCommunications");
+
+  useEffect(() => () => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+  }, [photoPreview]);
+
+  const updatePhotoCrop = (next: SquareCrop) => {
+    if (!photoDimensions) return;
+    setPhotoCrop(clampSquareCrop(next, photoDimensions));
+  };
+
+  const handlePhotoChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Selecciona una imagen", description: "Elige una foto en formato de imagen.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "Imagen muy grande", description: "Elige una foto de hasta 10 MB.", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const dimensions = await getImageDimensions(file);
+      if (!dimensions.width || !dimensions.height) throw new Error("La imagen no tiene dimensiones válidas");
+      setProfilePhoto(file);
+      setPhotoDimensions(dimensions);
+      setPhotoCrop(DEFAULT_SQUARE_CROP);
+      setPhotoPreview(URL.createObjectURL(file));
+    } catch {
+      toast({ title: "No se pudo abrir la foto", description: "Prueba con otra imagen.", variant: "destructive" });
+    }
+  };
+
+  const removePhoto = () => {
+    setProfilePhoto(null);
+    setPhotoPreview(null);
+    setPhotoDimensions(null);
+    setPhotoCrop(DEFAULT_SQUARE_CROP);
+  };
+
+  const beginPhotoDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!profilePhoto) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    photoDragStartRef.current = { x: event.clientX, y: event.clientY, crop: photoCrop };
+  };
+
+  const movePhoto = (event: PointerEvent<HTMLDivElement>) => {
+    const dragStart = photoDragStartRef.current;
+    if (!dragStart || !photoDimensions) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    updatePhotoCrop({
+      ...dragStart.crop,
+      x: dragStart.crop.x + (event.clientX - dragStart.x) / bounds.width,
+      y: dragStart.crop.y + (event.clientY - dragStart.y) / bounds.height,
+    });
+  };
+
+  const endPhotoDrag = () => {
+    photoDragStartRef.current = null;
+  };
+
+  const uploadCroppedProfilePhoto = async () => {
+    if (!profilePhoto || !photoDimensions) return;
+    const registeredUser = useAuthStore.getState().user;
+    if (!registeredUser) return;
+
+    setIsUploadingPhoto(true);
+    try {
+      const croppedPhoto = await cropImageToSquare(profilePhoto, photoCrop, { size: 720, quality: 0.88 });
+      const formData = new FormData();
+      formData.append("photo", croppedPhoto);
+      const response = await api.post(`/users/${registeredUser.id}/photo`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const payload = response.data?.data ?? response.data;
+      const photoUrl = payload?.photoUrl ?? payload?.photo_url;
+      if (photoUrl) {
+        updateUser({ ...registeredUser, photoUrl, photo_url: photoUrl });
+      }
+    } catch {
+      toast({
+        title: "Cuenta creada",
+        description: "No pudimos guardar la foto. Puedes subirla después desde tu perfil.",
+      });
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     clearError();
@@ -83,12 +198,25 @@ const Register = () => {
         dateOfBirth: data.dateOfBirth,
         acceptsTerms: data.acceptsTerms,
         acceptsCommunications: data.acceptsCommunications,
-      } as any);
+      });
+      await uploadCroppedProfilePhoto();
       navigate("/app");
-    } catch {
-      toast({ title: "Error al registrarse", description: error ?? "Inténtalo de nuevo", variant: "destructive" });
+    } catch (registrationError: unknown) {
+      const serverMessage = typeof registrationError === "object" && registrationError !== null
+        ? (registrationError as ApiError).response?.data?.message
+        : undefined;
+      toast({
+        title: "Error al registrarse",
+        description: serverMessage ?? error ?? "Inténtalo de nuevo",
+        variant: "destructive",
+      });
     }
   };
+
+  const photoAspect = photoDimensions ? photoDimensions.width / photoDimensions.height : 1;
+  const previewWidth = `${Math.max(1, photoAspect) * 100}%`;
+  const previewHeight = `${Math.max(1, 1 / photoAspect) * 100}%`;
+  const submitting = isLoading || isUploadingPhoto;
 
   const heading = (
     <>
@@ -112,6 +240,97 @@ const Register = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+
+        {/* Foto opcional: el recorte se guarda ya cuadrado para que siempre se vea bien en avatares. */}
+        <div className="rounded-[1.35rem] border border-[#E9D9D9] bg-[#FCF8F7] p-3.5">
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`relative h-24 w-24 shrink-0 overflow-hidden rounded-[1.1rem] border border-[#E8D7D6] bg-[#F3EFE9] ${profilePhoto ? "cursor-grab active:cursor-grabbing" : ""}`}
+              onPointerDown={beginPhotoDrag}
+              onPointerMove={movePhoto}
+              onPointerUp={endPhotoDrag}
+              onPointerCancel={endPhotoDrag}
+              style={{ touchAction: "none" }}
+              aria-label={profilePhoto ? "Arrastra para encuadrar la foto" : undefined}
+            >
+              {photoPreview ? (
+                <div
+                  className="absolute inset-0 will-change-transform"
+                  style={{ transform: `translate3d(${photoCrop.x * 100}%, ${photoCrop.y * 100}%, 0)` }}
+                >
+                  <img
+                    src={photoPreview}
+                    alt="Vista previa de tu foto de perfil"
+                    className="pointer-events-none absolute left-1/2 top-1/2 max-w-none select-none"
+                    draggable={false}
+                    style={{
+                      width: previewWidth,
+                      height: previewHeight,
+                      transform: `translate(-50%, -50%) scale(${photoCrop.zoom})`,
+                    }}
+                  />
+                </div>
+              ) : (
+                <span className="absolute inset-0 flex items-center justify-center font-alilato text-[0.62rem] uppercase tracking-[0.16em] text-[#9C8A8B]">Tu foto</span>
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <label className="block text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                Foto de perfil <span className="normal-case tracking-normal text-[#9C8A8B]">(opcional)</span>
+              </label>
+              <p className="mt-1 text-xs leading-relaxed text-[#8A5A5E]">
+                Sube una foto clara. Puedes moverla y acercarla para que quede bien encuadrada.
+              </p>
+              <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => photoInputRef.current?.click()}
+                  className="press rounded-full border border-[#3B0E1A]/20 px-3 py-1.5 font-alilato text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-[#3B0E1A] transition-colors hover:border-[#3B0E1A] hover:bg-[#FFE4EE]"
+                >
+                  {profilePhoto ? "Cambiar" : "Subir foto"}
+                </button>
+                {profilePhoto && (
+                  <button
+                    type="button"
+                    onClick={removePhoto}
+                    className="font-alilato text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[#9C8A8B] transition-colors hover:text-[#3B0E1A]"
+                  >
+                    Quitar
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {profilePhoto && (
+            <div className="mt-3 border-t border-[#E9D9D9] pt-3">
+              <label htmlFor="profile-photo-zoom" className="flex items-center justify-between text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[#8A5A5E]">
+                <span>Acercar foto</span>
+                <span>{Math.round(photoCrop.zoom * 100)}%</span>
+              </label>
+              <input
+                id="profile-photo-zoom"
+                type="range"
+                min="1"
+                max="3"
+                step="0.05"
+                value={photoCrop.zoom}
+                onChange={(event) => updatePhotoCrop({ ...photoCrop, zoom: Number(event.target.value) })}
+                className="mt-2 h-1.5 w-full cursor-pointer accent-[#3B0E1A]"
+              />
+              <p className="mt-1.5 text-[0.68rem] text-[#9C8A8B]">Arrastra la foto para ajustar su posición.</p>
+            </div>
+          )}
+
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            className="hidden"
+            onChange={handlePhotoChange}
+          />
+        </div>
 
         {/* 2-col: name + phone */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -262,10 +481,10 @@ const Register = () => {
         {/* submit */}
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={submitting}
           className="press mt-1 bg-[#3B0E1A] text-[#F3EFE9] py-3.5 rounded-full text-sm font-semibold tracking-[0.12em] uppercase flex items-center justify-center gap-2 hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(59,14,26,0.4)] transition-all disabled:opacity-60 disabled:translate-y-0"
         >
-          {isLoading ? (
+          {submitting ? (
             <Loader2 size={16} className="animate-spin" />
           ) : (
             <>
