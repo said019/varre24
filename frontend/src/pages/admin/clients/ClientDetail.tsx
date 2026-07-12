@@ -104,6 +104,22 @@ const SOURCE_LABEL: Record<string, string> = {
   membership: "Venta de mostrador",
 };
 
+// Las fechas de nacimiento son fechas civiles (sin hora). Construirlas como
+// fecha local evita que el navegador reste un día al interpretar YYYY-MM-DD en UTC.
+function formatDateOnly(value?: string | null): string | null {
+  if (!value) return null;
+
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day), 12).toLocaleDateString("es-MX", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 // ── Bloque reutilizable del perfil: icono + etiqueta + valor ──
 const InfoRow = ({ icon: Icon, label, value }: { icon: any; label: string; value: React.ReactNode }) => (
   <div className="flex items-start gap-3">
@@ -506,7 +522,7 @@ const ClientDetail = () => {
                   <SectionCard className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <InfoRow icon={Mail} label="Email" value={u?.email} />
                     <InfoRow icon={Phone} label="Teléfono" value={u?.phone} />
-                    <InfoRow icon={Cake} label="Fecha de nacimiento" value={u?.dateOfBirth ? new Date(u.dateOfBirth).toLocaleDateString("es-MX", { day: "2-digit", month: "long", year: "numeric" }) : null} />
+                    <InfoRow icon={Cake} label="Fecha de nacimiento" value={formatDateOnly(u?.dateOfBirth)} />
                     <InfoRow icon={ShieldAlert} label="Contacto de emergencia" value={u?.emergencyContactName ? `${u.emergencyContactName}${u?.emergencyContactPhone ? ` · ${u.emergencyContactPhone}` : ""}` : null} />
                     <div className="sm:col-span-2">
                       <InfoRow icon={ShieldAlert} label="Notas de salud" value={u?.healthNotes} />
