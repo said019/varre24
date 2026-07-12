@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn, formatStudioDate } from "@/lib/utils";
+import { cn, formatStudioDate, studioTodayKey } from "@/lib/utils";
 
 const methodLabel: Record<string, string> = {
   cash: "Tarjeta",
@@ -137,16 +137,70 @@ const SectionCard = ({ className, children }: { className?: string; children: Re
   <div className={cn("rounded-2xl border border-[#E8D7D6] bg-[#FCF8F7] p-5", className)}>{children}</div>
 );
 
+type SalePlan = {
+  id: string;
+  name: string;
+  price?: number | string;
+  currency?: string;
+  classLimit?: number | null;
+  class_limit?: number | null;
+  durationDays?: number | null;
+  duration_days?: number | null;
+};
+
 const MembershipsTab = ({ userId }: { userId: string }) => {
   const { toast } = useToast();
   const qc = useQueryClient();
   const [editingMem, setEditingMem] = useState<any>(null);
   const [credits, setCredits] = useState(0);
+  const [saleOpen, setSaleOpen] = useState(false);
+  const [salePlanId, setSalePlanId] = useState("");
+  const [salePaymentMethod, setSalePaymentMethod] = useState("cash");
+  const [saleStartDate, setSaleStartDate] = useState(studioTodayKey());
+  const [saleReference, setSaleReference] = useState("");
 
   const { data: memberships } = useQuery({
     queryKey: ["client-memberships", userId],
     queryFn: async () => (await api.get(`/memberships?userId=${userId}`)).data,
     enabled: !!userId,
+  });
+
+  const { data: plansData, isLoading: loadingPlans } = useQuery<{ data: SalePlan[] }>({
+    queryKey: ["plans"],
+    queryFn: async () => (await api.get("/plans")).data,
+    enabled: saleOpen,
+    staleTime: 60_000,
+  });
+  const salePlans = Array.isArray(plansData?.data) ? plansData.data : [];
+  const selectedSalePlan = salePlans.find((plan) => plan.id === salePlanId) ?? null;
+
+  const resetSale = () => {
+    setSaleOpen(false);
+    setSalePlanId("");
+    setSalePaymentMethod("cash");
+    setSaleStartDate(studioTodayKey());
+    setSaleReference("");
+  };
+
+  const sellMembership = useMutation({
+    mutationFn: () => api.post("/memberships", {
+      userId,
+      planId: salePlanId,
+      paymentMethod: salePaymentMethod,
+      startDate: saleStartDate,
+      paymentReference: saleReference.trim() || undefined,
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-memberships", userId] });
+      qc.invalidateQueries({ queryKey: ["client-payments", userId] });
+      qc.invalidateQueries({ queryKey: ["memberships"] });
+      toast({ title: "Membresía vendida y activada" });
+      resetSale();
+    },
+    onError: (error: unknown) => {
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast({ title: message ?? "No se pudo registrar la venta", variant: "destructive" });
+    },
   });
 
   const updateMem = useMutation({
@@ -186,6 +240,16 @@ const MembershipsTab = ({ userId }: { userId: string }) => {
 
   return (
     <>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-[#1A060B]">Membresías</h2>
+          <p className="mt-0.5 text-xs text-[#1A060B]/50">Vende y activa un plan directamente para esta alumna.</p>
+        </div>
+        <Button size="sm" className="bg-[#3B0E1A] hover:bg-[#320C16]" onClick={() => setSaleOpen(true)}>
+          <CreditCard size={14} className="mr-1.5" /> Vender membresía
+        </Button>
+      </div>
+
       {mems.length === 0 ? (
         <SectionCard className="py-10 text-center">
           <p className="text-sm text-[#1A060B]/45">Sin membresías activas</p>
@@ -281,6 +345,73 @@ const MembershipsTab = ({ userId }: { userId: string }) => {
             >
               {updateMem.isPending ? <Loader2 className="animate-spin mr-1" size={14} /> : null}
               Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={saleOpen} onOpenChange={(open) => { if (!open) resetSale(); else setSaleOpen(true); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Vender membresía</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-[#1A060B]/60">La membresía se activará de inmediato para esta alumna y la venta quedará registrada en Pagos.</p>
+          <div className="space-y-4 pt-1">
+            <div className="space-y-1.5">
+              <Label>Plan</Label>
+              <Select value={salePlanId} onValueChange={setSalePlanId} disabled={loadingPlans}>
+                <SelectTrigger><SelectValue placeholder={loadingPlans ? "Cargando planes…" : "Selecciona un plan"} /></SelectTrigger>
+                <SelectContent>
+                  {salePlans.map((plan) => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {plan.name} · ${Number(plan.price ?? 0).toLocaleString("es-MX")} MXN
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Método de pago</Label>
+                <Select value={salePaymentMethod} onValueChange={setSalePaymentMethod}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cash">Efectivo</SelectItem>
+                    <SelectItem value="card">Tarjeta</SelectItem>
+                    <SelectItem value="transfer">Transferencia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Fecha de inicio</Label>
+                <Input type="date" value={saleStartDate} onChange={(event) => setSaleStartDate(event.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Referencia de pago <span className="font-normal text-[#1A060B]/45">(opcional)</span></Label>
+              <Input value={saleReference} onChange={(event) => setSaleReference(event.target.value)} placeholder="Folio, últimos dígitos, terminal…" maxLength={255} />
+            </div>
+            {selectedSalePlan && (
+              <div className="rounded-xl border border-[#3B0E1A]/15 bg-[#F3EFE9]/70 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-[#1A060B]/65">Total a cobrar</span>
+                  <span className="text-lg font-bold text-[#1A060B]">${Number(selectedSalePlan.price ?? 0).toLocaleString("es-MX")} {selectedSalePlan.currency ?? "MXN"}</span>
+                </div>
+                <p className="mt-1 text-xs text-[#1A060B]/50">
+                  {selectedSalePlan.classLimit ?? selectedSalePlan.class_limit ?? "Clases ilimitadas"} · vigencia {selectedSalePlan.durationDays ?? selectedSalePlan.duration_days ?? "—"} días
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="mt-2">
+            <Button variant="outline" onClick={resetSale}>Cancelar</Button>
+            <Button
+              className="bg-[#3B0E1A] hover:bg-[#320C16]"
+              onClick={() => sellMembership.mutate()}
+              disabled={!salePlanId || !saleStartDate || sellMembership.isPending}
+            >
+              {sellMembership.isPending ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <CreditCard size={14} className="mr-1.5" />}
+              Registrar venta
             </Button>
           </DialogFooter>
         </DialogContent>
