@@ -2039,7 +2039,7 @@ app.use((req, res, next) => adminAuditMiddleware(req, res, next));
 // sitio por sí mismo). El staff autenticado nunca se bloquea.
 const MAINTENANCE_ALLOW_PREFIXES = [
   "/api/auth/", "/api/admin", "/api/settings", "/api/evolution",
-  "/api/public/settings", "/api/health", "/api/drive",
+  "/api/public/settings", "/api/health", "/api/app-version", "/api/drive",
 ];
 async function requestIsStaff(req) {
   try {
@@ -15606,6 +15606,24 @@ const distDir = [
   try { return fs.existsSync(path.join(dir, "index.html")); } catch { return false; }
 }) || path.join(__dirname, "../../frontend/dist");
 console.log("[SPA] Serving frontend build from:", distDir);
+
+// La app abierta consulta este endpoint para saber si Railway publicó un bundle
+// nuevo. Se deriva del asset hasheado de index.html, no de una variable manual:
+// cambia automáticamente en cada build de frontend y no puede quedar desfasado.
+function currentFrontendAsset() {
+  try {
+    const html = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
+    return html.match(/\/assets\/index-[A-Za-z0-9_-]+\.js/)?.[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+app.get("/api/app-version", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  return res.json({ asset: currentFrontendAsset() });
+});
+
 app.use(express.static(distDir, {
   setHeaders: (res, path) => {
     if (path.endsWith(".css")) {
