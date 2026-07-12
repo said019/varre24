@@ -2208,7 +2208,7 @@ function calculateDiscountAmount(type, value, subtotal) {
 
 function normalizeClassCategory(value, fallback = "all") {
   const raw = String(value ?? "").trim().toLowerCase();
-  if (["pilates", "bienestar", "funcional", "mixto", "all"].includes(raw)) return raw;
+  if (["pilates", "bienestar", "funcional", "barre", "especial", "mixto", "all"].includes(raw)) return raw;
   return fallback;
 }
 
@@ -2216,6 +2216,105 @@ function normalizeDiscountChannel(value, fallback = "all") {
   const raw = String(value ?? "").trim().toLowerCase();
   if (["all", "membership", "pos", "event"].includes(raw)) return raw;
   return fallback;
+}
+
+function getPlanSubtotalForPayment(plan, paymentMethod) {
+  const regularPrice = Number(plan?.price || 0);
+  const discountedPrice = Number(plan?.discount_price);
+  const normalizedPaymentMethod = normalizePaymentMethod(paymentMethod);
+  const receivesPlanDiscount = normalizedPaymentMethod === "cash" || normalizedPaymentMethod === "transfer";
+
+  if (receivesPlanDiscount && Number.isFinite(discountedPrice) && discountedPrice > 0) {
+    return discountedPrice;
+  }
+  return Number.isFinite(regularPrice) && regularPrice > 0 ? regularPrice : 0;
+}
+
+function couponValidationError(message) {
+  const err = new Error(message);
+  err.status = 400;
+  return err;
+}
+
+// Las fechas elegidas en el panel se entienden como "válido hasta el final de
+// ese día" en Ciudad de México. Sin esta normalización, 2026-07-31 expiraba al
+// iniciar el día porque PostgreSQL interpretaba el input date a medianoche.
+function normalizeDiscountExpiry(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const raw = String(value).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const [year, month, day] = raw.split("-").map(Number);
+    const candidate = new Date(Date.UTC(year, month - 1, day));
+    if (
+      candidate.getUTCFullYear() !== year
+      || candidate.getUTCMonth() !== month - 1
+      || candidate.getUTCDate() !== day
+    ) {
+      throw couponValidationError("Fecha de expiración inválida");
+    }
+    return `${raw}T23:59:59.999-06:00`;
+  }
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) throw couponValidationError("Fecha de expiración inválida");
+  return parsed.toISOString();
+}
+
+function normalizeDiscountCodePayload(input) {
+  const normalizedCode = String(input.code ?? "").trim().toUpperCase();
+  if (!/^[A-Z0-9_-]{3,50}$/.test(normalizedCode)) {
+    throw couponValidationError("El código debe tener entre 3 y 50 caracteres: letras, números, guiones o guion bajo.");
+  }
+
+  const discountType = normalizeDiscountType(input.discountType);
+  if (!discountType) throw couponValidationError("Tipo de descuento inválido");
+
+  const discountValue = Number(input.discountValue);
+  if (!Number.isFinite(discountValue) || discountValue <= 0) {
+    throw couponValidationError("El valor del descuento debe ser mayor a cero");
+  }
+  if (discountType === "percent" && discountValue > 100) {
+    throw couponValidationError("Un descuento porcentual no puede ser mayor a 100%");
+  }
+
+  const rawMaxUses = input.maxUses;
+  const maxUses = rawMaxUses === undefined || rawMaxUses === null || rawMaxUses === ""
+    ? null
+    : Number(rawMaxUses);
+  if (maxUses !== null && (!Number.isInteger(maxUses) || maxUses < 1)) {
+    throw couponValidationError("El límite de usos debe ser un número entero mayor a cero");
+  }
+
+  const minOrderAmount = Number(input.minOrderAmount ?? input.minPurchaseAmount ?? 0);
+  if (!Number.isFinite(minOrderAmount) || minOrderAmount < 0) {
+    throw couponValidationError("La compra mínima debe ser un monto válido");
+  }
+
+  const rawCategory = input.classCategory;
+  const classCategory = rawCategory === undefined || rawCategory === null || rawCategory === ""
+    ? null
+    : normalizeClassCategory(rawCategory, "__invalid__");
+  if (classCategory === "__invalid__") {
+    throw couponValidationError("Categoría inválida");
+  }
+
+  const rawChannel = input.channel;
+  const channel = rawChannel === undefined || rawChannel === null || rawChannel === ""
+    ? "all"
+    : normalizeDiscountChannel(rawChannel, "__invalid__");
+  if (channel === "__invalid__") throw couponValidationError("Canal inválido");
+
+  return {
+    code: normalizedCode,
+    discountType,
+    discountValue,
+    maxUses,
+    expiresAt: normalizeDiscountExpiry(input.expiresAt),
+    minOrderAmount,
+    planId: input.planId || null,
+    classCategory,
+    channel,
+    isActive: input.isActive === undefined ? true : Boolean(input.isActive),
+  };
 }
 
 function isUnlimitedClasses(value) {
@@ -2483,6 +2582,7 @@ async function findApplicableDiscountCode({
   classCategory = "all",
   channel = "all",
   client = null,
+  lock = false,
 }) {
   if (!code) return null;
   const q = client ?? pool;
@@ -2495,19 +2595,29 @@ async function findApplicableDiscountCode({
       WHERE code = $1
         AND is_active = true
         AND (expires_at IS NULL OR expires_at > NOW())
-        AND (max_uses IS NULL OR uses_count < max_uses)
+        -- Mientras una orden está pendiente, conserva un cupo. Así evitamos
+        -- vender el último cupón dos veces durante pagos simultáneos.
+        AND (
+          max_uses IS NULL
+          OR uses_count + (
+            SELECT COUNT(*)
+              FROM orders pending_orders
+             WHERE pending_orders.discount_code_id = discount_codes.id
+               AND pending_orders.status IN ('pending_payment', 'pending_verification')
+          ) < max_uses
+        )
         AND (channel = 'all' OR channel = $2)
         AND (plan_id IS NULL OR plan_id = $3)
         AND (
           class_category IS NULL
           OR class_category = 'all'
           OR class_category = $4
-          OR (class_category = 'mixto' AND $4 IN ('pilates','bienestar','funcional'))
+          OR (class_category = 'mixto' AND $4 IN ('pilates','bienestar','funcional','barre','especial'))
         )
       ORDER BY
         CASE WHEN plan_id IS NULL THEN 1 ELSE 0 END ASC,
         CASE WHEN class_category IS NULL OR class_category = 'all' THEN 1 ELSE 0 END ASC
-      LIMIT 1`,
+      LIMIT 1${lock ? " FOR UPDATE" : ""}`,
     [normalizedCode, normalizedChannel, planId, normalizedCategory]
   );
   if (!r.rows.length) return null;
@@ -2687,6 +2797,7 @@ async function processPosSale({ userId, items, paymentMethod = "efectivo", disco
         channel: "pos",
         classCategory: "all",
         client,
+        lock: true,
       });
       if (!discount) {
         await client.query("ROLLBACK");
@@ -4926,25 +5037,15 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       });
     }
 
-    // ── Pricing with cash/transfer discounts ──
-    const COMBO_PRICES = { 8: { price: 1030, discount: 990 }, 12: { price: 1250, discount: 1190 }, 16: { price: 1450, discount: 1340 } };
+    // ── Precio base por método de pago ──
+    // Los precios especiales del plan aplican a efectivo/transferencia. El
+    // descuento de cupón se calcula después para todos los métodos, incluida
+    // tarjeta, y el total final es el que enviamos a Mercado Pago.
     // Feature de complementos retirada: se ignora cualquier complementType /
-    // complementId que llegue por API. No se aplica precio combo hardcodeado
-    // ni se generan consultas. (Var no usada referenciada abajo, se deja null.)
+    // complementId que llegue por API.
     void complementType; void complementId;
     const activeComplement = null;
-    let subtotal = parseFloat(plan.price);
-    const isCashOrTransfer = paymentMethod === "cash" || paymentMethod === "transfer";
-
-    if (activeComplement) {
-      const cl = plan.class_limit;
-      const combo = COMBO_PRICES[cl];
-      if (combo) {
-        subtotal = isCashOrTransfer ? combo.discount : combo.price;
-      }
-    } else if (isCashOrTransfer && plan.discount_price != null && parseFloat(plan.discount_price) > 0) {
-      subtotal = parseFloat(plan.discount_price);
-    }
+    const subtotal = getPlanSubtotalForPayment(plan, paymentMethod);
 
     let discount = 0;
     let appliedDiscountCode = null;
@@ -4957,6 +5058,7 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
         classCategory: normalizeClassCategory(plan.class_category, "all"),
         channel: "membership",
         client,
+        lock: true,
       });
       if (!discountResult) {
         await client.query("ROLLBACK");
@@ -5424,18 +5526,24 @@ app.delete("/api/orders/:id/proof/:proofId", authMiddleware, async (req, res) =>
 
 // POST /api/discount-codes/validate
 app.post("/api/discount-codes/validate", authMiddleware, async (req, res) => {
-  const { code, planId, classCategory, channel } = req.body;
+  const { code, planId, classCategory, channel, paymentMethod = "transfer" } = req.body;
   if (!code) return res.status(400).json({ message: "Código requerido" });
   try {
-    const planRes = await pool.query("SELECT price, class_category FROM plans WHERE id = $1", [planId || null]);
-    const originalPrice = planRes.rows.length > 0 ? parseFloat(planRes.rows[0].price) : 0;
+    const planRes = await pool.query(
+      "SELECT price, discount_price, class_category FROM plans WHERE id = $1 AND is_active = true",
+      [planId || null]
+    );
+    if (!planRes.rows.length) return res.status(404).json({ message: "Plan no encontrado" });
+    const plan = planRes.rows[0];
+    const normalizedPaymentMethod = normalizePaymentMethod(paymentMethod);
+    const subtotal = getPlanSubtotalForPayment(plan, normalizedPaymentMethod);
     const effectiveCategory = normalizeClassCategory(
-      classCategory ?? planRes.rows[0]?.class_category ?? "all",
+      classCategory ?? plan.class_category ?? "all",
       "all"
     );
     const discountResult = await findApplicableDiscountCode({
       code,
-      subtotal: originalPrice,
+      subtotal,
       planId: planId || null,
       classCategory: effectiveCategory,
       channel: channel || "membership",
@@ -5453,8 +5561,10 @@ app.post("/api/discount-codes/validate", authMiddleware, async (req, res) => {
         code: dc.code,
         discount_type: dc.discount_type,
         discount_value: parseFloat(dc.discount_value),
-        discount_amount: Math.min(discount, originalPrice),
-        final_price: Math.max(originalPrice - discount, 0),
+        subtotal_amount: subtotal,
+        discount_amount: Math.min(discount, subtotal),
+        final_price: Math.max(subtotal - discount, 0),
+        payment_method: normalizedPaymentMethod,
       }
     });
   } catch (err) {
@@ -13663,7 +13773,13 @@ app.get("/api/payments", adminMiddleware, async (req, res) => {
 app.get("/api/discount-codes", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      `SELECT dc.*, p.name AS plan_name
+      `SELECT dc.*, p.name AS plan_name,
+              COALESCE((
+                SELECT COUNT(*)
+                  FROM orders pending_orders
+                 WHERE pending_orders.discount_code_id = dc.id
+                   AND pending_orders.status IN ('pending_payment', 'pending_verification')
+              ), 0)::int AS pending_reservations
        FROM discount_codes dc
        LEFT JOIN plans p ON p.id = dc.plan_id
        ORDER BY dc.created_at DESC`
@@ -13677,39 +13793,9 @@ app.get("/api/discount-codes", adminMiddleware, async (req, res) => {
 // POST /api/discount-codes
 app.post("/api/discount-codes", adminMiddleware, async (req, res) => {
   try {
-    const {
-      code,
-      discountType = "percent",
-      discountValue,
-      maxUses,
-      expiresAt,
-      minOrderAmount,
-      minPurchaseAmount,
-      planId,
-      classCategory,
-      channel,
-      isActive = true,
-    } = req.body;
-    if (!code || !discountValue) return res.status(400).json({ message: "Código y valor requeridos" });
-    const normalizedType = normalizeDiscountType(discountType);
-    if (!normalizedType) return res.status(400).json({ message: "Tipo de descuento inválido" });
-    const normalizedMinOrder = Number(minOrderAmount ?? minPurchaseAmount ?? 0) || 0;
-    const normalizedCategory =
-      classCategory === undefined || classCategory === null || classCategory === ""
-        ? null
-        : normalizeClassCategory(classCategory, "__invalid__");
-    if (normalizedCategory === "__invalid__") {
-      return res.status(400).json({ message: "Categoría inválida. Usa: all, pilates, bienestar, funcional o mixto." });
-    }
-    const normalizedChannel =
-      channel === undefined || channel === null || channel === ""
-        ? "all"
-        : normalizeDiscountChannel(channel, "__invalid__");
-    if (normalizedChannel === "__invalid__") {
-      return res.status(400).json({ message: "Canal inválido. Usa: all, membership, pos o event." });
-    }
-    if (planId) {
-      const planExists = await pool.query("SELECT id FROM plans WHERE id = $1", [planId]);
+    const coupon = normalizeDiscountCodePayload(req.body);
+    if (coupon.planId) {
+      const planExists = await pool.query("SELECT id FROM plans WHERE id = $1", [coupon.planId]);
       if (!planExists.rows.length) return res.status(404).json({ message: "Plan no encontrado" });
     }
     const r = await pool.query(
@@ -13719,16 +13805,16 @@ app.post("/api/discount-codes", adminMiddleware, async (req, res) => {
        )
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
       [
-        code.toUpperCase(),
-        normalizedType,
-        discountValue,
-        maxUses || null,
-        expiresAt || null,
-        normalizedMinOrder,
-        planId || null,
-        normalizedCategory,
-        normalizedChannel,
-        isActive,
+        coupon.code,
+        coupon.discountType,
+        coupon.discountValue,
+        coupon.maxUses,
+        coupon.expiresAt,
+        coupon.minOrderAmount,
+        coupon.planId,
+        coupon.classCategory,
+        coupon.channel,
+        coupon.isActive,
       ]
     );
     const enriched = await pool.query(
@@ -13741,62 +13827,50 @@ app.post("/api/discount-codes", adminMiddleware, async (req, res) => {
     return res.status(201).json({ data: camelRow(enriched.rows[0]) });
   } catch (err) {
     if (err.code === "23505") return res.status(409).json({ message: "Código ya existe" });
-    return res.status(500).json({ message: "Error interno" });
+    return res.status(err.status || 500).json({ message: err.status ? err.message : "Error interno" });
   }
 });
 
 // PUT /api/discount-codes/:id
 app.put("/api/discount-codes/:id", adminMiddleware, async (req, res) => {
   try {
-    const {
-      code,
-      discountType,
-      discountValue,
-      maxUses,
-      expiresAt,
-      minOrderAmount,
-      minPurchaseAmount,
-      planId,
-      classCategory,
-      channel,
-      isActive,
-    } = req.body;
-    const normalizedType = normalizeDiscountType(discountType);
-    if (!normalizedType) return res.status(400).json({ message: "Tipo de descuento inválido" });
-    const normalizedMinOrder = Number(minOrderAmount ?? minPurchaseAmount ?? 0) || 0;
-    const normalizedCategory =
-      classCategory === undefined || classCategory === null || classCategory === ""
-        ? null
-        : normalizeClassCategory(classCategory, "__invalid__");
-    if (normalizedCategory === "__invalid__") {
-      return res.status(400).json({ message: "Categoría inválida. Usa: all, pilates, bienestar, funcional o mixto." });
-    }
-    const normalizedChannel =
-      channel === undefined || channel === null || channel === ""
-        ? "all"
-        : normalizeDiscountChannel(channel, "__invalid__");
-    if (normalizedChannel === "__invalid__") {
-      return res.status(400).json({ message: "Canal inválido. Usa: all, membership, pos o event." });
-    }
-    if (planId) {
-      const planExists = await pool.query("SELECT id FROM plans WHERE id = $1", [planId]);
+    const coupon = normalizeDiscountCodePayload(req.body);
+    if (coupon.planId) {
+      const planExists = await pool.query("SELECT id FROM plans WHERE id = $1", [coupon.planId]);
       if (!planExists.rows.length) return res.status(404).json({ message: "Plan no encontrado" });
+    }
+    const existing = await pool.query(
+      `SELECT dc.uses_count,
+              COALESCE((
+                SELECT COUNT(*)
+                  FROM orders pending_orders
+                 WHERE pending_orders.discount_code_id = dc.id
+                   AND pending_orders.status IN ('pending_payment', 'pending_verification')
+              ), 0)::int AS pending_reservations
+         FROM discount_codes dc
+        WHERE dc.id = $1`,
+      [req.params.id]
+    );
+    if (!existing.rows.length) return res.status(404).json({ message: "Código no encontrado" });
+    const reservedUses = Number(existing.rows[0].uses_count || 0) + Number(existing.rows[0].pending_reservations || 0);
+    if (coupon.maxUses !== null && coupon.maxUses < reservedUses) {
+      return res.status(400).json({ message: "El límite no puede ser menor a los usos confirmados y apartados" });
     }
     const r = await pool.query(
       `UPDATE discount_codes SET code=$1, discount_type=$2, discount_value=$3, max_uses=$4,
        expires_at=$5, min_order_amount=$6, plan_id=$7, class_category=$8, channel=$9, is_active=$10, updated_at=NOW()
        WHERE id=$11 RETURNING *`,
       [
-        code?.toUpperCase(),
-        normalizedType,
-        discountValue,
-        maxUses || null,
-        expiresAt || null,
-        normalizedMinOrder,
-        planId || null,
-        normalizedCategory,
-        normalizedChannel,
-        isActive !== false,
+        coupon.code,
+        coupon.discountType,
+        coupon.discountValue,
+        coupon.maxUses,
+        coupon.expiresAt,
+        coupon.minOrderAmount,
+        coupon.planId,
+        coupon.classCategory,
+        coupon.channel,
+        coupon.isActive,
         req.params.id,
       ]
     );
@@ -13810,7 +13884,8 @@ app.put("/api/discount-codes/:id", adminMiddleware, async (req, res) => {
     );
     return res.json({ data: camelRow(enriched.rows[0]) });
   } catch (err) {
-    return res.status(500).json({ message: "Error interno" });
+    if (err.code === "23505") return res.status(409).json({ message: "Código ya existe" });
+    return res.status(err.status || 500).json({ message: err.status ? err.message : "Error interno" });
   }
 });
 

@@ -22,9 +22,16 @@ import imgPilates from "@/assets/pilates-tower_1850574.png";
 type Step = "select" | "method" | "bank" | "cash" | "upload" | "done";
 type PaymentMethod = "transfer" | "card";
 
-// El estudio absorbe la comisión de MercadoPago. No se recarga nada al cliente
-// al pagar con tarjeta. Cualquier referencia a "card fee" se mantiene en 0 por
-// compatibilidad con backends antiguos.
+type DiscountResult = {
+  code: string;
+  discount_amount: number;
+  subtotal_amount: number;
+  final_price: number;
+  payment_method: PaymentMethod;
+};
+
+// El estudio absorbe la comisión de MercadoPago: no se recarga nada al cliente
+// al pagar con tarjeta.
 
 function compressImage(file: File, maxWidth = 1200, quality = 0.8): Promise<File> {
   return new Promise((resolve) => {
@@ -126,7 +133,7 @@ const PlanCard = ({
       </div>
       {discountPrice && (
         <p className={cn("text-[11px] font-bold mt-0.5", featured ? "text-[#FFD6E6]" : "text-[#1a6b0a]")}>
-          Tarjeta/transferencia: ${discountPrice.toLocaleString("es-MX")}
+          Transferencia: ${discountPrice.toLocaleString("es-MX")}
         </p>
       )}
       {features.length > 0 && (
@@ -209,7 +216,7 @@ const Checkout = () => {
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("transfer");
   const [discountCode, setDiscountCode] = useState("");
-  const [discountResult, setDiscountResult] = useState<any>(null);
+  const [discountResult, setDiscountResult] = useState<DiscountResult | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [orderUuid, setOrderUuid] = useState<string | null>(null);
   const [bankDetails, setBankDetails] = useState<any>(null);
@@ -329,39 +336,55 @@ const Checkout = () => {
 
   // Complementos de bienestar: feature retirada. El precio es el del plan real.
   // Compute price
-  const basePrice = selectedPlan?.price ?? 0;
+  const basePrice = Number(selectedPlan?.price ?? 0);
 
   // Apply discount when paying by bank transfer (precio con descuento del plan)
-  const planBasePrice = Number(selectedPlan?.price ?? 0);
   const individualDiscount = getPlanDiscountPrice(selectedPlan);
   const cashTransferPrice = individualDiscount;
   const effectivePrice = paymentMethod === "transfer" && cashTransferPrice
     ? cashTransferPrice : basePrice;
-  const subtotalAmount = discountResult ? effectivePrice - (discountResult.discount_amount ?? 0) : effectivePrice;
-  // Sin comisión por pago con tarjeta. El cliente paga el mismo monto que en transferencia.
-  const cardSurcharge = 0;
-  const finalAmount = Math.round(subtotalAmount * 100) / 100;
+  // Solo usamos la respuesta cuando pertenece al método seleccionado. Así no
+  // se muestra temporalmente el descuento de transferencia al cambiar a tarjeta.
+  const activeDiscount = discountResult?.payment_method === paymentMethod ? discountResult : null;
+  const finalAmount = activeDiscount
+    ? Number(activeDiscount.final_price)
+    : Math.round(effectivePrice * 100) / 100;
 
   const validateCodeMutation = useMutation({
-    mutationFn: async () => {
-      const r = await api.post("/discount-codes/validate", { code: discountCode, planId: selectedPlan?.id });
+    mutationFn: async (method: PaymentMethod = paymentMethod) => {
+      const r = await api.post("/discount-codes/validate", {
+        code: discountCode,
+        planId: selectedPlan?.id,
+        channel: "membership",
+        paymentMethod: method,
+      });
       return r.data?.data ?? r.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: DiscountResult) => {
       setDiscountResult(data);
       toast({ title: "Código de descuento aplicado" });
     },
     onError: (err: AxiosError<{ message?: string }>) => {
+      setDiscountResult(null);
       const msg = err?.response?.data?.message ?? "Código inválido";
       toast({ title: msg, variant: "destructive" });
     },
   });
 
+  const changePaymentMethod = (method: PaymentMethod) => {
+    setPaymentMethod(method);
+    // Revalida con el precio exacto de tarjeta o transferencia; la alumna no
+    // tiene que regresar al paso anterior para volver a aplicar el cupón.
+    if (discountResult && discountCode.trim() && selectedPlan) {
+      validateCodeMutation.mutate(method);
+    }
+  };
+
   const createOrderMutation = useMutation({
     mutationFn: () =>
       api.post("/orders", {
         planId: selectedPlan.id,
-        discountCode: discountResult?.code,
+        discountCode: activeDiscount?.code,
         paymentMethod,
       }),
     onSuccess: (res) => {
@@ -640,7 +663,10 @@ const Checkout = () => {
                           className="pl-8 bg-[#3B0E1A]/[0.06] border-[#3B0E1A]/15 text-[#1A060B] placeholder:text-[#3B0E1A]/40 uppercase"
                           placeholder="Ej. FAMILIA10 o el código de tu amiga"
                           value={discountCode}
-                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                          onChange={(e) => {
+                            setDiscountCode(e.target.value.toUpperCase());
+                            setDiscountResult(null);
+                          }}
                         />
                       </div>
                       <button
@@ -652,9 +678,9 @@ const Checkout = () => {
                       </button>
                     </div>
                   </div>
-                  {discountResult && (
+                  {activeDiscount && (
                     <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
-                      <Check size={12} /> Cupón <strong className="font-mono">{discountResult.code?.code ?? discountResult.code ?? ""}</strong> aplicado: −${(discountResult.discount_amount ?? 0).toLocaleString("es-MX")} MXN
+                      <Check size={12} /> Cupón <strong className="font-mono">{activeDiscount.code}</strong> aplicado: −${Number(activeDiscount.discount_amount).toLocaleString("es-MX")} MXN
                     </div>
                   )}
 
@@ -662,10 +688,15 @@ const Checkout = () => {
                   <div className="flex items-center justify-between py-3 border-t border-[#3B0E1A]/15">
                     <span className="text-sm text-[#1A060B]/60">Total a pagar</span>
                     <div className="text-right">
-                      <span className="text-2xl font-bold text-[#1A060B]">${basePrice.toLocaleString("es-MX")} <span className="text-sm font-normal text-[#1A060B]/35">MXN</span></span>
+                      {activeDiscount && (
+                        <span className="mr-2 text-xs text-[#1A060B]/35 line-through">
+                          ${effectivePrice.toLocaleString("es-MX")}
+                        </span>
+                      )}
+                      <span className="text-2xl font-bold text-[#1A060B]">${finalAmount.toLocaleString("es-MX")} <span className="text-sm font-normal text-[#1A060B]/35">MXN</span></span>
                       {cashTransferPrice && cashTransferPrice < basePrice && (
                         <p className="text-[11px] text-[#1a6b0a] font-bold mt-0.5">
-                          💰 Transferencia: ${cashTransferPrice.toLocaleString("es-MX")}
+                          💰 Precio por transferencia: ${cashTransferPrice.toLocaleString("es-MX")}
                         </p>
                       )}
                     </div>
@@ -693,7 +724,7 @@ const Checkout = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[#1A060B]/70">{selectedPlan?.name}</span>
                   <div className="text-right">
-                    {paymentMethod === "transfer" && cashTransferPrice && cashTransferPrice < basePrice ? (
+                    {finalAmount < basePrice ? (
                       <>
                         <span className="text-xs text-[#1A060B]/30 line-through mr-2">${basePrice.toLocaleString("es-MX")}</span>
                         <span className="text-lg font-bold text-[#1a6b0a]">${finalAmount.toLocaleString("es-MX")} MXN</span>
@@ -703,9 +734,9 @@ const Checkout = () => {
                     )}
                   </div>
                 </div>
-                {paymentMethod === "transfer" && cashTransferPrice && cashTransferPrice < basePrice && (
+                {finalAmount < basePrice && (
                   <p className="text-[11px] text-[#1a6b0a] font-bold mt-1.5 flex items-center gap-1">
-                    💰 Ahorras ${(basePrice - cashTransferPrice).toLocaleString("es-MX")} pagando por transferencia
+                    💰 Ahorras ${(basePrice - finalAmount).toLocaleString("es-MX")}{activeDiscount ? " con tu cupón" : " pagando por transferencia"}
                   </p>
                 )}
                 {/* Sin recargo por pago con tarjeta. El estudio absorbe la comisión de MercadoPago. */}
@@ -716,7 +747,7 @@ const Checkout = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("transfer")}
+                  onClick={() => changePaymentMethod("transfer")}
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "transfer"
@@ -740,7 +771,7 @@ const Checkout = () => {
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("card")}
+                  onClick={() => changePaymentMethod("card")}
                   className={cn(
                     "flex flex-col items-center gap-3 p-5 rounded-2xl border transition-all",
                     paymentMethod === "card"
@@ -765,7 +796,7 @@ const Checkout = () => {
 
               <button
                 onClick={() => createOrderMutation.mutate()}
-                disabled={createOrderMutation.isPending}
+                disabled={createOrderMutation.isPending || validateCodeMutation.isPending}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-[#3B0E1A] hover:bg-[#320C16] transition-colors disabled:opacity-50"
               >
                 {createOrderMutation.isPending ? <Loader2 className="animate-spin" size={16} /> : <CreditCard size={16} />}
