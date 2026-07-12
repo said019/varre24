@@ -14449,28 +14449,71 @@ app.post("/api/admin/classes", adminMiddleware, async (req, res) => {
 // "instructor_changed". Las notificaciones se envían async (no bloquean la
 // respuesta del PUT).
 app.put("/api/admin/classes/:id", adminMiddleware, async (req, res) => {
+  const client = await pool.connect();
+  let inTransaction = false;
   try {
     const classId = req.params.id;
     const { classTypeId, instructorId, startTime, endTime, maxCapacity, status, notes } = req.body;
     const notifyAttendees = req.body?.notifyAttendees !== false;
+    const rawCapacity = maxCapacity ?? req.body?.capacity;
+    const hasCapacityChange = rawCapacity !== undefined && rawCapacity !== null && rawCapacity !== "";
+    const requestedCapacity = hasCapacityChange ? Number(rawCapacity) : null;
 
-    // 1) Leer estado actual para detectar cambios
-    const beforeRes = await pool.query(
+    if (hasCapacityChange && (!Number.isInteger(requestedCapacity) || requestedCapacity < 1 || requestedCapacity > 100)) {
+      return res.status(400).json({ message: "El cupo debe ser un número entero entre 1 y 100." });
+    }
+
+    await client.query("BEGIN");
+    inTransaction = true;
+
+    // 1) Bloquear la clase para que una nueva reserva no pueda entrar entre la
+    // validación de cupo y el UPDATE.
+    const beforeRes = await client.query(
       `SELECT c.id, c.instructor_id, c.date, c.start_time, c.end_time,
+              c.max_capacity,
               ct.name AS class_type_name,
               i.display_name AS old_instructor_name
          FROM classes c
          JOIN class_types ct ON c.class_type_id = ct.id
          LEFT JOIN instructors i ON c.instructor_id = i.id
-        WHERE c.id = $1`,
+        WHERE c.id = $1
+        FOR UPDATE OF c`,
       [classId]
     );
-    if (!beforeRes.rows.length) return res.status(404).json({ message: "Clase no encontrada" });
+    if (!beforeRes.rows.length) {
+      await client.query("ROLLBACK");
+      inTransaction = false;
+      return res.status(404).json({ message: "Clase no encontrada" });
+    }
     const before = beforeRes.rows[0];
-    const instructorChanged = instructorId && instructorId !== before.instructor_id;
+    const instructorChanged = Boolean(instructorId && instructorId !== before.instructor_id);
+
+    if (hasCapacityChange) {
+      const occupancyRes = await client.query(
+        `SELECT COALESCE(SUM(
+                  CASE WHEN b.user_id IS NOT NULL
+                              AND b.guest_name IS NOT NULL
+                              AND b.guest_name <> ''
+                       THEN 2 ELSE 1 END
+                ), 0)::int AS occupied
+           FROM bookings b
+          WHERE b.class_id = $1
+            AND b.status IN ('confirmed', 'checked_in')`,
+        [classId]
+      );
+      const occupied = Number(occupancyRes.rows[0]?.occupied ?? 0);
+      if (requestedCapacity < occupied) {
+        await client.query("ROLLBACK");
+        inTransaction = false;
+        return res.status(409).json({
+          message: `No puedes bajar el cupo a ${requestedCapacity}: ya hay ${occupied} lugar${occupied === 1 ? "" : "es"} ocupado${occupied === 1 ? "" : "s"}.`,
+          occupied,
+        });
+      }
+    }
 
     // 2) Update
-    const r = await pool.query(
+    const r = await client.query(
       `UPDATE classes SET
          class_type_id  = COALESCE($1, class_type_id),
          instructor_id  = COALESCE($2, instructor_id),
@@ -14482,8 +14525,11 @@ app.put("/api/admin/classes/:id", adminMiddleware, async (req, res) => {
          updated_at     = NOW()
        WHERE id = $8 RETURNING *`,
       [classTypeId || null, instructorId || null, startTime || null, endTime || null,
-       maxCapacity || null, status || null, notes || null, classId]
+       requestedCapacity, status || null, notes || null, classId]
     );
+
+    await client.query("COMMIT");
+    inTransaction = false;
 
     // 3) Si cambió el instructor, notificar a alumnas async
     let notifiedCount = 0;
@@ -14558,8 +14604,11 @@ app.put("/api/admin/classes/:id", adminMiddleware, async (req, res) => {
       notifiedCount,
     });
   } catch (err) {
+    if (inTransaction) await client.query("ROLLBACK").catch(() => {});
     console.error("PUT /api/admin/classes/:id error:", err);
     return res.status(500).json({ message: "Error interno" });
+  } finally {
+    client.release();
   }
 });
 

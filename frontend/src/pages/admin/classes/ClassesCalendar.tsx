@@ -747,29 +747,38 @@ function CalendarTab({
     },
   });
 
-  // Cambiar instructor de una clase. Si el server detecta cambio real, notifica
-  // por email + WhatsApp a las alumnas con reserva activa.
-  const [newInstructorId, setNewInstructorId] = useState<string>("");
-  const changeInstructorMutation = useMutation({
-    mutationFn: ({ classId, instructorId }: { classId: string; instructorId: string }) =>
-      api.put(`/admin/classes/${classId}`, { instructorId, notifyAttendees: true }),
+  // Edición puntual de una clase: coach y cupo. Si cambia la instructora, el
+  // servidor notifica a las alumnas con reserva activa.
+  const [editInstructorId, setEditInstructorId] = useState<string>("");
+  const [editCapacity, setEditCapacity] = useState<string>("");
+  const updateClassMutation = useMutation({
+    mutationFn: ({ classId, instructorId, maxCapacity }: { classId: string; instructorId: string; maxCapacity: number }) =>
+      api.put(`/admin/classes/${classId}`, { instructorId, maxCapacity, notifyAttendees: true }),
     onSuccess: (res: any) => {
       qc.invalidateQueries({ queryKey: ["classes"] });
       const notified = Number(res?.data?.notifiedCount ?? 0);
       toast({
-        title: "Instructora actualizada",
+        title: "Clase actualizada",
         description: notified > 0
           ? `Se notificó a ${notified} alumna${notified === 1 ? "" : "s"} por email${notified === 1 ? "" : ""} y WhatsApp.`
-          : "Sin alumnas reservadas a notificar.",
+          : "El cupo y la instructora quedaron actualizados.",
       });
       setSheetOpen(false);
-      setNewInstructorId("");
+      setEditInstructorId("");
+      setEditCapacity("");
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message ?? "No se pudo cambiar la instructora";
+      const message = error?.response?.data?.message ?? "No se pudo actualizar la clase";
       toast({ title: message, variant: "destructive" });
     },
   });
+
+  const openClassDetail = (classItem: ClassInstance) => {
+    setSelectedClass(classItem);
+    setEditInstructorId(classItem.instructorId ?? "");
+    setEditCapacity(String(classItem.maxCapacity ?? classItem.capacity ?? 10));
+    setSheetOpen(true);
+  };
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   const classesForDay = (date: Date) =>
@@ -962,7 +971,7 @@ function CalendarTab({
                   <button
                     key={c.id}
                     type="button"
-                    onClick={() => { setSelectedClass(c); setSheetOpen(true); }}
+                    onClick={() => openClassDetail(c)}
                     className="w-full rounded-xl border border-[#3B0E1A]/15 bg-[#3B0E1A]/10 p-3 text-left"
                     style={{ borderLeftColor: c.classTypeColor ?? "#C9A5A8", borderLeftWidth: 3 }}
                   >
@@ -1042,7 +1051,7 @@ function CalendarTab({
                       return (
                         <div
                           key={c.id}
-                          onClick={() => { setSelectedClass(c); setSheetOpen(true); }}
+                          onClick={() => openClassDetail(c)}
                           className="cursor-pointer rounded-xl border border-[#3B0E1A]/12 bg-white p-2.5 transition-all hover:-translate-y-0.5 hover:border-[#3B0E1A]/40"
                           style={{ boxShadow: "0 2px 8px rgba(114,93,81,0.06)" }}
                         >
@@ -1154,7 +1163,13 @@ function CalendarTab({
       </Dialog>
 
       {/* Detail sheet */}
-      <Sheet open={sheetOpen} onOpenChange={(v) => { setSheetOpen(v); if (!v) setNewInstructorId(""); }}>
+      <Sheet open={sheetOpen} onOpenChange={(v) => {
+        setSheetOpen(v);
+        if (!v) {
+          setEditInstructorId("");
+          setEditCapacity("");
+        }
+      }}>
         <SheetContent>
           <SheetHeader><SheetTitle>{selectedClass?.classTypeName ?? "Clase"}</SheetTitle></SheetHeader>
           {selectedClass && (
@@ -1180,47 +1195,77 @@ function CalendarTab({
               {/* ── Attendees list ── */}
               <ClassAttendees classId={selectedClass.id} />
 
-              {/* ── Cambio de instructora ── */}
+              {/* ── Edición de coach y cupo ── */}
               {!selectedClass.isCancelled && (
                 <div className="pt-2 border-t border-[#3B0E1A]/15 mt-2">
-                  <Label className="text-xs uppercase tracking-wide text-[#260910]/70">Cambiar instructora</Label>
+                  <Label className="text-xs uppercase tracking-wide text-[#260910]/70">Editar clase</Label>
                   <p className="text-[11px] text-[#260910]/55 mt-1 mb-2 leading-snug">
-                    Las alumnas reservadas serán notificadas automáticamente por email y WhatsApp.
+                    Puedes cambiar la coach/instructora y el cupo sin cancelar la clase. Si cambia la instructora, se avisará automáticamente a las alumnas reservadas.
                   </p>
-                  <div className="flex gap-2">
-                    <Select
-                      value={newInstructorId}
-                      onValueChange={setNewInstructorId}
-                    >
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Selecciona instructora" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {instructors
-                          .filter((inst) => inst.id !== selectedClass.instructorId)
-                          .map((inst) => (
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_7.5rem]">
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-[#260910]/60">Coach / instructora</Label>
+                      <Select value={editInstructorId} onValueChange={setEditInstructorId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona instructora" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {instructors.map((inst) => (
                             <SelectItem key={inst.id} value={inst.id}>
                               {inst.displayName}
                             </SelectItem>
                           ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      onClick={() => {
-                        if (!newInstructorId) {
-                          toast({ title: "Selecciona una instructora antes de confirmar.", variant: "destructive" });
-                          return;
-                        }
-                        const newName = instructors.find((i) => i.id === newInstructorId)?.displayName ?? "la instructora";
-                        if (!window.confirm(`¿Cambiar a "${newName}" y notificar a las alumnas reservadas?`)) return;
-                        changeInstructorMutation.mutate({ classId: selectedClass.id, instructorId: newInstructorId });
-                      }}
-                      disabled={changeInstructorMutation.isPending || !newInstructorId}
-                      className="bg-[#3B0E1A] text-white hover:bg-[#260910]"
-                    >
-                      {changeInstructorMutation.isPending ? "..." : "Cambiar"}
-                    </Button>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-[#260910]/60">Cupo máximo</Label>
+                      <Input
+                        type="number"
+                        min={selectedClass.bookedCount ?? selectedClass.currentBookings ?? 0}
+                        max={100}
+                        inputMode="numeric"
+                        value={editCapacity}
+                        onChange={(event) => setEditCapacity(event.target.value)}
+                      />
+                    </div>
                   </div>
+                  <p className="mt-2 text-[11px] text-[#260910]/55">
+                    No puedes reducir el cupo por debajo de {(selectedClass.bookedCount ?? selectedClass.currentBookings ?? 0)} lugar{(selectedClass.bookedCount ?? selectedClass.currentBookings ?? 0) === 1 ? "" : "es"} ya ocupado{(selectedClass.bookedCount ?? selectedClass.currentBookings ?? 0) === 1 ? "" : "s"}.
+                  </p>
+                  <Button
+                    className="mt-3 w-full bg-[#3B0E1A] text-white hover:bg-[#260910]"
+                    disabled={updateClassMutation.isPending}
+                    onClick={() => {
+                      const occupied = Number(selectedClass.bookedCount ?? selectedClass.currentBookings ?? 0);
+                      const capacity = Number(editCapacity);
+                      if (!Number.isInteger(capacity) || capacity < 1 || capacity > 100) {
+                        toast({ title: "El cupo debe ser un número entero entre 1 y 100.", variant: "destructive" });
+                        return;
+                      }
+                      if (capacity < occupied) {
+                        toast({ title: `El cupo no puede ser menor que los ${occupied} lugares ya ocupados.`, variant: "destructive" });
+                        return;
+                      }
+                      if (!editInstructorId) {
+                        toast({ title: "Selecciona una instructora.", variant: "destructive" });
+                        return;
+                      }
+                      const currentCapacity = Number(selectedClass.maxCapacity ?? selectedClass.capacity ?? 0);
+                      const instructorChanged = editInstructorId !== selectedClass.instructorId;
+                      if (!instructorChanged && capacity === currentCapacity) {
+                        toast({ title: "No hay cambios por guardar." });
+                        return;
+                      }
+                      if (instructorChanged) {
+                        const newName = instructors.find((instructor) => instructor.id === editInstructorId)?.displayName ?? "la instructora";
+                        if (!window.confirm(`¿Cambiar a "${newName}" y notificar a las alumnas reservadas?`)) return;
+                      }
+                      updateClassMutation.mutate({ classId: selectedClass.id, instructorId: editInstructorId, maxCapacity: capacity });
+                    }}
+                  >
+                    {updateClassMutation.isPending ? "Guardando..." : "Guardar cambios"}
+                  </Button>
                 </div>
               )}
 
