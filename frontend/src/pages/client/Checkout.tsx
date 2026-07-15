@@ -384,7 +384,10 @@ const Checkout = () => {
     mutationFn: () =>
       api.post("/orders", {
         planId: selectedPlan.id,
-        discountCode: activeDiscount?.code,
+        // El backend vuelve a validar el código con el método de pago actual.
+        // Enviar el texto validado evita perder el cupón durante el cambio
+        // asíncrono de transferencia a tarjeta.
+        discountCode: discountResult && discountCode.trim() ? discountCode.trim() : undefined,
         paymentMethod,
       }),
     onSuccess: (res) => {

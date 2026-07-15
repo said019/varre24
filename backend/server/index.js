@@ -5029,11 +5029,13 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
 
     // ── Órdenes pendientes duplicadas para el mismo plan ──
     const pendingDup = await client.query(
-      `SELECT id, status, payment_method, mp_checkout_url, order_number
-         FROM orders
-        WHERE user_id = $1 AND plan_id = $2
-          AND status IN ('pending_payment', 'pending_verification')
-        ORDER BY created_at DESC
+      `SELECT o.id, o.status, o.payment_method, o.mp_checkout_url, o.order_number,
+              dc.code AS discount_code
+         FROM orders o
+         LEFT JOIN discount_codes dc ON dc.id = o.discount_code_id
+        WHERE o.user_id = $1 AND o.plan_id = $2
+          AND o.status IN ('pending_payment', 'pending_verification')
+        ORDER BY o.created_at DESC
         LIMIT 1`,
       [req.userId, planId]
     );
@@ -5044,6 +5046,15 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       // devolver (o regenerar) su checkout de MercadoPago. Antes esto devolvía
       // 409 y el cliente quedaba atascado tras un intento de pago fallido.
       if (paymentMethod === "card" && dup.status === "pending_payment") {
+        const requestedDiscountCode = String(discountCode || "").trim().toUpperCase();
+        const existingDiscountCode = String(dup.discount_code || "").trim().toUpperCase();
+        if (requestedDiscountCode !== existingDiscountCode) {
+          return res.status(409).json({
+            message: "Ya tienes un checkout pendiente con otro precio. Cancela esa orden desde Mis órdenes y vuelve a aplicar el cupón.",
+            existingOrderId: dup.id,
+            existingOrderStatus: dup.status,
+          });
+        }
         try {
           let checkoutUrl = dup.mp_checkout_url || null;
           if (!checkoutUrl && isMercadoPagoEnabled()) {
