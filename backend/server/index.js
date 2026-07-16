@@ -14189,19 +14189,44 @@ app.get("/api/instructors", adminMiddleware, async (req, res) => {
 
 // POST /api/instructors
 app.post("/api/instructors", adminMiddleware, async (req, res) => {
+  const { displayName, email, phone, bio, specialties, isActive = true, photoFocusX = 50, photoFocusY = 50 } = req.body;
+  if (!displayName) return res.status(400).json({ message: "Nombre requerido" });
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  if (!cleanEmail) return res.status(400).json({ message: "Email requerido (se usa para el acceso de la instructora)" });
+  const specialtiesValue = serializeSpecialtiesForDb(specialties);
+  const safeFocusX = Math.max(0, Math.min(100, Number(photoFocusX || 50)));
+  const safeFocusY = Math.max(0, Math.min(100, Number(photoFocusY || 50)));
+  const client = await pool.connect();
   try {
-    const { displayName, email, phone, bio, specialties, isActive = true, photoFocusX = 50, photoFocusY = 50 } = req.body;
-    if (!displayName) return res.status(400).json({ message: "Nombre requerido" });
-    const specialtiesValue = serializeSpecialtiesForDb(specialties);
-    const safeFocusX = Math.max(0, Math.min(100, Number(photoFocusX || 50)));
-    const safeFocusY = Math.max(0, Math.min(100, Number(photoFocusY || 50)));
-    const r = await pool.query(
-      "INSERT INTO instructors (display_name, email, phone, bio, specialties, is_active, photo_focus_x, photo_focus_y) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
-      [displayName, email || null, phone || null, bio || null, specialtiesValue, isActive, safeFocusX, safeFocusY]
+    await client.query("BEGIN");
+    // instructors.user_id es NOT NULL (FK a users) — toda instructora necesita una
+    // cuenta de acceso vinculada. Si ya existe un usuario con ese email lo
+    // reutilizamos, promoviéndolo a 'instructor' solo si era 'client' (nunca
+    // degradamos a alguien que ya sea admin/reception/instructor). El teléfono es
+    // NOT NULL en users; si no se dio uno, usamos un placeholder (el contacto real
+    // de la instructora vive en instructors.phone, columna aparte).
+    const userRes = await client.query(
+      `INSERT INTO users (email, phone, display_name, role)
+       VALUES ($1, $2, $3, 'instructor')
+       ON CONFLICT (email) DO UPDATE
+         SET role = CASE WHEN users.role = 'client' THEN 'instructor' ELSE users.role END
+       RETURNING id`,
+      [cleanEmail, phone || "0000000000", displayName]
     );
+    const userId = userRes.rows[0].id;
+    const r = await client.query(
+      `INSERT INTO instructors (user_id, display_name, email, phone, bio, specialties, is_active, photo_focus_x, photo_focus_y)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [userId, displayName, cleanEmail, phone || null, bio || null, specialtiesValue, isActive, safeFocusX, safeFocusY]
+    );
+    await client.query("COMMIT");
     return res.status(201).json({ data: camelRow(r.rows[0]) });
   } catch (err) {
-    return res.status(500).json({ message: "Error interno" });
+    await client.query("ROLLBACK").catch(() => {});
+    console.error("POST /api/instructors error:", err.message);
+    return res.status(500).json({ message: "Error interno al crear el instructor" });
+  } finally {
+    client.release();
   }
 });
 
@@ -14334,20 +14359,30 @@ app.post("/api/instructors/:id/magic-link", adminMiddleware, async (req, res) =>
     const r = await pool.query("SELECT * FROM instructors WHERE id = $1", [req.params.id]);
     if (!r.rows.length) return res.status(404).json({ message: "Instructor no encontrado" });
     const ins = r.rows[0];
-    // Find or create a user account for this instructor
+    // Find or create a user account for this instructor. Preferimos el user_id ya
+    // vinculado; si por alguna razón falta (fila antigua/importada), buscamos o
+    // creamos por email y lo vinculamos de una vez para no crear un usuario nuevo
+    // cada vez que se pida un magic link.
     let userRow = null;
-    if (ins.email) {
+    if (ins.user_id) {
+      const uRes = await pool.query("SELECT * FROM users WHERE id = $1", [ins.user_id]);
+      userRow = uRes.rows[0] || null;
+    }
+    if (!userRow && ins.email) {
       const uRes = await pool.query("SELECT * FROM users WHERE email = $1 LIMIT 1", [ins.email]);
       if (uRes.rows.length) {
         userRow = uRes.rows[0];
       } else {
-        // Create a user for the instructor
+        // `is_verified` no existe en `users` — columna eliminada en una migración
+        // vieja; esta INSERT tronaba en silencio antes de este fix. `phone` es
+        // NOT NULL: usamos el de la instructora si lo tiene, si no un placeholder.
         const newU = await pool.query(
-          `INSERT INTO users (email, display_name, role, is_verified) VALUES ($1, $2, 'instructor', true) RETURNING *`,
-          [ins.email, ins.display_name]
+          `INSERT INTO users (email, phone, display_name, role) VALUES ($1, $2, $3, 'instructor') RETURNING *`,
+          [ins.email, ins.phone || "0000000000", ins.display_name]
         );
         userRow = newU.rows[0];
       }
+      await pool.query("UPDATE instructors SET user_id = $1 WHERE id = $2", [userRow.id, ins.id]);
     }
     if (!userRow) return res.status(400).json({ message: "El instructor necesita un email para generar magic link" });
     // Generate a short-lived JWT
