@@ -14,14 +14,45 @@ if (process.env.RESEND_API_KEY) {
 }
 
 const FROM_EMAIL = process.env.EMAIL_FROM || "VARRE24 <onboarding@resend.dev>";
-const SITE_URL = String(process.env.SITE_URL || process.env.APP_URL || "https://varre24-web-production.up.railway.app").replace(/\/+$/, "");
-const LOGO_URL = `${SITE_URL}/pr-logo-email.png`;
+const CANONICAL_APP_URL = "https://www.varre24fit.com";
+
+function normalizePublicUrl(value, fallback = CANONICAL_APP_URL) {
+  const normalized = String(value || fallback).trim().replace(/\/+$/, "");
+  try {
+    // Railway es la infraestructura, no una dirección que deban ver las alumnas.
+    // Conservamos este guard para instalaciones antiguas que aún tengan APP_URL
+    // apuntando al dominio temporal de Railway.
+    if (new URL(normalized).hostname.endsWith(".up.railway.app")) return fallback;
+  } catch {
+    return fallback;
+  }
+  return normalized;
+}
+
+const APP_URL = normalizePublicUrl(
+  process.env.EMAIL_PUBLIC_URL || process.env.FRONTEND_URL || process.env.APP_URL,
+);
+const EMAIL_ASSET_URL = normalizePublicUrl(process.env.EMAIL_ASSET_URL || APP_URL, APP_URL);
+const LOGO_URL = `${EMAIL_ASSET_URL}/brand/varre24-logo-email-cream.png`;
+
+function customerFacingUrl(value) {
+  try {
+    const url = new URL(String(value || ""), `${APP_URL}/`);
+    if (url.hostname.endsWith(".up.railway.app")) {
+      return new URL(`${url.pathname}${url.search}${url.hash}`, `${APP_URL}/`).toString();
+    }
+    return url.toString();
+  } catch {
+    return APP_URL;
+  }
+}
 
 // ─── Brand palette (MODDO — vino/rosa, la misma del sitio y el admin) ────────
 const B = {
-  bg:        "#F3EFE9",   // ivory — fondo de página
-  card:      "#FCF8F7",   // surface — fondo de la tarjeta
-  border:    "#E8D7D6",   // hairline
+  bg:        "#E9DFDD",   // rosy canvas — fondo exterior
+  card:      "#FCF8F7",   // surface — contenido
+  ivory:     "#F3EFE9",   // marfil de marca
+  border:    "#E8D7D6",   // hairline rosado
   brand:     "#3B0E1A",   // burgundy — acento primario (botones, links, barra superior)
   brandDark: "#320C16",   // burgundy hover/deep
   rose:      "#C9A5A8",   // dusty rose — acento secundario
@@ -36,19 +67,24 @@ const B = {
 // Poppins vía @import con la misma pila web-safe como fallback: Outlook desktop
 // ignora @import y cae directo a Helvetica; Gmail/Apple Mail/Yahoo sí la cargan.
 const FONT = "'Poppins','Helvetica Neue',Helvetica,Arial,sans-serif";
-const DISPLAY_URL = SITE_URL.replace(/^https?:\/\//, "");
+const DISPLAY_URL = APP_URL.replace(/^https?:\/\//, "");
 
 // ─── Base layout ──────────────────────────────────────────────────────────────
 function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } = {}) {
-  const ctaBlock = ctaUrl
-    ? `<tr><td align="center" style="padding:28px 0 12px;">
-         <a href="${ctaUrl}"
-            style="display:inline-block;background:${B.brand};
-                   color:${B.pink};font-family:${FONT};
-                   font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-                   text-decoration:none;border-radius:50px;padding:14px 40px;">
-           ${ctaText}
-         </a>
+  const resolvedCtaUrl = ctaUrl ? customerFacingUrl(ctaUrl) : "";
+  const ctaBlock = resolvedCtaUrl
+    ? `<tr><td class="email-pad" align="left" style="padding:28px 48px 10px;">
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+           <tr><td bgcolor="${B.brand}" style="border-radius:999px;">
+             <a href="${resolvedCtaUrl}"
+                style="display:inline-block;color:${B.ivory};font-family:${FONT};
+                       font-size:11px;font-weight:600;letter-spacing:1.8px;
+                       text-transform:uppercase;text-decoration:none;
+                       border:1px solid ${B.brand};border-radius:999px;padding:14px 28px;">
+               ${ctaText}&nbsp;&nbsp;&rarr;
+             </a>
+           </td></tr>
+         </table>
        </td></tr>`
     : "";
 
@@ -61,6 +97,12 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
   <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    @media only screen and (max-width:620px) {
+      .email-shell-pad { padding:0 !important; }
+      .email-pad { padding-left:24px !important; padding-right:24px !important; }
+      .email-logo { max-width:250px !important; }
+      .email-meta { letter-spacing:1.2px !important; }
+    }
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:${B.bg};">
@@ -69,55 +111,67 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
     ${preheader}&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;
   </div>
 
-  <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
-         style="background-color:${B.bg};">
-    <tr><td align="center" style="padding:40px 16px 48px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+         style="width:100%;background-color:${B.bg};">
+    <tr><td class="email-shell-pad" align="center" style="padding:36px 12px 44px;">
 
-      <!-- Card -->
-      <table role="presentation" cellpadding="0" cellspacing="0" width="560"
-             style="max-width:560px;width:100%;background-color:${B.card};
-                    border:1px solid ${B.border};border-radius:16px;
-                    box-shadow:0 4px 24px rgba(59,14,26,0.08);">
+      <!-- Editorial email canvas -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+             style="max-width:600px;width:100%;background-color:${B.card};
+                    border:1px solid ${B.border};">
 
-        <!-- Top accent bar -->
-        <tr><td style="height:4px;background:linear-gradient(90deg,${B.brand},${B.pink});
-                        border-radius:16px 16px 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
-
-        <!-- Logo -->
-        <tr><td align="center" style="padding:32px 40px 4px;">
-          <a href="${SITE_URL}" style="text-decoration:none;">
-            <img src="${LOGO_URL}" alt="VARRE24" width="200" height="auto"
-                 style="display:block;max-width:200px;" />
+        <!-- Branded header -->
+        <tr><td class="email-pad" bgcolor="${B.brand}" style="background-color:${B.brand};padding:16px 36px 0;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td class="email-meta" style="font-family:${FONT};font-size:9px;font-weight:500;letter-spacing:2px;
+                         text-transform:uppercase;color:${B.rose};">Estudio de movimiento</td>
+              <td class="email-meta" align="right" style="font-family:${FONT};font-size:9px;font-weight:500;letter-spacing:2px;
+                         text-transform:uppercase;color:${B.rose};">N&aacute;poles &middot; CDMX</td>
+            </tr>
+          </table>
+        </td></tr>
+        <tr><td class="email-pad" align="center" bgcolor="${B.brand}"
+                style="background-color:${B.brand};padding:38px 48px 12px;">
+          <a href="${APP_URL}" style="text-decoration:none;">
+            <img class="email-logo" src="${LOGO_URL}" alt="VARRE24" width="300"
+                 style="display:block;width:100%;max-width:300px;height:auto;border:0;" />
           </a>
         </td></tr>
-
-        <!-- Tagline -->
-        <tr><td align="center" style="padding:0 40px 20px;">
+        <tr><td class="email-pad" align="center" bgcolor="${B.brand}"
+                style="background-color:${B.brand};padding:0 40px 38px;">
           <p style="font-family:${FONT};font-size:10px;font-weight:500;
-                    letter-spacing:2.5px;text-transform:uppercase;color:${B.rose};margin:0;">
-            Barre &middot; Pilates &middot; Bienestar
+                    letter-spacing:4px;text-transform:uppercase;color:${B.ivory};margin:0;">
+            Barre &middot; Pilates
           </p>
         </td></tr>
 
         <!-- Content -->
-        <tr><td style="padding:0 40px;">
+        <tr><td class="email-pad" style="padding:38px 48px 0;background-color:${B.card};">
           ${content}
         </td></tr>
 
         <!-- CTA -->
         ${ctaBlock}
 
-        <!-- Divider -->
-        <tr><td style="padding:16px 40px 0;">
-          <hr style="border:none;border-top:1px solid ${B.border};margin:0;" />
+        <!-- Brand close -->
+        <tr><td class="email-pad" style="padding:34px 48px 38px;background-color:${B.card};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr><td style="border-top:1px solid ${B.border};font-size:0;line-height:0;">&nbsp;</td></tr>
+            <tr><td style="padding-top:24px;font-family:${FONT};font-size:18px;font-weight:300;
+                           line-height:1.4;color:${B.brand};">
+              Movimiento con intenci&oacute;n.<br>Fuerza que se siente.
+            </td></tr>
+          </table>
         </td></tr>
 
         <!-- Footer -->
-        <tr><td align="center" style="padding:20px 40px 28px;">
-          <p style="font-family:${FONT};font-size:11px;
-                    color:${B.muted};margin:0;line-height:1.7;">
-            © ${new Date().getFullYear()} VARRE24 · Nápoles, CDMX<br>
-            <a href="${SITE_URL}" style="color:${B.brand};text-decoration:none;">${DISPLAY_URL}</a>
+        <tr><td class="email-pad" align="center" bgcolor="${B.brandDark}"
+                style="background-color:${B.brandDark};padding:22px 36px 24px;">
+          <p style="font-family:${FONT};font-size:10px;letter-spacing:0.4px;
+                    color:${B.rose};margin:0;line-height:1.8;">
+            &copy; ${new Date().getFullYear()} VARRE24 &middot; N&aacute;poles, CDMX<br>
+            <a href="${APP_URL}" style="color:${B.ivory};text-decoration:none;">${DISPLAY_URL}</a>
           </p>
         </td></tr>
 
@@ -130,17 +184,17 @@ function baseLayout({ preheader = "", content = "", ctaUrl = "", ctaText = "" } 
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function h1(text) {
-  return `<h1 style="font-family:${FONT};font-size:24px;font-weight:300;
-                      color:${B.dark};margin:16px 0 8px;line-height:1.3;">${text}</h1>`;
+  return `<h1 style="font-family:${FONT};font-size:28px;font-weight:300;
+                      letter-spacing:-0.3px;color:${B.dark};margin:0 0 12px;line-height:1.25;">${text}</h1>`;
 }
 function h2(text) {
-  return `<h2 style="font-family:${FONT};font-size:16px;
-                      font-weight:600;color:${B.brand};margin:20px 0 6px;text-transform:uppercase;
-                      letter-spacing:0.5px;">${text}</h2>`;
+  return `<h2 style="font-family:${FONT};font-size:11px;
+                      font-weight:600;color:${B.brand};margin:24px 0 8px;text-transform:uppercase;
+                      letter-spacing:2px;">${text}</h2>`;
 }
 function p(text) {
   return `<p style="font-family:${FONT};font-size:15px;
-                     color:${B.body};line-height:1.7;margin:0 0 12px;">${text}</p>`;
+                     color:${B.body};line-height:1.75;margin:0 0 14px;">${text}</p>`;
 }
 function small(text) {
   return `<p style="font-family:${FONT};font-size:13px;
@@ -149,38 +203,37 @@ function small(text) {
 function infoRow(label, value) {
   return `<tr>
     <td style="font-family:${FONT};font-size:13px;
-               color:${B.muted};padding:10px 0;border-bottom:1px solid ${B.border};">${label}</td>
+               color:${B.muted};padding:12px 16px;border-bottom:1px solid ${B.border};">${label}</td>
     <td style="font-family:${FONT};font-size:13px;
-               color:${B.dark};font-weight:600;padding:10px 0 10px 12px;
+               color:${B.dark};font-weight:600;padding:12px 16px 12px 10px;
                border-bottom:1px solid ${B.border};text-align:right;">${value}</td>
   </tr>`;
 }
 function infoTable(rows) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%"
-                  style="margin:16px 0 20px;">
+                  style="margin:20px 0 22px;background:${B.ivory};border:1px solid ${B.border};">
     ${rows.join("")}
   </table>`;
 }
 function pill(text, color) {
-  return `<span style="display:inline-block;background:${color}1a;border:1px solid ${color}66;
+  return `<span style="display:inline-block;background:${B.ivory};border:1px solid ${color};
                         color:${color};border-radius:50px;font-size:11px;font-weight:700;
-                        padding:4px 14px;letter-spacing:0.5px;text-transform:uppercase;
+                        padding:5px 14px;letter-spacing:1.2px;text-transform:uppercase;
                         font-family:${FONT};">${text}</span>`;
 }
-// Info/success/warning/error se mantienen semánticos (verde=bien, ámbar=ojo,
-// rojo=mal) — el morado/rosa de marca queda para "info" neutral, no para
-// success/error, así una alumna reconoce el color sin leer el texto.
+// Los estados conservan contraste semántico, pero dentro de la paleta cálida
+// del estudio para que ninguna notificación parezca de un sistema ajeno.
 function alertBox(text, type = "info") {
   const colors = {
-    info:    { bg: `${B.pink}40`,  border: B.rose,    text: B.brand },
-    success: { bg: "#ecfdf5",      border: "#10b981", text: "#065f46" },
-    warning: { bg: "#fef3c7",      border: "#f59e0b", text: "#92400e" },
-    error:   { bg: "#fdf1f0",      border: "#9B5B53", text: "#7a3f3a" },
+    info:    { bg: "#F4E6EA", border: B.rose,    text: B.brand },
+    success: { bg: "#F1E9EB", border: B.rose,    text: B.brand },
+    warning: { bg: "#F7EFE1", border: "#C18A45", text: "#76501F" },
+    error:   { bg: "#F6E9E7", border: "#9B5B53", text: "#713E39" },
   };
   const c = colors[type] || colors.info;
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%"
                   style="background:${c.bg};border-left:4px solid ${c.border};
-                         border-radius:0 8px 8px 0;margin:12px 0 20px;">
+                         margin:14px 0 22px;">
     <tr><td style="padding:14px 16px;font-family:${FONT};
                     font-size:14px;color:${c.text};line-height:1.6;">${text}</td></tr>
   </table>`;
@@ -218,7 +271,9 @@ function fmtTime(timeStr) {
 async function sendEmail({ to, subject, html }) {
   if (!resend) {
     console.log(`[Email] RESEND_API_KEY not set — skipping email to ${to} (${subject})`);
-    return;
+    // El resultado permite previsualizar y probar las plantillas sin hacer un
+    // envío real. En producción, con Resend configurado, el flujo no cambia.
+    return { skipped: true, subject, html };
   }
   try {
     const { data, error } = await resend.emails.send({
@@ -227,10 +282,15 @@ async function sendEmail({ to, subject, html }) {
       subject,
       html,
     });
-    if (error) console.error("[Email] Resend error:", error);
-    else console.log(`[Email] Sent "${subject}" → ${to} (id: ${data?.id})`);
+    if (error) {
+      console.error("[Email] Resend error:", error);
+      return { error };
+    }
+    console.log(`[Email] Sent "${subject}" → ${to} (id: ${data?.id})`);
+    return { data };
   } catch (err) {
     console.error("[Email] Exception sending email:", err.message);
+    return { error: err };
   }
 }
 
@@ -254,10 +314,10 @@ async function sendMembershipActivated(opts) {
   const html = baseLayout({
     preheader: `Tu membresía ${planName} está activa. ¡Reserva tus clases!`,
     content,
-    ctaUrl: `${SITE_URL}/app/classes`,
+    ctaUrl: `${APP_URL}/app/classes`,
     ctaText: "Reservar clases",
   });
-  await sendEmail({ to, subject: `Tu membresía está activa — VARRE24`, html });
+  return sendEmail({ to, subject: `Tu membresía está activa — VARRE24`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -268,7 +328,7 @@ async function sendBookingConfirmed(opts) {
 
   const statusPill = isWaitlist
     ? pill("Lista de espera", B.amber)
-    : pill("Confirmada", B.rose);
+    : pill("Confirmada", B.brand);
 
   const classesLeftText = classesLeft === null
     ? "Ilimitadas"
@@ -300,10 +360,10 @@ async function sendBookingConfirmed(opts) {
   const html = baseLayout({
     preheader: isWaitlist ? `En lista de espera para ${className}` : `Reserva confirmada: ${className} — ${fmtDate(date)}`,
     content,
-    ctaUrl: `${SITE_URL}/app/bookings`,
+    ctaUrl: `${APP_URL}/app/bookings`,
     ctaText: "Ver mis reservas",
   });
-  await sendEmail({ to, subject: isWaitlist ? `En lista de espera — ${className}` : `Reserva confirmada — ${className}`, html });
+  return sendEmail({ to, subject: isWaitlist ? `En lista de espera — ${className}` : `Reserva confirmada — ${className}`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -336,10 +396,10 @@ async function sendBookingCancelled(opts) {
   const html = baseLayout({
     preheader: creditRestored ? "Clase devuelta a tu paquete." : "Cancelación tardía — clase no devuelta.",
     content,
-    ctaUrl: `${SITE_URL}/app/classes`,
+    ctaUrl: `${APP_URL}/app/classes`,
     ctaText: "Ver horario",
   });
-  await sendEmail({ to, subject: `Reserva cancelada — ${className}`, html });
+  return sendEmail({ to, subject: `Reserva cancelada — ${className}`, html });
 }
 
 // Cancelación iniciada por el estudio (no por la alumna) — la clase entera se
@@ -364,10 +424,10 @@ async function sendClassCancelledByStudio(opts) {
   const html = baseLayout({
     preheader: `Cancelamos ${className} del ${fmtDate(date)}. Tu clase fue devuelta a tu paquete.`,
     content,
-    ctaUrl: `${SITE_URL}/app/classes`,
+    ctaUrl: `${APP_URL}/app/classes`,
     ctaText: "Ver horario",
   });
-  await sendEmail({ to, subject: `Clase cancelada por el estudio — ${className}`, html });
+  return sendEmail({ to, subject: `Clase cancelada por el estudio — ${className}`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -395,10 +455,10 @@ async function sendWeeklyReminder(opts) {
   const html = baseLayout({
     preheader: `Nueva semana — ${classesLeft === null ? "clases ilimitadas" : `${classesLeft} clases disponibles`}.`,
     content,
-    ctaUrl: `${SITE_URL}/app/classes`,
+    ctaUrl: `${APP_URL}/app/classes`,
     ctaText: "Programar mi semana",
   });
-  await sendEmail({ to, subject: `Programa tu semana — VARRE24`, html });
+  return sendEmail({ to, subject: `Programa tu semana — VARRE24`, html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -430,10 +490,10 @@ async function sendRenewalReminder(opts) {
   const html = baseLayout({
     preheader: isLastClass ? "¡Solo te queda 1 clase! Renueva tu paquete." : "Tu membresía vence pronto — renueva ahora.",
     content,
-    ctaUrl: `${SITE_URL}/app/checkout`,
+    ctaUrl: `${APP_URL}/app/checkout`,
     ctaText: "Renovar membresía",
   });
-  await sendEmail({
+  return sendEmail({
     to,
     subject: isLastClass
       ? `Te queda 1 clase — Renueva tu membresía`
@@ -448,8 +508,8 @@ async function sendRenewalReminder(opts) {
 async function sendPasswordResetEmail(opts) {
   const { to, name, token, resetUrl } = opts;
   const firstName = String(name || "").trim().split(/\s+/)[0] || "Alumna";
-  const resolvedResetUrl = String(
-    resetUrl || `${SITE_URL}/auth/reset-password?token=${encodeURIComponent(token)}`,
+  const resolvedResetUrl = customerFacingUrl(
+    resetUrl || `${APP_URL}/auth/reset-password?token=${encodeURIComponent(token)}`,
   );
   const content = `
     ${h1(`Recupera tu contraseña, ${firstName}`)}
@@ -464,7 +524,7 @@ async function sendPasswordResetEmail(opts) {
     ctaUrl: resolvedResetUrl,
     ctaText: "Restablecer contraseña",
   });
-  await sendEmail({ to, subject: "Restablecer contraseña — VARRE24", html });
+  return sendEmail({ to, subject: "Restablecer contraseña — VARRE24", html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -481,10 +541,10 @@ async function sendOrderRejected(opts) {
   const html = baseLayout({
     preheader: "Tu comprobante de pago fue revisado — VARRE24",
     content,
-    ctaUrl: `${SITE_URL}/app/checkout`,
+    ctaUrl: `${APP_URL}/app/checkout`,
     ctaText: "Reintentar pago",
   });
-  await sendEmail({ to, subject: "Comprobante no aprobado — VARRE24", html });
+  return sendEmail({ to, subject: "Comprobante no aprobado — VARRE24", html });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -513,30 +573,31 @@ async function sendBirthdayGreeting({ to, name, message, ctaUrl, ctaText }) {
   const paragraphs = safeBody.split(/<br\/><br\/>/).map((para) => p(para)).join("");
 
   const heroBlock = `
-    <tr><td align="center" style="padding:8px 0 24px;">
-      <div style="display:inline-block;font-size:48px;line-height:1;letter-spacing:0.18em;">🎂 🌸 🎂</div>
-      <div style="margin-top:14px;font-family:Georgia,serif;font-style:italic;font-size:13px;letter-spacing:0.32em;text-transform:uppercase;color:${B.brand};">
-        Feliz cumpleaños
+    <div style="padding:2px 0 24px;">
+      <div style="font-family:${FONT};font-size:10px;font-weight:600;letter-spacing:2.6px;
+                  text-transform:uppercase;color:${B.rose};margin-bottom:12px;">
+        Celebramos contigo
       </div>
-      <h1 style="font-family:${FONT};font-size:36px;line-height:1.1;font-weight:300;color:${B.dark};margin:14px 0 0;letter-spacing:-0.01em;">
-        ${escapeHtml(firstName)}
+      <h1 style="font-family:${FONT};font-size:36px;line-height:1.15;font-weight:300;
+                 color:${B.dark};margin:0;letter-spacing:-0.5px;">
+        Feliz cumplea&ntilde;os,<br>${escapeHtml(firstName)}.
       </h1>
-      <div style="width:48px;height:2px;background:${B.pink};margin:18px auto 0;"></div>
-    </td></tr>`;
+      <div style="width:48px;height:2px;background:${B.pink};margin:22px 0 0;"></div>
+    </div>`;
 
   const content = `
     ${heroBlock}
-    <tr><td style="padding:6px 8px 0;">
+    <div style="padding-top:4px;">
       ${paragraphs}
-    </td></tr>
+    </div>
   `;
   const html = baseLayout({
     preheader: `${firstName}, hoy celebramos contigo · VARRE24`,
     content,
-    ctaUrl: ctaUrl || `${SITE_URL}/app/classes`,
+    ctaUrl: ctaUrl || `${APP_URL}/app/classes`,
     ctaText: ctaText || "Reservar mi clase de cumpleaños",
   });
-  await sendEmail({ to, subject: `🎂 ¡Feliz cumpleaños, ${firstName}! — VARRE24`, html });
+  return sendEmail({ to, subject: `🎂 ¡Feliz cumpleaños, ${firstName}! — VARRE24`, html });
 }
 
 async function sendCustomBroadcast({ to, name, subject, body, ctaUrl, ctaText, headline }) {
@@ -552,7 +613,7 @@ async function sendCustomBroadcast({ to, name, subject, body, ctaUrl, ctaText, h
     ctaUrl: ctaUrl || "",
     ctaText: ctaText || "",
   });
-  await sendEmail({ to, subject: subject || "VARRE24 — Mensaje del estudio", html });
+  return sendEmail({ to, subject: subject || "VARRE24 — Mensaje del estudio", html });
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -578,10 +639,10 @@ async function sendAdminNewOrderToVerify({ to, orderNumber, orderId, planName, a
   const html = baseLayout({
     preheader: `${alumnaName || "Alumna"} subió comprobante — revisa antes de ${expiresDisplay}`,
     content,
-    ctaUrl: `${SITE_URL}/admin/payments`,
+    ctaUrl: `${APP_URL}/admin/payments`,
     ctaText: "Revisar orden",
   });
-  await sendEmail({ to, subject: `Nueva orden por verificar — ${planName || "Plan"}`, html });
+  return sendEmail({ to, subject: `Nueva orden por verificar — ${planName || "Plan"}`, html });
 }
 
 // ─── Exports ──────────────────────────────────────────────────────────────────

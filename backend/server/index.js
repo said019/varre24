@@ -35,7 +35,20 @@ const JWT_SECRET = process.env.JWT_SECRET || "varre24_dev_only_change_me";
 if (!process.env.JWT_SECRET) {
   console.warn("[seguridad] JWT_SECRET no definido — usando un default SOLO para desarrollo. Define JWT_SECRET en producción.");
 }
-const APP_PUBLIC_URL = String(process.env.APP_URL || process.env.SITE_URL || "https://varre24-web-production.up.railway.app").replace(/\/+$/, "");
+const CANONICAL_APP_URL = "https://www.varre24fit.com";
+function normalizePublicAppUrl(value) {
+  const normalized = String(value || CANONICAL_APP_URL).trim().replace(/\/+$/, "");
+  try {
+    return new URL(normalized).hostname.endsWith(".up.railway.app")
+      ? CANONICAL_APP_URL
+      : normalized;
+  } catch {
+    return CANONICAL_APP_URL;
+  }
+}
+const APP_PUBLIC_URL = normalizePublicAppUrl(
+  process.env.EMAIL_PUBLIC_URL || process.env.FRONTEND_URL || process.env.APP_URL || process.env.SITE_URL,
+);
 
 // ─── MercadoPago (Checkout Pro) config ──────────────────────────────────────
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN || "";
@@ -5796,7 +5809,7 @@ app.post("/api/loyalty/redeem", authMiddleware, async (req, res) => {
 
 // ─── Google Wallet helpers ──────────────────────────────────────────────────
 
-const SITE_URL = process.env.SITE_URL || "https://varre24-web-production.up.railway.app";
+const SITE_URL = normalizePublicAppUrl(process.env.SITE_URL || APP_PUBLIC_URL);
 const GW_ISSUER_ID = process.env.GOOGLE_ISSUER_ID || "";
 const GW_ISSUER_NAME = process.env.GOOGLE_ISSUER_NAME || "VARRE24";
 const GW_PROGRAM_NAME = process.env.GOOGLE_PROGRAM_NAME || "VARRE24 Club";
