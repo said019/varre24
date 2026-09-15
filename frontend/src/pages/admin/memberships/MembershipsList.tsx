@@ -53,6 +53,8 @@ interface Membership {
   paymentMethod?: string;
   startDate?: string;
   endDate?: string;
+  activatedAt?: string;
+  cancelledAt?: string;
   classesRemaining?: number | null;
   classLimit?: number | null;
 }
@@ -138,7 +140,13 @@ const MembershipTable = ({ status, title }: { status?: string; title: string }) 
                       <Badge variant={STATUS_VARIANTS[m.status]}>{STATUS_LABELS[m.status]}</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
-                      {formatStudioDate(m.endDate, { day: "2-digit", month: "short", year: "numeric" }) || "—"}
+                      {m.startDate || m.endDate ? (
+                        <span className="whitespace-nowrap">
+                          {formatStudioDate(m.startDate, { day: "2-digit", month: "short", year: "numeric" }) || "—"}
+                          {" – "}
+                          {formatStudioDate(m.endDate, { day: "2-digit", month: "short", year: "numeric" }) || "—"}
+                        </span>
+                      ) : "—"}
                     </TableCell>
                     <TableCell>
                       {m.classesRemaining === null || m.classesRemaining === undefined

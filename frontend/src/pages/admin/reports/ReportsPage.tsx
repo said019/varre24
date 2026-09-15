@@ -105,7 +105,7 @@ const ReportsPage = () => {
     queryFn: async () => (await api.get("/reports/retention")).data,
   });
 
-  // ── Filtro por rango de fechas + detalle de órdenes ──
+  // ── Filtro por rango de fechas + detalle de movimientos ──
   const [rangeStart, setRangeStart] = useState(monthStartStr());
   const [rangeEnd, setRangeEnd] = useState(todayStr());
   const validRange = !!rangeStart && !!rangeEnd && rangeStart <= rangeEnd;
@@ -116,13 +116,18 @@ const ReportsPage = () => {
     enabled: validRange,
   });
   const detail = (detailRes?.data ?? detailRes ?? {}) as {
-    orders?: any[]; total?: number; count?: number;
+    movements?: any[]; orders?: any[]; total?: number; count?: number;
   };
-  const detailOrders = safeArray<any>(detail.orders);
-  const paymentLabel = (m: string) =>
-    m === "card" ? "Tarjeta (en línea)"
-      : m === "cash" ? "Tarjeta (en estudio)"
-      : m === "transfer" ? "Transferencia" : (m || "—");
+  const detailMovements = safeArray<any>(detail.movements ?? detail.orders);
+  const paymentLabel = (method: string, source: string) =>
+    method === "card"
+      ? source === "order" ? "Tarjeta (en línea)" : "Tarjeta (en estudio)"
+      : method === "cash" ? "Efectivo"
+      : method === "transfer" ? "Transferencia" : (method || "—");
+  const sourceLabel = (source: string) =>
+    source === "order" ? "Compra en app"
+      : source === "walkin" ? "Venta en estudio"
+      : source === "membership" ? "Membresía asignada" : "Movimiento";
   const fmtDateTime = (raw: any) => {
     const d = new Date(raw);
     return Number.isNaN(d.getTime())
@@ -344,7 +349,7 @@ const ReportsPage = () => {
                       : money(n(detail.total))}
                   </div>
                   <div className="text-[11px] text-[#260910]/70">
-                    {n(detail.count)} orden{n(detail.count) === 1 ? "" : "es"} aprobada{n(detail.count) === 1 ? "" : "s"}
+                    {n(detail.count)} movimiento{n(detail.count) === 1 ? "" : "s"}
                   </div>
                 </div>
               </div>
@@ -363,21 +368,22 @@ const ReportsPage = () => {
                         <th className="text-left font-semibold py-2 pr-3">Fecha</th>
                         <th className="text-left font-semibold py-2 pr-3">Cliente</th>
                         <th className="text-left font-semibold py-2 pr-3">Plan</th>
+                        <th className="text-left font-semibold py-2 pr-3">Origen</th>
                         <th className="text-left font-semibold py-2 pr-3">Método</th>
                         <th className="text-right font-semibold py-2">Monto</th>
                       </tr>
                     </thead>
                     <tbody>
                       {loadingDetail ? (
-                        <tr><td colSpan={5} className="py-6 text-center text-[#260910]/60">
+                        <tr><td colSpan={6} className="py-6 text-center text-[#260910]/60">
                           <Loader2 size={16} className="animate-spin inline mr-2" />Cargando…
                         </td></tr>
-                      ) : detailOrders.length === 0 ? (
-                        <tr><td colSpan={5} className="py-6 text-center text-[#260910]/60">
-                          No hay órdenes aprobadas en este período.
+                      ) : detailMovements.length === 0 ? (
+                        <tr><td colSpan={6} className="py-6 text-center text-[#260910]/60">
+                          No hay ingresos registrados en este período.
                         </td></tr>
                       ) : (
-                        detailOrders.map((o) => (
+                        detailMovements.map((o) => (
                           <tr key={o.id} className="border-b border-[#3B0E1A]/8 last:border-0">
                             <td className="py-2.5 pr-3 text-[#260910] whitespace-nowrap">{fmtDateTime(o.created_at)}</td>
                             <td className="py-2.5 pr-3">
@@ -385,7 +391,12 @@ const ReportsPage = () => {
                               <div className="text-[11px] text-[#260910]/60">{o.client_email}</div>
                             </td>
                             <td className="py-2.5 pr-3 text-[#260910]">{o.plan_name || "—"}</td>
-                            <td className="py-2.5 pr-3 text-[#260910]">{paymentLabel(o.payment_method)}</td>
+                            <td className="py-2.5 pr-3 text-[#260910]">
+                              <span className="inline-flex whitespace-nowrap rounded-full bg-[#3B0E1A]/8 px-2 py-1 text-[10px] font-semibold text-[#3B0E1A]">
+                                {sourceLabel(o.source)}
+                              </span>
+                            </td>
+                            <td className="py-2.5 pr-3 text-[#260910]">{paymentLabel(o.payment_method, o.source)}</td>
                             <td className="py-2.5 text-right font-semibold text-[#1A060B] tabular-nums">{money(n(o.total_amount))}</td>
                           </tr>
                         ))
@@ -416,7 +427,7 @@ const ReportsPage = () => {
                   </p>
                 </div>
                 <div className="border-l border-[#3B0E1A]/15 pl-5">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#260910]/55 font-semibold">Órdenes</p>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#260910]/55 font-semibold">Movimientos</p>
                   <p className="font-bebas text-2xl text-[#1A060B] tabular-nums leading-none mt-0.5">{totalOrders}</p>
                 </div>
               </div>
@@ -458,7 +469,7 @@ const ReportsPage = () => {
                           <div className="text-right shrink-0 tabular-nums">
                             <p className="text-[14px] font-bold text-[#1A060B]">{money(row.amount)}</p>
                             <p className="text-[11px] text-[#260910]/65">
-                              {row.count} orden{row.count !== 1 ? "es" : ""}
+                              {row.count} movimiento{row.count !== 1 ? "s" : ""}
                             </p>
                           </div>
                         </li>

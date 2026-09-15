@@ -40,8 +40,12 @@ export function formatStudioDate(
 ): string {
   if (!value) return "";
   const raw = String(value);
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(raw)
-    ? new Date(`${raw}T12:00:00Z`)
+  // node-postgres puede serializar una columna DATE como medianoche UTC
+  // ("2026-08-30T00:00:00.000Z"). Para una fecha civil la hora no existe:
+  // conservamos siempre el YYYY-MM-DD inicial y lo anclamos a mediodía.
+  const civilDate = raw.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+  const date = civilDate
+    ? new Date(`${civilDate}T12:00:00Z`)
     : new Date(raw);
   if (Number.isNaN(date.getTime())) return "";
   return new Intl.DateTimeFormat("es-MX", { timeZone: STUDIO_TIME_ZONE, ...options }).format(date);

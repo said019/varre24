@@ -542,6 +542,30 @@ function formatMexicoDate(value, options = {}) {
   return date.toLocaleDateString("es-MX", { timeZone: STUDIO_TIME_ZONE, ...options });
 }
 
+// Convierte una columna DATE de PostgreSQL a su llave civil sin permitir que
+// JSON/UTC la recorra al día anterior. node-postgres puede devolver DATE como
+// string o como Date según su parser y la configuración del entorno.
+function databaseDateKey(value) {
+  if (!value) return null;
+  const stringMatch = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
+  if (stringMatch) return stringMatch[1];
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) return null;
+  return [
+    value.getFullYear(),
+    String(value.getMonth() + 1).padStart(2, "0"),
+    String(value.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function serializeMembershipDates(row) {
+  if (!row) return row;
+  return {
+    ...row,
+    start_date: databaseDateKey(row.start_date),
+    end_date: databaseDateKey(row.end_date),
+  };
+}
+
 // Las consultas usan CURRENT_DATE/NOW(); el pool debe evaluarlos en CDMX y no
 // en la zona por defecto de Railway (UTC). Se aplica por conexión, incluidos
 // clientes transaccionales obtenidos con pool.connect().
@@ -1329,6 +1353,10 @@ async function ensureSchema() {
     // ── memberships: add fallback name/limit override columns ─────────────
     await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS plan_name_override VARCHAR(255)`).catch(() => { });
     await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS class_limit_override INTEGER`).catch(() => { });
+    await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS activated_by UUID REFERENCES users(id)`).catch(() => { });
+    await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS activated_at TIMESTAMP WITH TIME ZONE`).catch(() => { });
+    await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP WITH TIME ZONE`).catch(() => { });
+    await pool.query(`ALTER TABLE memberships ADD COLUMN IF NOT EXISTS cancellation_reason TEXT`).catch(() => { });
     // Fix existing 9999 unlimited sentinel values → NULL
     await pool.query(`
       UPDATE memberships SET classes_remaining = NULL WHERE classes_remaining >= 9999;
@@ -3523,6 +3551,8 @@ app.get("/api/memberships/my", authMiddleware, async (req, res) => {
     );
     if (!r.rows[0]) return res.json({ data: null });
     const row = camelRows([r.rows[0]])[0];
+    row.startDate = databaseDateKey(row.startDate);
+    row.endDate = databaseDateKey(row.endDate);
     // Treat 9999 or very large numbers as unlimited (null)
     if (row.classesRemaining >= 9999) row.classesRemaining = null;
     if (row.classLimit >= 9999) row.classLimit = null;
@@ -9683,6 +9713,46 @@ app.get("/api/loyalty/points/:userId", adminMiddleware, async (req, res) => {
 
 // ─── Reports sub-routes ──────────────────────────────────────────────────────
 
+// Una sola fuente para todos los importes de Reportes. Además de las órdenes
+// aprobadas incluye las membresías asignadas directamente por el estudio, que
+// no tienen order_id. Mantener esta unión compartida evita que el total mensual
+// muestre ventas que después no aparecen en el detalle por fechas.
+const REPORT_INCOME_MOVEMENTS_CTE = `income_movements AS (
+  SELECT
+    ('order:' || o.id::text) AS id,
+    CASE WHEN o.user_id IS NULL THEN 'walkin' ELSE 'order' END AS source,
+    o.order_number::text AS order_number,
+    o.total_amount::numeric AS total_amount,
+    o.payment_method::text AS payment_method,
+    o.created_at AS created_at,
+    o.approved_at AS approved_at,
+    COALESCE(u.display_name, o.guest_name, 'Venta en estudio') AS client_name,
+    u.email AS client_email,
+    COALESCE(p.name, o.event_details->>'package_name', 'Clase suelta') AS plan_name
+  FROM orders o
+  LEFT JOIN users u ON u.id = o.user_id
+  LEFT JOIN plans p ON p.id = o.plan_id
+  WHERE o.status = 'approved'
+
+  UNION ALL
+
+  SELECT
+    ('membership:' || m.id::text) AS id,
+    'membership' AS source,
+    NULL::text AS order_number,
+    COALESCE(NULLIF(p.discount_price, 0), p.price, 0)::numeric AS total_amount,
+    m.payment_method::text AS payment_method,
+    m.created_at AS created_at,
+    COALESCE(m.activated_at, m.created_at) AS approved_at,
+    COALESCE(u.display_name, 'Clienta') AS client_name,
+    u.email AS client_email,
+    COALESCE(m.plan_name_override, p.name, 'Membresía') AS plan_name
+  FROM memberships m
+  LEFT JOIN users u ON u.id = m.user_id
+  LEFT JOIN plans p ON p.id = m.plan_id
+  WHERE m.order_id IS NULL
+)`;
+
 app.get("/api/reports/overview", adminMiddleware, async (req, res) => {
   try {
     const now = new Date();
@@ -9693,14 +9763,12 @@ app.get("/api/reports/overview", adminMiddleware, async (req, res) => {
     const SLOTS = "(CASE WHEN b.user_id IS NOT NULL AND b.guest_name IS NOT NULL AND b.guest_name <> '' THEN 2 ELSE 1 END)";
     const [members, revenue, bookings, classes, newMembers, reviews] = await Promise.all([
       pool.query("SELECT COUNT(*) FROM memberships WHERE status='active'"),
-      // Ingresos del mes: órdenes aprobadas + membresías de alta manual admin.
+      // Misma fuente que el histórico mensual y el detalle por fechas.
       pool.query(
-        `SELECT
-           (SELECT COALESCE(SUM(total_amount),0) FROM orders
-              WHERE status='approved' AND created_at >= $1)
-         + (SELECT COALESCE(SUM(COALESCE(NULLIF(p.discount_price,0), p.price)),0)
-              FROM memberships m JOIN plans p ON p.id=m.plan_id
-             WHERE m.order_id IS NULL AND m.created_at >= $1) AS total`,
+        `WITH ${REPORT_INCOME_MOVEMENTS_CTE}
+         SELECT COALESCE(SUM(total_amount), 0) AS total
+           FROM income_movements
+          WHERE created_at >= $1::date`,
         [monthStart]
       ),
       // reservas y asistencia de las clases programadas DENTRO del mes actual
@@ -9762,43 +9830,33 @@ app.get("/api/reports/overview", adminMiddleware, async (req, res) => {
 app.get("/api/reports/revenue", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      // Ingresos por mes = órdenes aprobadas + membresías de alta manual
-      // (admin, sin order_id). Antes solo contaba orders y ocultaba la
-      // operación manual del estudio.
+      // El acumulado sale de la misma lista de movimientos que el detalle.
       `WITH months AS (
          SELECT DATE_TRUNC('month', CURRENT_DATE) - (INTERVAL '1 month' * gs.n) AS month_start
          FROM generate_series(0, 11) AS gs(n)
        ),
-       orders_by_month AS (
+       ${REPORT_INCOME_MOVEMENTS_CTE},
+       income_by_month AS (
          SELECT DATE_TRUNC('month', created_at) AS month_start,
                 COALESCE(SUM(total_amount), 0) AS total,
                 COUNT(*) AS count
-           FROM orders
-          WHERE status = 'approved'
-          GROUP BY 1
-       ),
-       manual_by_month AS (
-         SELECT DATE_TRUNC('month', m.created_at) AS month_start,
-                COALESCE(SUM(COALESCE(NULLIF(p.discount_price,0), p.price)), 0) AS total,
-                COUNT(*) AS count
-           FROM memberships m JOIN plans p ON p.id = m.plan_id
-          WHERE m.order_id IS NULL
+           FROM income_movements
           GROUP BY 1
        )
        SELECT m.month_start AS month,
-              COALESCE(o.total, 0) + COALESCE(mm.total, 0) AS amount,
-              COALESCE(o.count, 0) + COALESCE(mm.count, 0) AS count
+              COALESCE(i.total, 0) AS amount,
+              COALESCE(i.count, 0) AS count
          FROM months m
-         LEFT JOIN orders_by_month o  ON o.month_start  = m.month_start
-         LEFT JOIN manual_by_month mm ON mm.month_start = m.month_start
+         LEFT JOIN income_by_month i ON i.month_start = m.month_start
         ORDER BY m.month_start ASC`
     );
     return res.json({ data: r.rows });
   } catch (err) { return res.status(500).json({ message: "Error interno" }); }
 });
 
-// Detalle de órdenes aprobadas en un rango de fechas (para el filtro de
-// Reportes). start/end son "YYYY-MM-DD" inclusivos. Devuelve la lista + total.
+// Detalle de ingresos en un rango de fechas. Incluye tanto órdenes aprobadas
+// como ventas de membresía registradas directamente por el estudio.
+// start/end son "YYYY-MM-DD" inclusivos. Devuelve la lista + total.
 app.get("/api/reports/orders", adminMiddleware, async (req, res) => {
   try {
     const dateRe = /^\d{4}-\d{2}-\d{2}$/;
@@ -9808,21 +9866,24 @@ app.get("/api/reports/orders", adminMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Parámetros start y end (YYYY-MM-DD) requeridos" });
     }
     const r = await pool.query(
-      `SELECT o.id, o.order_number, o.total_amount, o.payment_method,
-              o.created_at, o.approved_at,
-              u.display_name AS client_name, u.email AS client_email,
-              p.name AS plan_name
-         FROM orders o
-         JOIN users u ON u.id = o.user_id
-         LEFT JOIN plans p ON p.id = o.plan_id
-        WHERE o.status = 'approved'
-          AND o.created_at >= $1::date
-          AND o.created_at < ($2::date + INTERVAL '1 day')
-        ORDER BY o.created_at DESC`,
+      `WITH ${REPORT_INCOME_MOVEMENTS_CTE}
+       SELECT *
+         FROM income_movements
+        WHERE created_at >= $1::date
+          AND created_at < ($2::date + INTERVAL '1 day')
+        ORDER BY created_at DESC`,
       [start, end]
     );
     const total = r.rows.reduce((s, x) => s + Number(x.total_amount || 0), 0);
-    return res.json({ data: { orders: r.rows, total, count: r.rows.length } });
+    return res.json({
+      data: {
+        movements: r.rows,
+        // Alias temporal para clientes anteriores de este endpoint.
+        orders: r.rows,
+        total,
+        count: r.rows.length,
+      }
+    });
   } catch (err) {
     console.error("[GET /reports/orders]", err.message);
     return res.status(500).json({ message: "Error interno" });
@@ -11324,16 +11385,12 @@ app.get("/api/admin/stats", adminMiddleware, async (req, res) => {
     const [classesToday, activeMembers, monthlyRevenue, pendingAlerts] = await Promise.all([
       pool.query("SELECT COUNT(*) FROM classes WHERE date = $1", [today]),
       pool.query("SELECT COUNT(*) FROM memberships WHERE status = 'active'"),
-      // Ingresos del mes = órdenes aprobadas (pagos por la app) + membresías
-      // dadas de alta manualmente por admin (sin order_id). Antes solo contaba
-      // las órdenes y ocultaba toda la operación manual del estudio.
+      // Misma fuente contable que la pantalla de Reportes.
       pool.query(
-        `SELECT
-           (SELECT COALESCE(SUM(total_amount),0) FROM orders
-              WHERE status='approved' AND created_at >= $1)
-         + (SELECT COALESCE(SUM(COALESCE(NULLIF(p.discount_price,0), p.price)),0)
-              FROM memberships m JOIN plans p ON p.id=m.plan_id
-             WHERE m.order_id IS NULL AND m.created_at >= $1) AS total`,
+        `WITH ${REPORT_INCOME_MOVEMENTS_CTE}
+         SELECT COALESCE(SUM(total_amount), 0) AS total
+           FROM income_movements
+          WHERE created_at >= $1::date`,
         [monthStart]
       ),
       // Mismo criterio de "pendiente" que la pestaña Pendientes de Pagos:
@@ -11508,8 +11565,10 @@ app.get("/api/memberships", adminMiddleware, async (req, res) => {
         classCategory: m.class_category ?? "all",
         status: m.status,
         paymentMethod: m.payment_method,
-        startDate: m.start_date,
-        endDate: m.end_date,
+        startDate: databaseDateKey(m.start_date),
+        endDate: databaseDateKey(m.end_date),
+        activatedAt: m.activated_at,
+        cancelledAt: m.cancelled_at,
         // 9999 = unlimited → null para que el admin UI muestre "∞"
         classesRemaining: m.classes_remaining != null && Number(m.classes_remaining) >= 9999
           ? null
@@ -11560,9 +11619,11 @@ app.post("/api/memberships", adminMiddleware, async (req, res) => {
     const compInfo = complementType ? COMPLEMENT_MAP[complementType] : null;
     const complementNote = compInfo ? `Complemento: ${compInfo.name} — ${compInfo.specialist}` : null;
     const r = await pool.query(
-      `INSERT INTO memberships (user_id, plan_id, status, payment_method, start_date, end_date, classes_remaining, notes)
-       VALUES ($1,$2,'active',$3,$4,$5,$6,$7) RETURNING *`,
-      [userId, planId, paymentMethod, startStr, endStr, plan.class_limit ?? null, complementNote]
+      `INSERT INTO memberships
+         (user_id, plan_id, status, payment_method, start_date, end_date,
+          classes_remaining, notes, activated_by, activated_at)
+       VALUES ($1,$2,'active',$3,$4,$5,$6,$7,$8,NOW()) RETURNING *`,
+      [userId, planId, paymentMethod, startStr, endStr, plan.class_limit ?? null, complementNote, req.userId]
     );
 
     // ── Registro contable del pago (venta de mostrador) — antes esta ruta
@@ -11642,7 +11703,7 @@ app.post("/api/memberships", adminMiddleware, async (req, res) => {
     }
 
     triggerWalletPassSync(userId, "membership_created");
-    return res.status(201).json({ data: r.rows[0] });
+    return res.status(201).json({ data: serializeMembershipDates(r.rows[0]) });
   } catch (err) {
     console.error("POST /memberships error:", err);
     return res.status(500).json({ message: err.message || "Error interno" });
@@ -11688,10 +11749,11 @@ app.post("/api/admin/memberships/courtesy", adminMiddleware, async (req, res) =>
     const m = await pool.query(
       `INSERT INTO memberships
          (user_id, plan_id, status, payment_method, start_date, end_date,
-          classes_remaining, class_limit_override, plan_name_override, notes)
-       VALUES ($1, $2, 'active', 'cash', $3, $4, $5, $5, 'Clases de cortesía', $6)
+          classes_remaining, class_limit_override, plan_name_override, notes,
+          activated_by, activated_at)
+       VALUES ($1, $2, 'active', 'cash', $3, $4, $5, $5, 'Clases de cortesía', $6, $7, NOW())
        RETURNING *`,
-      [userId, planId, startStr, endStr, classes, notes]
+      [userId, planId, startStr, endStr, classes, notes, req.userId]
     );
 
     // Rastro en el log de créditos (de 0 a N).
@@ -11735,7 +11797,7 @@ app.post("/api/admin/memberships/courtesy", adminMiddleware, async (req, res) =>
     } catch (e) { console.error("[cortesia] notify:", e.message); }
 
     triggerWalletPassSync(userId, "courtesy_granted");
-    return res.status(201).json({ data: m.rows[0], message: `${classes} clase(s) de cortesía otorgada(s)` });
+    return res.status(201).json({ data: serializeMembershipDates(m.rows[0]), message: `${classes} clase(s) de cortesía otorgada(s)` });
   } catch (err) {
     console.error("POST /admin/memberships/courtesy error:", err);
     return res.status(500).json({ message: err.message || "Error interno" });
@@ -11746,7 +11808,10 @@ app.post("/api/admin/memberships/courtesy", adminMiddleware, async (req, res) =>
 app.put("/api/memberships/:id/activate", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      `UPDATE memberships SET status = 'active', updated_at = NOW() WHERE id = $1
+      `UPDATE memberships
+          SET status = 'active', activated_at = NOW(), cancelled_at = NULL,
+              cancellation_reason = NULL, updated_at = NOW()
+        WHERE id = $1
        RETURNING *, (SELECT name FROM plans WHERE id = memberships.plan_id) AS plan_name,
                     (SELECT class_limit FROM plans WHERE id = memberships.plan_id) AS plan_class_limit`,
       [req.params.id]
@@ -11786,7 +11851,7 @@ app.put("/api/memberships/:id/activate", adminMiddleware, async (req, res) => {
     }
 
     triggerWalletPassSync(mem.user_id, "membership_activated");
-    return res.json({ data: mem });
+    return res.json({ data: serializeMembershipDates(mem) });
   } catch (err) {
     return res.status(500).json({ message: "Error interno" });
   }
@@ -11796,12 +11861,14 @@ app.put("/api/memberships/:id/activate", adminMiddleware, async (req, res) => {
 app.put("/api/memberships/:id/cancel", adminMiddleware, async (req, res) => {
   try {
     const r = await pool.query(
-      "UPDATE memberships SET status = 'cancelled', updated_at = NOW() WHERE id = $1 RETURNING *",
+      `UPDATE memberships
+          SET status = 'cancelled', cancelled_at = NOW(), updated_at = NOW()
+        WHERE id = $1 RETURNING *`,
       [req.params.id]
     );
     if (!r.rows.length) return res.status(404).json({ message: "Membresía no encontrada" });
     triggerWalletPassSync(r.rows[0].user_id, "membership_cancelled");
-    return res.json({ data: r.rows[0] });
+    return res.json({ data: serializeMembershipDates(r.rows[0]) });
   } catch (err) {
     return res.status(500).json({ message: "Error interno" });
   }
