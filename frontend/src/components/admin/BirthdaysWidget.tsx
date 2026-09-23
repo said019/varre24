@@ -12,6 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminBilling } from "./AdminBillingGate";
 import { Cake, Mail, MessageSquare, Loader2, Sparkles, Send } from "lucide-react";
 
 interface Birthday {
@@ -70,6 +71,7 @@ const dayLabel = (d: number) => {
 };
 
 export function BirthdaysWidget() {
+  const { locked } = useAdminBilling();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [active, setActive] = useState<Birthday | null>(null);
@@ -178,6 +180,7 @@ export function BirthdaysWidget() {
                   </p>
                 </div>
                 <Button
+                  disabled={locked}
                   size="sm"
                   variant={isToday ? "default" : "ghost"}
                   className={isToday
@@ -198,7 +201,7 @@ export function BirthdaysWidget() {
       )}
 
       {/* Felicitar dialog */}
-      <Dialog open={!!active} onOpenChange={(v) => !v && setActive(null)}>
+      <Dialog open={!locked && !!active} onOpenChange={(v) => !v && setActive(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">

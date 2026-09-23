@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { AuthGuard } from "@/components/admin/AuthGuard";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminBillingNotice, useAdminBilling } from "@/components/admin/AdminBillingGate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,6 +34,7 @@ interface Stats {
 }
 
 const Dashboard = () => {
+  const { locked } = useAdminBilling();
   const navigate = useNavigate();
   const [broadcastOpen, setBroadcastOpen] = useState(false);
   const { data: stats, isLoading } = useQuery<Stats>({
@@ -84,9 +86,10 @@ const Dashboard = () => {
   );
 
   return (
-    <AuthGuard requiredRoles={["admin", "instructor"]}>
+    <AuthGuard requiredRoles={["admin", "super_admin", "reception", "instructor"]}>
       <AdminLayout>
         <div className="admin-page max-w-6xl">
+          <AdminBillingNotice />
           <section className="mb-6 grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
             <div className="rounded-[1.35rem] border border-[#3B0E1A]/15 bg-[#1A060B] p-5 text-[#F3EFE9] shadow-[0_28px_70px_-45px_rgba(47,40,35,0.9)] sm:p-6">
               <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#C9A5A8]">
@@ -100,6 +103,7 @@ const Dashboard = () => {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button
+                  disabled={locked}
                   size="sm"
                   onClick={() => setBroadcastOpen(true)}
                   className="bg-[#FFD6E6] hover:bg-[#FFE4EE] text-[#3B0E1A] font-semibold"
@@ -111,6 +115,8 @@ const Dashboard = () => {
 
             <button
               type="button"
+              disabled={locked}
+              style={locked ? { opacity: 0.55, cursor: "not-allowed" } : undefined}
               onClick={() => navigate("/admin/classes")}
               className="group flex min-h-[9.5rem] flex-col justify-between rounded-[1.35rem] border border-[#3B0E1A]/15 bg-white/65 p-5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_20px_54px_-38px_rgba(84,67,49,0.48)] backdrop-blur sm:p-6"
             >
@@ -126,7 +132,7 @@ const Dashboard = () => {
             </button>
           </section>
 
-          <BroadcastDialog open={broadcastOpen} onOpenChange={setBroadcastOpen} />
+          {!locked && <BroadcastDialog open={broadcastOpen} onOpenChange={setBroadcastOpen} />}
 
           {/* Metric cards */}
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -174,14 +180,14 @@ const Dashboard = () => {
 
             {/* Pending orders */}
             <Card
-              className="cursor-pointer hover:border-primary/50 transition-colors"
-              onClick={() => navigate("/admin/payments?tab=pending")}
+              className={locked ? "" : "cursor-pointer hover:border-primary/50 transition-colors"}
+              onClick={locked ? undefined : () => navigate("/admin/payments?tab=pending")}
             >
               <CardHeader>
                 <CardTitle className="text-base flex items-center justify-between">
                   Órdenes pendientes
                   <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
-                    Ver <ArrowRight size={12} />
+                    {locked ? "Solo lectura" : <>Ver <ArrowRight size={12} /></>}
                   </span>
                 </CardTitle>
               </CardHeader>

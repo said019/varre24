@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { AnimatedRoutes } from "@/lib/motion";
 import { MaintenanceGate } from "@/components/MaintenanceGate";
 import { AppUpdatePrompt } from "@/components/AppUpdatePrompt";
+import { AdminBillingGate } from "@/components/admin/AdminBillingGate";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -141,7 +142,7 @@ const App = () => (
       <BrowserRouter>
         <AppInit />
         <MaintenanceGate>
-          <AppRoutes />
+          <AdminBillingGate><AppRoutes /></AdminBillingGate>
         </MaintenanceGate>
       </BrowserRouter>
     </TooltipProvider>

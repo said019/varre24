@@ -15,6 +15,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (r) => r,
   (err) => {
+    if (err.response?.data?.code === "ADMIN_BILLING_LOCKED") {
+      window.dispatchEvent(new Event("admin-billing-locked"));
+    }
     if (err.response?.status === 401) {
       localStorage.removeItem("auth_token");
       // CRÍTICO: limpiar también el estado persistido de zustand (auth-storage).

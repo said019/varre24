@@ -10,6 +10,7 @@ import {
   Settings, ChevronLeft, ChevronRight, ChevronDown, LogOut, Globe, Menu, X,
 } from "lucide-react";
 import { AdminPendingBell } from "./AdminPendingBell";
+import { useAdminBilling } from "./AdminBillingGate";
 import { SHELL_PHOTOS } from "@/components/landing/photoAssets";
 
 const NAV_GROUPS = [
@@ -56,6 +57,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const { locked } = useAdminBilling();
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -191,6 +193,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   <div className="space-y-0.5">
                     {group.items.map(({ path, label, icon: Icon }) => {
                       const active = location.pathname === path || location.pathname.startsWith(path + "/");
+                      if (locked && path !== "/admin/dashboard") return (
+                        <span key={path} aria-disabled="true" title="Disponible al regularizar tu mensualidad" className={cn("flex items-center gap-3 rounded-lg py-2.5 text-[#9C8A8B]/50 cursor-not-allowed", isCompact ? "justify-center" : "px-3")}>
+                          <Icon size={17} strokeWidth={1.75} />
+                          {!isCompact && <span className="text-[13.5px]">{label}</span>}
+                        </span>
+                      );
                       return (
                         <Link
                           key={path}
@@ -286,10 +294,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             )}
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <AdminPendingBell />
+            {!locked && <AdminPendingBell />}
             <span className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#E9D9D9] px-2.5 py-1 text-[11px] text-[#9C8A8B] font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[#9C8A8B]" />
-              En línea
+              {locked ? "Solo lectura" : "En línea"}
             </span>
             <div className="w-px h-4 bg-[#E9D9D9] hidden sm:block" />
             <div className="flex items-center gap-2 min-w-0">
@@ -312,6 +320,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <ul className="grid grid-cols-5 gap-1">
               {MOBILE_QUICK_NAV.map((item) => {
                 const active = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
+                if (locked && item.path !== "/admin/dashboard") return (
+                  <li key={item.path}><span aria-disabled="true" className="flex h-12 flex-col items-center justify-center text-[11px] text-[#9C8A8B]/50"><item.icon size={16} /><span className="mt-0.5">{item.label}</span></span></li>
+                );
                 return (
                   <li key={item.path}>
                     <Link

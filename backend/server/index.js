@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { createAdminBillingGate, getAdminBillingStatus } from "./adminBillingLock.js";
 import express from "express";
 import cors from "cors";
 import compression from "compression";
@@ -2070,6 +2071,16 @@ app.use((req, res, next) => {
 // Se monta DESPUÉS de los body parsers para tener acceso a req.body, y se
 // dispara en res.on("finish") así que no bloquea la respuesta al cliente.
 // La función se define más abajo (declarada con function → hoisted).
+app.use(createAdminBillingGate({
+  resolveRole: async (req) => {
+    const header = req.headers.authorization;
+    if (!header?.startsWith("Bearer ")) return null;
+    let payload;
+    try { payload = jwt.verify(header.slice(7), JWT_SECRET); }
+    catch { return null; } // La autenticación de cada ruta rechaza tokens inválidos.
+    return getRoleCached(payload.sub);
+  },
+}));
 app.use((req, res, next) => adminAuditMiddleware(req, res, next));
 
 // ─── Modo mantenimiento ─────────────────────────────────────────────────────
@@ -3208,6 +3219,11 @@ async function adminMiddleware(req, res, next) {
     } catch { return res.status(500).json({ message: "Error interno" }); }
   });
 }
+
+app.get("/api/admin/billing-status", adminMiddleware, (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  return res.json({ data: getAdminBillingStatus() });
+});
 
 function mapUser(u) {
   return {

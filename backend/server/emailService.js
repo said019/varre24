@@ -244,12 +244,20 @@ const STUDIO_TIME_ZONE = "America/Mexico_City";
 
 function fmtDate(dateStr) {
   if (!dateStr) return "—";
-  const raw = String(dateStr);
-  // DATE no representa una hora: lo anclamos a mediodía para que nunca se
-  // convierta al día anterior al formatearlo en CDMX.
-  const d = /^\d{4}-\d{2}-\d{2}$/.test(raw)
-    ? new Date(`${raw}T12:00:00Z`)
-    : new Date(dateStr);
+  // Estos campos son fechas civiles (classes.date, start_date, end_date),
+  // no instantes. pg convierte DATE a medianoche en la zona del proceso:
+  // recuperar sus componentes locales antes de formatear en CDMX. Si ya fue
+  // serializada como ISO, conservar el YYYY-MM-DD, sin convertir la hora.
+  const civilDate = dateStr instanceof Date
+    ? Number.isNaN(dateStr.getTime()) ? null : [
+        dateStr.getFullYear(),
+        String(dateStr.getMonth() + 1).padStart(2, "0"),
+        String(dateStr.getDate()).padStart(2, "0"),
+      ].join("-")
+    : String(dateStr).match(/^(\d{4}-\d{2}-\d{2})(?:$|T)/)?.[1];
+  if (!civilDate) return "—";
+  const d = new Date(`${civilDate}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleDateString("es-MX", {
     timeZone: STUDIO_TIME_ZONE,
     weekday: "long",
