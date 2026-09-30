@@ -2211,6 +2211,15 @@ function adminAuditMiddleware(req, res, next) {
 // Evita un SELECT role FROM users por cada request a /api/classes y similares.
 const ROLE_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min
 const roleCache = new Map(); // userId → { role, expiresAt }
+// La validez ya termina a los cinco minutos; liberar también las entradas
+// de usuarios que no regresan evita retener su historial en RAM indefinidamente.
+const roleCacheSweep = setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of roleCache) {
+    if (entry.expiresAt <= now) roleCache.delete(key);
+  }
+}, 60_000);
+roleCacheSweep.unref();
 function invalidateRoleCache(userId) {
   if (userId) roleCache.delete(String(userId));
 }
