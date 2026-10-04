@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { dateTimeFormatter, spanishDate } from "./lib/date-formatters.js";
 import { createAdminBillingGate, getAdminBillingStatus } from "./adminBillingLock.js";
 import express from "express";
 import cors from "cors";
@@ -514,7 +515,7 @@ const STUDIO_TIME_ZONE = "America/Mexico_City";
 // No usar toISOString() para "hoy": después de las 18:00 en CDMX ya es el día
 // siguiente en UTC y eso adelantaba altas, reportes y vigencias.
 function mexicoDateKey(value = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-US", {
+  const parts = dateTimeFormatter("en-US", {
     timeZone: STUDIO_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
@@ -540,7 +541,7 @@ function formatMexicoDate(value, options = {}) {
       ? new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate(), 12))
       : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("es-MX", { timeZone: STUDIO_TIME_ZONE, ...options });
+  return spanishDate(date, { timeZone: STUDIO_TIME_ZONE, ...options });
 }
 
 // Convierte una columna DATE de PostgreSQL a su llave civil sin permitir que
