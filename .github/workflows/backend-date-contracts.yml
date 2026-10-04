@@ -1,0 +1,43 @@
+name: Backend date contracts
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/backend-date-contracts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (${{ matrix.version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [baseline, candidate]
+    env:
+      DOTENV_CONFIG_PATH: /dev/null
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.version == 'baseline' && (github.event.pull_request.base.sha || '40d2a5477433154a15dd6ee4c4c7aea698b97e40') || (github.event.pull_request.head.sha || github.sha) }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.5'
+      # These tests use only Node/local modules; no install or live API/DB is needed.
+      # cancellation, referrals and transfer-flow are manual integration scripts
+      # that seed PostgreSQL and are deliberately outside this offline contract.
+      - name: Run existing offline backend tests
+        run: node --test --test-concurrency=1 backend/server/tests/admin-billing-lock.test.mjs backend/server/tests/email-service.test.mjs
+      - name: Run differential date contracts against the frozen baseline
+        if: matrix.version == 'candidate'
+        run: node --test --test-concurrency=1 backend/server/tests/date-formatters.test.mjs
+      - name: Validate server syntax
+        run: node --check backend/server/index.js
