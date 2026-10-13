@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { AdminPendingBell } from "./AdminPendingBell";
 import { useAdminBilling } from "./AdminBillingGate";
+import { PaymentNotice } from "./PaymentNotice";
 import { SHELL_PHOTOS } from "@/components/landing/photoAssets";
 
 const NAV_GROUPS = [
@@ -313,7 +314,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
         </header>
 
-        <main className="admin-mobile-main flex-1 overflow-auto pb-[88px] lg:pb-0">{children}</main>
+        <main className="admin-mobile-main flex-1 overflow-auto pb-[88px] lg:pb-0"><PaymentNotice role={user?.role} />{children}</main>
 
         {isMobile && (
           <nav className="fixed inset-x-3 bottom-3 z-40 rounded-2xl border border-[#E9D9D9] bg-[#FCF8F7] p-1 pb-safe lg:hidden">

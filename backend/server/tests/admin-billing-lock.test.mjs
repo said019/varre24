@@ -38,6 +38,12 @@ test("switch off restores actions; client accounts and unauthenticated webhooks 
   assert.equal((await check("POST", "/api/webhook/mercadopago", null)).passed, true);
   assert.equal((await check("POST", "/api/auth/login", null)).passed, true);
 });
+test("informational payment notice read remains available without granting writes", async () => {
+  const url = "/api/admin/platform-payment-notice";
+  assert.equal((await check("GET", url, "admin")).passed, true);
+  assert.equal((await check("POST", url, "admin")).status, 423);
+  assert.equal(isDashboardRead(request("GET", url + "?project=other")), false);
+});
 test("role lookup failure cannot unlock administrative actions", async () => {
   let status;
   await createAdminBillingGate({ resolveRole: async () => { throw new Error("DB unavailable"); }, getStatus: () => ({ locked: true }) })(request("POST", "/api/memberships"), { status(s) { status = s; return this; }, json() {} }, () => assert.fail("must not proceed"));

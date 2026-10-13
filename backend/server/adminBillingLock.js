@@ -13,7 +13,7 @@ export function isDashboardRead(req) {
   if (req.method !== "GET") return false;
   const url = new URL(req.originalUrl, "http://localhost");
   const path = url.pathname.replace(/\/+$/, "").toLowerCase();
-  if (["/api/auth/me", "/api/admin/billing-status", "/api/admin/stats", "/api/app-version", "/api/health"].includes(path)) {
+  if (["/api/auth/me", "/api/admin/billing-status", "/api/admin/platform-payment-notice", "/api/admin/stats", "/api/app-version", "/api/health"].includes(path)) {
     return url.search === "";
   }
   const expected = {

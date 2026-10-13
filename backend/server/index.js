@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { registerPaymentNoticeRoute } from './paymentNoticeRoute.mjs';
 import { dateTimeFormatter, spanishDate } from "./lib/date-formatters.js";
 import { createAdminBillingGate, getAdminBillingStatus } from "./adminBillingLock.js";
 import express from "express";
@@ -3216,6 +3217,8 @@ async function authMiddleware(req, res, next) {
     return res.status(401).json({ message: "Token inválido" });
   }
 }
+
+registerPaymentNoticeRoute(app, { authMiddleware, pool });
 
 async function adminMiddleware(req, res, next) {
   authMiddleware(req, res, async () => {
