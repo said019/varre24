@@ -22,3 +22,11 @@ test('only valid due today or tomorrow consumes eligibility',()=>{
  for(const date of ['2026-10-13','2026-10-16','2026-02-30','invalid'])assert.equal(eligibleNotice({fecha:date,texto:'Pago'},now),false);
  assert.equal(eligibleNotice(null,now),false);
 });
+
+test('pending payment remains eligible only with a fresh central confirmation',()=>{
+ const now=new Date('2026-10-20T18:00:00Z');
+ const notice={texto:'Pendiente',fecha:'2026-10-15',ciclo:'2026-10',pendiente:true,vigenteEl:'2026-10-20'};
+ assert.equal(eligibleNotice(notice,now),true);
+ assert.equal(eligibleNotice({...notice,vigenteEl:'2026-10-19'},now),false);
+ assert.equal(eligibleNotice({...notice,pendiente:false},now),false);
+});

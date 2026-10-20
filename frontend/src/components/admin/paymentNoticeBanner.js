@@ -20,7 +20,8 @@ export function montarAviso(elemento,{endpoint,fetchImpl=fetch,onNotice=()=>{}})
       const today=localDate(),due=new Date(a.fecha+'T00:00:00Z');
       if(!Number.isFinite(due.getTime()) || due.toISOString().slice(0,10)!==a.fecha){hide();return;}
       due.setUTCDate(due.getUTCDate()-1);
-      if(today!==a.fecha && today!==due.toISOString().slice(0,10)){hide();return;}
+      const pending=a.pendiente===true && a.vigenteEl===today && a.fecha<=today && a.ciclo===a.fecha.slice(0,7);
+      if(!pending && today!==a.fecha && today!==due.toISOString().slice(0,10)){hide();return;}
       elemento.textContent=a.texto;elemento.hidden=false;lastDate=today;onNotice(a);
     }catch{if(!disposed && request===current)hide();}finally{clearTimeout(timeout);}
   }

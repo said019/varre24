@@ -8,6 +8,7 @@ export function eligibleNotice(notice, now = new Date()) {
  const due = new Date(notice.fecha+'T00:00:00Z');
  if (!Number.isFinite(due.getTime()) || due.toISOString().slice(0,10)!==notice.fecha) return false;
  const today=noticeWindow(now).slice(0,10);
+ if(notice.pendiente===true && notice.vigenteEl===today && notice.fecha<=today && notice.ciclo===notice.fecha.slice(0,7)) return true;
  due.setUTCDate(due.getUTCDate()-1);
  return today===notice.fecha || today===due.toISOString().slice(0,10);
 }

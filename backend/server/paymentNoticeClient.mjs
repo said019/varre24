@@ -15,8 +15,9 @@ export async function consultarAviso({baseUrl,token,fetchImpl=fetch,now=()=>new 
       const due=new Date(a.fecha+'T00:00:00Z');if(!Number.isFinite(due.getTime()) || due.toISOString().slice(0,10)!==a.fecha)return null;
       const dateParts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now()).map(p=>[p.type,p.value]));
       const today=`${dateParts.year}-${dateParts.month}-${dateParts.day}`;due.setUTCDate(due.getUTCDate()-1);
-      if(today!==a.fecha && today!==due.toISOString().slice(0,10))return null;
-      return {ciclo:a.ciclo,fecha:a.fecha,texto:a.texto};
+      const pending=a.pendiente===true && a.vigenteEl===today && a.fecha<=today;
+      if(!pending && today!==a.fecha && today!==due.toISOString().slice(0,10))return null;
+      return {ciclo:a.ciclo,fecha:a.fecha,texto:a.texto,...(pending?{pendiente:true,vigenteEl:today}:{})};
     })()]);
   }catch{return null;}finally{clearTimeout(timer);controller.abort();}
 }
