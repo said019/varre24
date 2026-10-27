@@ -1569,6 +1569,9 @@ async function ensureSchema() {
     await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS guest_name TEXT`).catch(() => { });
     await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS guest_phone TEXT`).catch(() => { });
     await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS order_id UUID REFERENCES orders(id) ON DELETE SET NULL`).catch(() => { });
+    // Los walk-ins (user_id NULL) no deben romper el check-in vía el trigger de reseñas.
+    await pool.query(fs.readFileSync(path.join(__dirname, "../supabase/migrations/202610260001_guest_checkin_reviews.sql"), "utf8"))
+      .catch((e) => console.error("[migration guest_checkin_reviews]", e.message));
     // ── orders: walk-in support (nullable user_id was set earlier; add guest fields) ─
     await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS guest_name TEXT`).catch(() => { });
     await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS guest_phone TEXT`).catch(() => { });

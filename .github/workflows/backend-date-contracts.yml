@@ -39,5 +39,8 @@ jobs:
       - name: Run differential date contracts against the frozen baseline
         if: matrix.version == 'candidate'
         run: node --test --test-concurrency=1 backend/server/tests/date-formatters.test.mjs
+      - name: Run guest check-in review guard
+        if: matrix.version == 'candidate'
+        run: node --test backend/server/tests/guest-checkin-review.test.mjs
       - name: Validate server syntax
         run: node --check backend/server/index.js
